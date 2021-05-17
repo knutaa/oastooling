@@ -1,0 +1,14 @@
+
+
+== API DELETE Operation Conformance
+
+All the DELETE operations in this API share the same status code pattern.
+
+[cols=",",options="header",]
+|===
+|DELETE |Mandatory/Optional
+|Status Code 204 if resource deleted |M
+|===
+
+include::../generated/DeleteOperationConformance.adoc[]
+

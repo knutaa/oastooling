@@ -1,0 +1,22 @@
+[.text-center]
+{{#puml_source}}
+ifdef::puml[]
+[plantuml, puml, svg]
+....
+include::{{filename}}[]
+....
+endif::puml[]
+{{/puml_source}}
+{{#svg_source}}
+ifdef::svg[]
+image:{{filename}}[]
+endif::svg[]
+{{/svg_source}}
+{{#png_source}}
+ifdef::png[]
+image::{{filename}}[]
+endif::png[]
+{{/png_source}}
+[.text-center]
+Figure {counter:figure} - {{resource}}
+

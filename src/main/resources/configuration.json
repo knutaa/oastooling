@@ -1,0 +1,1185 @@
+{
+	"###NOTE###": "This configuration is included in the jar file",
+	"userguide::template": "API_UserGuide_Template.docx",
+	"userguide::eventsubscription": "NotificationsPattern.png",
+	"template": "API_Conformance_Profile_Template.docx",
+	"textFragments_old": {
+		"API-INTRO": {
+			"reference": "INSERT-API-INTRODUCTION"
+		}
+	},
+	"userguide": {
+		"variables": {
+			"intro": "intro ..."
+		}
+	},
+	"userguide::metaProperties": [
+		"@type",
+		"@baseType",
+		"@schemaLocation"
+	],
+	"userguide::excludedResources": [
+		"EventSubscription"
+	],
+	"userguide::resourceFragments": {
+		"heading": "%s resource",
+		"headingLevel": "3",
+		"resourceModel": {
+			"heading": "Resource model",
+			"headingLevel": "3"
+		},
+		"fieldDescription": {
+			"heading": "Field description",
+			"headingLevel": "4",
+			"resourceTable": {
+				"defaults": {
+					"color": "B3B3B3",
+					"spacingBefore": 120,
+					"spacingAfter": 120
+				},
+				"noHeader": true,
+				"color": "E5E5E5",
+				"header": [
+					{
+						"label": "Property",
+						"color": "",
+						"width": "35.00%",
+						"spacingBefore": 120,
+						"spacingAfter": 120
+					},
+					{
+						"label": "Description",
+						"color": "",
+						"width": "65.00%",
+						"spacingBefore": 120,
+						"spacingAfter": 120
+					}
+				],
+				"rows": []
+			}
+		},
+		"jsonRepresentations": {
+			"heading": "JSON representation sample",
+			"headingLevel": "4",
+			"jsonTable": {
+				"tableSource": "documentation/resource-samples/${RESOURCE}.example.json",
+				"noHeader": true,
+				"color": "E5E5E5",
+				"header": [
+					{
+						"label": "",
+						"color": "E5E5E5",
+						"width": "100.00%",
+						"spacingBefore": 120,
+						"spacingAfter": 120
+					}
+				],
+				"rows": []
+			}
+		}
+	},
+	"userguide::notificationFragments": {
+		"heading": "%s",
+		"headingLevel": "3",
+		"notificationPostOverviewText": [
+			"The notification structure for all notifications in this API follow the pattern depicted by the figure below.",
+			"A notification event resource (depicted by \"SpecificEvent\" placeholder) is a sub class of a generic Event structure containing at least an id of the event occurrence (eventId), an event timestamp (eventTime), and the name of the resource (eventType).",
+			"This notification structure owns an event payload structure (\"SpecificEventPayload\" placeholder) linked to the resource concerned by the notification using the resource name as access field (\"resourceName\" placeholder)."
+		],
+		"jsonRepresentations": {
+			"heading": "JSON representation sample",
+			"headingLevel": "4",
+			"template": [
+				"{",
+				"    \"eventId\": \"00001\",",
+				"    \"eventTime\": \"${TIMESTAMP}\",",
+				"    \"eventType\": \"${EVENT}\",",
+				"    \"event\": {",
+				"        \"${PROPERTY}\":",
+				"            {-- SEE ${RESOURCENAME} RESOURCE SAMPLE --}",
+				"    }",
+				"}"
+			],
+			"jsonTable": {
+				"noHeader": true,
+				"color": "E5E5E5",
+				"header": [
+					{
+						"label": "",
+						"color": "E5E5E5",
+						"width": "100.00%",
+						"spacingBefore": 120,
+						"spacingAfter": 120
+					}
+				],
+				"rows": []
+			}
+		},
+		"xx_jsonRepresentations": "JSON representation sample",
+		"xx_jsonTable": {
+			"noHeader": true,
+			"header": [
+				{
+					"label": "",
+					"color": "E5E5E5",
+					"width": "100.00%",
+					"spacingBefore": 120,
+					"spacingAfter": 120
+				}
+			],
+			"rows": []
+		}
+	},
+	"userguide::operationsFragments": {
+		"heading": "Operations on %s",
+		"headingLevel": "2",
+		"jsonRepresentations": "JSON representation sample",
+		"jsonTable": {
+			"noHeader": true,
+			"color": "E5E5E5",
+			"header": [
+				{
+					"label": "",
+					"color": "E5E5E5",
+					"width": "100.00%",
+					"spacingBefore": 120,
+					"spacingAfter": 120
+				}
+			],
+			"rows": []
+		},
+		"operation-samples-folder": "documentation/operation-samples",
+		"operation-samples-config-pattern": [
+			".operation_samples.json",
+			".operation_samples.yaml",
+			".operation_sample.yaml",
+			".operation_sample.json",
+			".operation.samples.json",
+			".operation.samples.yaml",
+			".operation.sample.json",
+			".operation.sample.yaml",
+			".operations.sample.json",
+			".operations.sample.yaml"
+		],
+		"operationsDetails": {
+			"heading": "%s",
+			"headingLevel": "3",
+			"operationsIntroText": {
+				"create": [
+					"This operation creates ${RESOURCE_ARTICLE} ${RESOURCE_LOWER} entity."
+				],
+				"list": [
+					"This operation list ${RESOURCE_LOWER} entities.",
+					"Attribute selection is enabled for all first level attributes.",
+					"Filtering may be available depending on the compliance level supported by an implementation."
+				],
+				"retrieve": [
+					"This operation retrieves ${RESOURCE_ARTICLE} ${RESOURCE_LOWER} entity.",
+					"Attribute selection is enabled for all first level attributes.",
+					"Filtering may be available depending on the compliance level supported by an implementation."
+				],
+				"replace": [],
+				"delete": [
+					"This operation deletes ${RESOURCE_ARTICLE} ${RESOURCE_LOWER} entity."
+				],
+				"partialupdate": [
+					"This operation allows partial updates of ${RESOURCE_ARTICLE} ${RESOURCE_LOWER} entity. Support of json/merge (https://tools.ietf.org/html/rfc7386) is mandatory, support of json/patch (http://tools.ietf.org/html/rfc5789) is optional",
+					"Note: If the update operation yields to the creation of sub-resources or relationships, the same rules concerning mandatory sub-resource attributes and default value settings in the POST operation applies to the PATCH operation. Hence these tables are not repeated here."
+				]
+			},
+			"old_operationsSampleText": [
+				"Here's an example of a request for ${OPERATION_VERB} ${RESOURCE_LOWER} resources."
+			],
+			"operationSampleTable": {
+				"noHeader": true,
+				"color": "E5E5E5",
+				"header": [
+					{
+						"label": "",
+						"color": "",
+						"width": "100.00%",
+						"spacingBefore": 120,
+						"spacingAfter": 120
+					}
+				],
+				"rows": []
+			}
+		}
+	},
+	"tableFragments": {
+		"INSERT-RESOURCES-CONFORMANCE": {
+			"type": "resource",
+			"config": "resourceOverview",
+			"values": "mandatoryOptionalResources"
+		},
+		"INSERT-RESOURCES-DETAILED-CONFORMANCE": {
+			"type": "resource-details",
+			"config": "resourceDetails",
+			"heading": "%s Resource Mandatory Attributes",
+			"heading_old": "%s Resource Mandatory And Optional Attributes"
+		},
+		"INSERT-NOTIFICATIONS-CONFORMANCE": {
+			"type": "notifications",
+			"config": "notificationOverview",
+			"values": "mandatoryOptionalNotifications"
+		},
+		"INSERT-API-OPERATION-CONFORMANCE": {
+			"type": "operations",
+			"config": "operationOverview",
+			"values_old": "mandatoryOptionalOperations",
+			"heading_old": "%s Mandatory And Optional Operations",
+			"intro_old": "The following table indicates which ones are mandatory and which ones are optional for the RESOURCE resource:",
+			"values": "mandatoryOperations",
+			"heading": "%s Mandatory Operations",
+			"intro": "The following table indicates which ones are mandatory for the RESOURCE resource:"
+		},
+		"INSERT-GET-RESOURCE-OPERATION-CONFORMANCE": {
+			"type": "operations-details",
+			"operation": "GET",
+			"heading": "GET %s?fields=...&{filtering}",
+			"textAfter_old": [
+				"Attribute selection is mandatory for all first level attributes.",
+				"Filtering on sub-resources is optional for all compliance levels."
+			],
+			"textAfter": [
+				"Attribute selection is mandatory for all first level attributes except for the href attribute.",
+				"Filtering on sub-resources is optional for all compliance levels"
+			]
+		},
+		"INSERT-POST-RESOURCE-OPERATION-CONFORMANCE": {
+			"type": "operations-details",
+			"config_old": [
+				"resourcePostMandatory",
+				"resourcePostOptional"
+			],
+			"config_old2": [
+				"resourcePostMandatory",
+				"resourcePostConditional"
+			],
+			"config": [
+				"resourcePostMandatory"
+			],
+			"operation": "POST",
+			"heading": "POST %s",
+			"intro_old": "The following tables provides the list of mandatory and non mandatory attributes when creating an instance of the RESOURCE resource, including any possible rule conditions and applicable default values. Notice that it is up to an implementer to add additional mandatory attributes.",
+			"intro": "The following table provides the list of mandatory attributes when creating an instance of the RESOURCE resource, including any possible rule, conditions and applicable default values."
+		},
+		"INSERT-DELETE-RESOURCE-OPERATION-CONFORMANCE": {
+			"type": "operations-details",
+			"operation": "DELETE",
+			"heading": "DELETE %s"
+		},
+		"INSERT-PUT-RESOURCE-OPERATION-CONFORMANCE": {
+			"type": "operations-details",
+			"operation": "PUT",
+			"heading": "PUT %s"
+		},
+		"INSERT-PATCH-RESOURCE-OPERATION-CONFORMANCE": {
+			"type": "operations-details",
+			"operation": "PATCH",
+			"heading": "PATCH %s",
+			"config_old": [
+				"resourcePatchMandatory",
+				"resourcePatchOptional"
+			],
+			"config": [
+				"resourcePatchMandatory"
+			],
+			"textBefore_old": [
+				"This operation allows partial updates of an instance of the RESOURCE resource.",
+				"Support of json/merge (https://tools.ietf.org/html/rfc7386) is mandatory, support of json/patch (http://tools.ietf.org/html/rfc5789) is optional.",
+				"Note: If the update operation yields to the creation of sub-resources or relationships, the same rules concerning mandatory sub-resource attributes and default value settings in the POST operation applies to the PATCH operation.  Hence these tables are not repeated here.",
+				"The tables below provide the list of patchable and non patchable attributes, including constraint rules on their usage."
+			],
+			"textBefore": [
+				"This operation allows partial updates of an instance of the RESOURCE resource.",
+				"Support of json/merge (https://tools.ietf.org/html/rfc7386) is mandatory.",
+				"Note: If the update operation yields to the creation of sub-resources or relationships, the same rules concerning mandatory sub-resource attributes and default value settings in the POST operation applies to the PATCH operation.  Hence these tables are not repeated here.",
+				"The tables below provide the list of patchable attributes, including constraint rules on their usage."
+			]
+		}
+	},
+	
+	"resourceOverview": {
+		"defaults": {
+			"color": "B3B3B3",
+			"spacingBefore": 120,
+			"spacingAfter": 120
+		},
+		"header": [
+			{
+				"label": "Resource Name",
+				"color": "B3B3B3",
+				"width": "40.00%",
+				"spacingBefore": 120,
+				"spacingAfter": 120
+			},
+			{
+				"label": "Comment",
+				"color": "B3B3B3",
+				"width": "60.00%",
+				"spacingBefore": 120,
+				"spacingAfter": 120
+			}
+		],
+		"rows": [
+			{
+				
+			},
+			{
+				"map": 2
+			}
+		]
+	},
+	"resourceOverview_old": {
+		"defaults": {
+			"color": "B3B3B3",
+			"spacingBefore": 120,
+			"spacingAfter": 120
+		},
+		"header": [
+			{
+				"label": "Resource Name",
+				"color": "B3B3B3",
+				"width": "36.00%",
+				"spacingBefore": 120,
+				"spacingAfter": 120
+			},
+			{
+				"label": "Mandatory / Optional",
+				"color": "B3B3B3",
+				"width": "23.00%",
+				"spacingBefore": 120,
+				"spacingAfter": 120
+			},
+			{
+				"label": "Comment",
+				"color": "B3B3B3",
+				"width": "41.00%",
+				"spacingBefore": 120,
+				"spacingAfter": 120
+			}
+		],
+		"rows": [
+			{
+				
+			},
+			{
+				"alignment": "center"
+			}
+		]
+	},
+	"resourceDetails": {
+		"defaults": {
+			"color": "B3B3B3",
+			"spacingBefore": 120,
+			"spacingAfter": 120
+		},
+		"header": [
+			{
+				"label": "Mandatory attribute when parent is present",
+				"color": "B3B3B3",
+				"width": "50.00%",
+				"spacingBefore": 120,
+				"spacingAfter": 120
+			},
+			{
+				"label": "Rule",
+				"color": "B3B3B3",
+				"width": "50.00%",
+				"spacingBefore": 120,
+				"spacingAfter": 120
+			}
+		],
+		"rows": [
+			{
+				
+			},
+			{
+				"map": 1
+			}
+		],
+		"merge": {
+			"header": [
+				{
+					"label": "Mandatory attribute",
+					"color": "B3B3B3",
+					"width": "100.00%",
+					"spacingBefore": 120,
+					"spacingAfter": 120
+				}
+			],
+			"rows": [
+				{
+					
+				}
+			]
+		}
+	},
+	"resourceDetails_old": {
+		"defaults": {
+			"color": "B3B3B3",
+			"spacingBefore": 120,
+			"spacingAfter": 120
+		},
+		"header": [
+			{
+				"label": "Parameter",
+				"color": "B3B3B3",
+				"width": "41.00%",
+				"spacingBefore": 120,
+				"spacingAfter": 120
+			},
+			{
+				"label": "Mandatory / Optional",
+				"color": "B3B3B3",
+				"width": "23.00%",
+				"spacingBefore": 120,
+				"spacingAfter": 120
+			},
+			{
+				"label": "Comment",
+				"color": "B3B3B3",
+				"width": "36.00%",
+				"spacingBefore": 120,
+				"spacingAfter": 120
+			}
+		],
+		"rows": [
+			{
+				
+			},
+			{
+				"alignment": "center"
+			}
+		]
+	},
+	"notificationOverview": {
+		"defaults": {
+			"color": "B3B3B3",
+			"spacingBefore": 120,
+			"spacingAfter": 120
+		},
+		"header": [
+			{
+				"label": "Notification Name",
+				"color": "B3B3B3",
+				"width": "46.00%",
+				"spacingBefore": 120,
+				"spacingAfter": 120
+			},
+			{
+				"label": "Comment",
+				"color": "B3B3B3",
+				"width": "31.00%",
+				"spacingBefore": 120,
+				"spacingAfter": 120
+			}
+		],
+		"rows": [
+			{
+				
+			},
+			{
+				"map": 2
+			}
+		]
+	},
+	"notificationOverview_old": {
+		"defaults": {
+			"color": "B3B3B3",
+			"spacingBefore": 120,
+			"spacingAfter": 120
+		},
+		"header": [
+			{
+				"label": "Notification Name",
+				"color": "B3B3B3",
+				"width": "46.00%",
+				"spacingBefore": 120,
+				"spacingAfter": 120
+			},
+			{
+				"label": "Mandatory / Optional",
+				"color": "B3B3B3",
+				"width": "23.00%",
+				"spacingBefore": 120,
+				"spacingAfter": 120
+			},
+			{
+				"label": "Comment",
+				"color": "B3B3B3",
+				"width": "31.00%",
+				"spacingBefore": 120,
+				"spacingAfter": 120
+			}
+		],
+		"rows": [
+			{
+				
+			},
+			{
+				"alignment": "center"
+			}
+		]
+	},
+	"operationOverview_old": {
+		"heading": "%s Mandatory And Optional Operations",
+		"defaults": {
+			"color": "B3B3B3",
+			"spacingBefore": 120,
+			"spacingAfter": 120
+		},
+		"header": [
+			{
+				"label": "Uniform API Operation",
+				"color": "B3B3B3",
+				"width": "25.00%",
+				"spacingBefore": 120,
+				"spacingAfter": 120
+			},
+			{
+				"label": "Mandatory / Optional",
+				"color": "B3B3B3",
+				"width": "30.00%",
+				"spacingBefore": 120,
+				"spacingAfter": 120
+			},
+			{
+				"label": "Comments",
+				"color": "B3B3B3",
+				"width": "45.00%",
+				"spacingBefore": 120,
+				"spacingAfter": 120
+			}
+		],
+		"rows": [
+			{
+				
+			},
+			{
+				"alignment": "center"
+			}
+		]
+	},
+	"operationOverview": {
+		"heading": "%s Mandatory Operations",
+		"defaults": {
+			"color": "B3B3B3",
+			"spacingBefore": 120,
+			"spacingAfter": 120
+		},
+		"header": [
+			{
+				"label": "Uniform API Operation",
+				"color": "B3B3B3",
+				"width": "25.00%",
+				"spacingBefore": 120,
+				"spacingAfter": 120
+			}
+		],
+		"rows": [
+			{
+				
+			}
+		]
+	},
+	"resourcePostMandatory": {
+		"header": [
+			{
+				"label": "Mandatory Attributes",
+				"color": "B3B3B3",
+				"width": "46.00%",
+				"spacingBefore": 120,
+				"spacingAfter": 120
+			},
+			{
+				"label": "Rule",
+				"color": "B3B3B3",
+				"width": "54.00%",
+				"spacingBefore": 120,
+				"spacingAfter": 120
+			}
+		]
+	},
+	"resourcePostOptional": {
+		"header": [
+			{
+				"label": "Non Mandatory Attributes",
+				"color": "B3B3B3",
+				"width": "46.00%",
+				"spacingBefore": 120,
+				"spacingAfter": 120
+			},
+			{
+				"label": "Default Value",
+				"color": "B3B3B3",
+				"width": "20.00%",
+				"spacingBefore": 120,
+				"spacingAfter": 120
+			},
+			{
+				"label": "Rule",
+				"color": "B3B3B3",
+				"width": "34.00%",
+				"spacingBefore": 120,
+				"spacingAfter": 120
+			}
+		]
+	},
+	"resourcePostConditional": {
+		"header": [
+			{
+				"label": "Conditional Attributes",
+				"color": "B3B3B3",
+				"width": "46.00%",
+				"spacingBefore": 120,
+				"spacingAfter": 120
+			},
+			{
+				"label": "Rule",
+				"color": "B3B3B3",
+				"width": "54.00%",
+				"spacingBefore": 120,
+				"spacingAfter": 120
+			}
+		]
+	},
+	"resourcePatchMandatory": {
+		"header": [
+			{
+				"label": "Patchable Attributes",
+				"color": "B3B3B3",
+				"width": "46.00%",
+				"spacingBefore": 120,
+				"spacingAfter": 120
+			},
+			{
+				"label": "Rule",
+				"color": "B3B3B3",
+				"width": "54.00%",
+				"spacingBefore": 120,
+				"spacingAfter": 120
+			}
+		]
+	},
+	"resourcePatchOptional": {
+		"header": [
+			{
+				"label": "Non Patchable Attributes",
+				"color": "B3B3B3",
+				"width": "46.00%",
+				"spacingBefore": 120,
+				"spacingAfter": 120
+			},
+			{
+				"label": "Rule",
+				"color": "B3B3B3",
+				"width": "54.00%",
+				"spacingBefore": 120,
+				"spacingAfter": 120
+			}
+		]
+	},
+	"extract": [
+		{
+			"header": "API MANDATORY RESOURCES",
+			"destination": "mandatoryOptionalResources",
+			"conditional-pattern": "^([^ ]+)",
+			"ordering": true,
+			"columns": [
+				{
+					"index": 0
+				},
+				{
+					"index": 1,
+					"label": "comment"
+				}
+			],
+			"defaults": {
+				"condition": "M"
+			}
+		},
+		{
+			"header": "API MANDATORY AND OPTIONAL RESOURCES",
+			"destination": "mandatoryOptionalResources",
+			"conditional-pattern": "^([^ ]+)",
+			"ordering": true,
+			"columns": [
+				{
+					"index": 0
+				},
+				{
+					"index": 1,
+					"label": "condition"
+				},
+				{
+					"index": 2,
+					"label": "comment"
+				}
+			]
+		},
+		{
+			"header": "MANDATORY AND OPTIONAL ATTRIBUTES",
+			"pattern": "^([^ ]+)",
+			"columns": [
+				{
+					"index": -3
+				},
+				{
+					"index": -2,
+					"label": "condition"
+				},
+				{
+					"index": -1,
+					"label": "comment"
+				}
+			]
+		},
+		{
+			"header": "API GET FILTERING OPERATION CONFORMANCE",
+			"pattern": "^([^ ]+)",
+			"columns": [
+				{
+					"index": 0,
+					"label": "Attribute name"
+				},
+				{
+					"index": 1,
+					"label": "Filtered search\nFirst Level"
+				},
+				{
+					"index": 2,
+					"label": "Filtered search\nN Level"
+				},
+				{
+					"index": 3,
+					"label": "Attribute Selection\nFirst Level"
+				},
+				{
+					"index": 4,
+					"label": "Attribute Selection\nN Level"
+				}
+			]
+		},
+		{
+			"header": "MANDATORY AND OPTIONAL NOTIFICATIONS",
+			"not-used-conditional-pattern": "^([^ ]+)",
+			"not-used-conditional-group": "notifications",
+			"destination": "mandatoryOptionalNotifications",
+			"ordering": true,
+			"multiple": true,
+			"columns": [
+				{
+					"index": 0
+				},
+				{
+					"index": 1,
+					"label": "condition"
+				},
+				{
+					"index": 2,
+					"label": "comment"
+				}
+			]
+		},
+		{
+			"header": "MANDATORY NOTIFICATIONS",
+			"not-used-conditional-pattern": "^([^ ]+)",
+			"not-used-conditional-group": "notifications",
+			"destination": "mandatoryOptionalNotifications",
+			"ordering": true,
+			"multiple": true,
+			"columns": [
+				{
+					"index": 0
+				},
+				{
+					"index": 1,
+					"label": "comment"
+				}
+			],
+			"defaults": {
+				"condition": "M"
+			}
+		},
+		{
+			"header": "MANDATORY AND OPTIONAL OPERATIONS",
+			"destination": "mandatoryOptionalOperations",
+			"conditional-pattern": "^([^ ]+)",
+			"conditional-group": "operations",
+			"ordering": true,
+			"columns": [
+				{
+					"index": 0
+				},
+				{
+					"index": 1,
+					"label": "condition"
+				},
+				{
+					"index": 2,
+					"label": "comment"
+				}
+			]
+		},
+		{
+			"header": "MANDATORY OPERATIONS",
+			"destination": "mandatoryOperations",
+			"conditional-pattern": "^([^ ]+)",
+			"conditional-group": "operations",
+			"ordering": true,
+			"columns": [
+				{
+					"index": 0
+				}
+			],
+			"defaults": {
+				"condition": "M"
+			}
+		},
+		{
+			"headerPrefix": "^POST",
+			"skip": 0,
+			"parts": [
+				{
+					"conditional-pattern": "^POST[ ]+([^ ]+)",
+					"conditional-group": [
+						"operations-details",
+						"POST",
+						"mandatory"
+					],
+					"ignore-columns": [],
+					"columns": [
+						{
+							"index": 0
+						},
+						{
+							"index": -1,
+							"label": "rule"
+						}
+					],
+					"config-layer": false
+				},
+				{
+					"conditional-pattern": "^POST[ ]+([^ ]+)",
+					"conditional-group": [
+						"operations-details",
+						"POST",
+						"conditional"
+					],
+					"ignore-columns": [],
+					"columns": [
+						{
+							"index": 0
+						},
+						{
+							"index": -2,
+							"label": "default"
+						},
+						{
+							"index": -1,
+							"label": "comment"
+						}
+					],
+					"config-layer": false
+				}
+			]
+		},
+		{
+			"headerPrefix": "^PATCH",
+			"skip": 0,
+			"parts": [
+				{
+					"conditional-pattern": "^PATCH[ ]+([^ {}]+)",
+					"conditional-group": [
+						"operations-details",
+						"PATCH",
+						"patchable"
+					],
+					"ignore-columns": [
+						"Mandatory",
+						"Optional"
+					],
+					"columns": [
+						{
+							"index": 0
+						},
+						{
+							"index": 1,
+							"label": "rule"
+						}
+					],
+					"config-layer": false
+				}
+			]
+		}
+	],
+	"rewriteRules": [
+		{
+			"regex": "^([\\w\\.]+)[^\\w]+in[^\\w]+([\\w.]+)[^\\w@\\.]+(.*)?",
+			"replacement": "$2.$1$3"
+		}
+	],
+	"removeSections": {
+		"POST": {
+			"text": "API POST OPERATION CONFORMANCE",
+			"style": "Heading1"
+		},
+		"GET": {
+			"text": "API GET OPERATION CONFORMANCE",
+			"style": "Heading1"
+		},
+		"DELETE": {
+			"text": "API DELETE OPERATION CONFORMANCE",
+			"style": "Heading1"
+		},
+		"PUT": {
+			"text": "API PUT OPERATION CONFORMANCE",
+			"style": "Heading1"
+		},
+		"PATCH": {
+			"text": "API PATCH OPERATION CONFORMANCE",
+			"style": "Heading1"
+		}
+	},
+	"removeNotificationSection": {
+		"text": "NOTIFICATION MODEL CONFORMANCE",
+		"style": "Heading1"
+	},
+	"removeSectionsForOptionalOperations": true,
+	"includeMetaProperties": false,
+	"default_conformance": {
+		"layout": {
+			"operations": [
+				"GET",
+				"POST",
+				"PATCH",
+				"PUT",
+				"DELETE"
+			]
+		},
+		"userguide": {
+			"variables": {
+				"intro": "This text is a replacement of the ${userguide.variables.intro} template variable used in the template in this location.\n\nMultiple lines can be added as needed.\n\nSee https://yaml-multiline.info/ for details on how to format multi-line text with YAML."
+			}
+		}
+	},
+	"default_config": {
+		"layout": {
+			"operations": [
+				"GET",
+				"POST",
+				"PATCH",
+				"PUT",
+				"DELETE"
+			]
+		},
+		"userguide": {
+			"variables": {
+				"intro": "This text is a replacement of the ${userguide.variables.intro} template variable used in the template in this location.\n\nMultiple lines can be added as needed.\n\nSee https://yaml-multiline.info/ for details on how to format multi-line text with YAML."
+			}
+		}
+	},
+	"yamlOrdering": [
+		"condition",
+		"comment",
+		"mandatory",
+		"patchable",
+		"conditional",
+		"operations",
+		"resources",
+		"notifications",
+		"attributes",
+		"operations-details",
+		"conformance",
+		"layout",
+		"default_conformance",
+		"GET",
+		"POST",
+		"PATCH",
+		"PUT",
+		"DELETE"
+	],
+	"filterResourceDetails": true,
+	"resourceMapping": {
+		"EventSubscription": "Hub"
+	},
+	"compareByLevel": true,
+	"removeConditionalMandatoryInPost": true,
+	"onlyMandatoryInOperationsOverview": true,
+	"onlyMandatoryResources": true,
+	"setByServerRule": "M (in response messages)",
+	"globalsSetByServer": [
+		"href",
+		"id"
+	],
+	"parentPresentCondition": " (if present)",
+	"minimizeResourceDetails": true,
+	"includeCommentsInRules": true,
+	"onlyMandatoryForPost": true,
+	"onlyMandatoryAsPatchable": true,
+	"formatToType": {
+		"date-time": "DateTime",
+		"date": "Date",
+		"float": "Float",
+		"uri": "Uri",
+		"url": "Url",
+		"int32": "Integer32",
+		"int64": "Integer64",
+		"uint32": "UInteger32",
+		"uint64": "UInteger64",
+		"base64": "Base64"
+	},
+	"typeMapping": {
+		"integer": "Integer",
+		"string": "String",
+		"boolean": "Boolean",
+		"number": "Number"
+	},
+	"complexityLegend": [
+		"legend center",
+		"Sub-resources can be shown as properties of a containing resource for enhanced readability",
+		"endlegend"
+	],
+	"defaultStereoType": "<<SubResource>>",
+	"showDefaultCardinality": true,
+	"defaultCardinality": "0..1",
+	"requiredHighlighting": "<b>%s</b>",
+	"useRequiredHighlighting": true,
+	"includeDescription": false,
+	"showCardinalitySimpleProperties": true,
+	"processComplexity": true,
+	"simplifyRefOrValue": true,
+	"simpleTypes": [
+		"TimePeriod",
+		"Money",
+		"Quantity",
+		"Tax",
+		"Value",
+		"Any",
+		"object",
+		"Number",
+		"Date"
+	],
+	"simpleEndings": [
+		"Type",
+		"Error"
+	],
+	"nonSimpleEndings": [
+		"RefType",
+		"TypeRef",
+		"RoleType"
+	],
+	"puml": [
+		"@startuml",
+		"'",
+		"' Resource:  ${RESOURCE}",
+		"' Source:    ${FILE}",
+		"'",
+		"hide circle",
+		"hide methods",
+		"hide stereotype",
+		"show <<Enumeration>> stereotype",
+		"skinparam class {",
+		"   backgroundColor<<Enumeration>> #E6F5F7",
+		"   backgroundColor<<Ref>> #FFFFE0",
+		"   backgroundColor<<Pivot>> #FFFFFFF",
+		"   backgroundColor #FCF2E3",
+		"   backgroundColor<<SubResource>> MistyRose",
+		"}",
+		"",
+		"skinparam legend {",
+		"   borderRoundCorner 0",
+		"   borderColor red",
+		"   backgroundColor white",
+		"}",
+		"",
+		""
+	],
+	"coreInheritanceTypes": [
+		"Entity",
+		"EntityRef",
+		"Extensible",
+		"Addressable"
+	],
+	"includeInherited": true,
+	"expandInherited": false,
+	"expandPropertiesFromAllOfs": false,
+	
+	"userguide.partials":                  true,
+	"userguide.mustache":                  "userguide.mustache",
+	"userguide.mustache.partial":          "userguide.mustache.partial",
+	"userguide.mustache.diagram":          "userguide.mustache.diagram",
+	"userguide.resource_diagram.mustache": "userguide.resource_diagram.mustache",
+	"userguide.resource.mustache":         "userguide.resource.mustache",
+	"userguide.resources.mustache":        "userguide.resources.mustache",
+	"userguide.notifications.mustache":    "userguide.notifications.mustache",
+	"userguide.operations.mustache":       "userguide.operations.mustache",
+	
+	"diagrams.yaml": "generated/diagrams/diagrams.yaml",
+	
+	"userguide.filesToCopy": {
+		"01_Introduction.adoc":                   "parts",
+		"02_UseCases.adoc":                       "parts",
+		"03_PolymorphismAndExtensions.adoc":      "parts",
+		"04_Resources.adoc":                      "parts",
+		"05_Operations.adoc":                     "parts",
+		"06_Common_notifications.adoc":           "parts",
+		"07_Acknowledgements.adoc":               "parts",
+		"Environment.adoc":                       "config"
+	},
+
+	"userguide.generated.filesToCopy": {
+		"NotificationsPattern.png":               "./images",
+		"NotificationsPattern.svg":               "./images",
+		"Environment.adoc":                       "./userguide"
+	},
+		
+	"userguide.generatedTarget": "userguide/",
+	
+	"userguide.templates": {
+		"userguide.resources.mustache":           "userguide/Resources.adoc",
+		"userguide.notifications.mustache":       "userguide/Notifications.adoc",
+		"userguide.operations.mustache":          "userguide/Operations.adoc"
+	},
+	
+	"conformance.templates": {
+		"conformance/conformance.template.mustache":               "conformance.adoc",
+		"conformance/conformance.resources_overview.mustache":     "generated/ResourceConformanceOverview.adoc",
+		"conformance/conformance.resources_detailed.mustache":     "generated/ResourceDetailedConformance.adoc",
+		
+		"conformance/conformance.get_operations.mustache":         "generated/GetOperationConformance.adoc",
+		"conformance/conformance.post_operations.mustache":        "generated/PostOperationConformance.adoc",
+		"conformance/conformance.delete_operations.mustache":      "generated/DeleteOperationConformance.adoc",
+		"conformance/conformance.put_operations.mustache":         "generated/PutOperationConformance.adoc",
+		"conformance/conformance.patch_operations.mustache":       "generated/PatchOperationConformance.adoc"
+		
+	},
+	
+	"conformance.filesToNumber": {
+		"GET": "conformance/0x_Get_Operation_Conformance.adoc",
+		"POST": "conformance/0x_Post_Operation_Conformance.adoc",
+		"PUT": "conformance/0x_Put_Operation_Conformance.adoc",
+		"PATCH": "conformance/0x_Patch_Operation_Conformance.adoc",
+		"DELETE": "conformance/0x_Delete_Operation_Conformance.adoc",
+		"Acknowledgement": "conformance/0x_Acknowledgements.adoc"
+	},
+	
+	"conformance.filesToNumber.start": 5,"conformance.filesToNumber.destination":"parts",
+	
+	"conformance.template.mustache":"conformance.adoc",
+	
+	"conformance.filesToCopy": {
+		"conformance/01_Conformance_Introduction.adoc": "parts",
+		"conformance/02_Resources_Model_Conformance.adoc": "parts",
+		"conformance/03_Notifications_Model_Conformance.adoc": "parts",
+		"conformance/04_Operations_Conformance.adoc": "parts",
+		"conformance/Environment.adoc": "config"
+	},
+	
+	"conformance.generatedTarget": "generated/"
+	
+	
+	
+}

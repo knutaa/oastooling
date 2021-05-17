@@ -1,0 +1,22 @@
+include::../config/Environment.adoc[]
+
+{{#resources}}
+{{#patch}}
+=== PATCH {{path}}?fields=...&{filtering}
+
+{{description}}
+
+[cols="50%,50%", options="header"]
+|===
+|*Patchable Attribute*	| *Rule*
+{{#patchableAttributes}}
+|{{label}} 
+|{{comment}}
+{{/patchableAttributes}}
+|===
+
+{{/patch}}
+
+{{/resources}}
+
+

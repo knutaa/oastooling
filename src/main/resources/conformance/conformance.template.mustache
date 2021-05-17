@@ -1,0 +1,40 @@
+= ${TITLE}
+:COPYRIGHT: Copyright © TM Forum 2020. All Rights Reserved.
+:DOCID: ${DOCID}
+:RELEASE: ${RELEASE}
+:DATE: ${DATE}
+:CELL1: ${CELL1}
+:CELL2: ${CELL2}
+:CELL3: ${CELL3}
+:CELL4: ${CELL4}
+
+:maindoc:
+:doctype: book
+:backend: docbook
+include::config/Environment.adoc[]
+:parts: parts
+:title-page:
+
+:imagesdir: ./images
+
+:toc: macro
+:toclevels: 3
+
+image::../conformance-front-pages.pdf[pages=1..2]
+
+toc::[]
+
+include::parts/01_Conformance_Introduction.adoc[]
+
+include::parts/02_Resources_Model_Conformance.adoc[]
+
+include::parts/03_Notifications_Model_Conformance.adoc[]
+
+include::parts/04_Operations_Conformance.adoc[]
+
+{{#parts}}
+include::parts/{{filename}}
+{{/parts}}
+
+
+

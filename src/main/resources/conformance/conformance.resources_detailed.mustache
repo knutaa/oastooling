@@ -1,0 +1,26 @@
+include::../config/Environment.adoc[]
+
+
+{{#resourceDetails}}
+=== {{{resourceName}}} Resource Mandatory Attributes
+
+[cols="5%,55%,40%", options="header"]
+|===
+2+|*Mandatory attribute when parent is present*	| *Rule*
+{{#conformanceItems}}
+{{#isIndented}}
+| |{{label}} 
+|{{condition}}
+
+{{comment}}
+{{/isIndented}}
+{{^isIndented}}
+2+|{{label}} 
+|{{condition}}
+
+{{comment}}
+{{/isIndented}}
+{{/conformanceItems}}
+|===
+{{/resourceDetails}}
+

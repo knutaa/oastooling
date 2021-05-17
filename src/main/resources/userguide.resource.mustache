@@ -1,0 +1,50 @@
+:isGenerated:
+
+include::Environment.adoc[]
+
+==== {{resource}} resource
+
+{{description}}
+
+*Resource model*
+
+include::{{diagramSource}}[]
+
+{{#fields}}
+*Field descriptions*
+
+{{#hasFields}}
+*{{resource}} fields*
+
+[cols="35%,65%"]
+|===
+{{#fields}}
+|{{name}} |{{description}}
+{{/fields}}
+|===
+{{/hasFields}}
+
+{{#subResources}}
+{{#hasFields}}
+*{{resource}} sub-resource fields*
+
+[cols="35%,65%"]
+|===
+{{#fields}}
+|{{name}} |{{description}}
+{{/fields}}
+|===
+
+{{/hasFields}}
+{{/subResources}}
+
+{{/fields}}
+
+*Json representation sample*
+
+We provide below the json representation of an example of a '{{resource}}' resource object.
+
+[code]
+----
+include::{samples}/{{sampleSource}}[]
+----

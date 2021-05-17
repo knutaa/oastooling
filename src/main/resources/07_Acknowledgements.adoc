@@ -1,0 +1,21 @@
+
+== Acknowledgements
+
+=== Release History
+
+[cols="15%,15%,30%,40%",]
+|===
+|*Release Number* |*Date* |*Release led by:* |*Description*
+|                 |       |                  |
+
+|                 |       |                  |
+
+|===
+
+=== Contributors to Document
+
+[cols=",",]
+|===
+| |
+| |
+|===

@@ -1,0 +1,35 @@
+include::../config/Environment.adoc[]
+ifdef::backend-pdf[<<<]
+
+== API OPERATIONS
+
+Remember the following Uniform Contract:
+
+[cols=",,",options="header",]
+|===
+|Operation on Entities |Uniform API Operation |Description
+|Query Entities |GET Resource |GET must be used to retrieve a
+representation of a resource.
+
+|Create Entity |POST Resource |POST must be used to create a new
+resource
+
+|Partial Update of an Entity |PATCH Resource |PATCH must be used to
+partially update a resource
+
+|Remove an Entity |DELETE Resource |DELETE must be used to remove a
+resource
+
+|Execute an Action on an Entity |POST on TASK Resource |POST must be
+used to execute Task Resources
+
+|Other Request Methods |POST on TASK Resource |GET and POST must not be
+used to tunnel other request methods.
+|===
+
+Filtering and attribute selection rules are described in the TMF REST
+Design Guidelines.
+
+Notifications are also described in a subsequent section.
+
+include::{generated}/userguide/Operations.adoc[]

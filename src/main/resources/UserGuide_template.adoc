@@ -1,0 +1,37 @@
+= ${TITLE}
+:COPYRIGHT: Copyright © TM Forum 2020. All Rights Reserved.
+:DOCID: ${DOCID}
+:RELEASE: ${RELEASE}
+:DATE: ${DATE}
+:CELL1: ${CELL1}
+:CELL2: ${CELL2}
+:CELL3: ${CELL3}
+:CELL4: ${CELL4}
+
+:maindoc:
+:doctype: book
+:backend: docbook
+
+include::config/Environment.adoc[]
+
+:toc: macro
+:toclevels: 3
+
+toc::[]
+
+:sectnums:
+
+include::parts/01_Introduction.adoc[]
+
+include::parts/02_UseCases.adoc[]
+
+include::parts/03_PolymorphismAndExtensions.adoc[]
+
+include::parts/04_Resources.adoc[]
+
+include::parts/05_Operations.adoc[]
+
+include::parts/06_Common_notifications.adoc[]
+
+include::parts/07_Acknowledgements.adoc[]
+

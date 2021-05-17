@@ -1,2 +1,6 @@
 # oastooling
-Tooling for OpenAPI user guides and conformance
+Tooling for API user guides and conformance (swagger and OAS3.x)
+
+
+
+

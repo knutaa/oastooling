@@ -1,0 +1,13 @@
+include::../config/Environment.adoc[]
+ifdef::backend-pdf[<<<]
+
+== RESOURCE MODEL
+
+=== Managed Entity and Task Resource Models
+
+include::{generated}/userguide/Resources.adoc[]
+
+=== Notification Resource Models
+
+include::{generated}/userguide/Notifications.adoc[]
+

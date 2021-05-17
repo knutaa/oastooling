@@ -1,0 +1,99 @@
+:isGenerated:
+
+include::Environment.adoc[]
+
+{{#resourcesData}}
+=== Operations on {{resource}}
+
+{{#operations}}
+==== {{operation}}
+
+`*{{uRL}}*`
+
+*Description*
+
+{{#isCreate}}
+This operation creates {{resourceArticle}} {{resource}} entity.
+
+*Mandatory Attributes*
+
+[cols="35%,65%"]
+|===
+|*Mandatory Attributes*|*Rule*
+
+{{#mandatory}}
+|{{name}} |{{rule}}
+{{/mandatory}}
+|===
+
+{{/isCreate}}
+{{#isList}}
+This operation list {{resource}} entities.
+Attribute selection is enabled for all first level attributes.
+Filtering may be available depending on the compliance level supported by an implementation.
+{{/isList}}
+{{#isRetrieve}}
+This operation retrieves {{resourceArticle}} {{resource}} entity.
+Attribute selection is enabled for all first level attributes.
+Filtering may be available depending on the compliance level supported by an implementation.
+{{/isRetrieve}}
+{{#isReplace}}
+This operation replaces {{resourceArticle}} {{resource}} entity.
+{{/isReplace}}
+{{#isDelete}}
+This operation deletes {{resourceArticle}} {{resource}} entity.
+{{/isDelete}}
+{{#isPartialUpdate}}
+This operation allows partial updates of {{resourceArticle}} {{resource}} entity. Support of json/merge (https://tools.ietf.org/html/rfc7386) is mandatory, support of json/patch (http://tools.ietf.org/html/rfc5789) is optiona.
+Note: If the update operation yields to the creation of sub-resources or relationships, the same rules concerning mandatory sub-resource attributes and default value settings in the POST operation applies to the PATCH operation. Hence these tables are not repeated here.
+
+*Patchable and Non Patchable Attributes*
+
+[cols="35%,65%"]
+|===
+|*Patchable Attributes*|*Rule*
+
+{{#patchable}}
+|{{name}} |{{rule}}
+{{/patchable}}
+|===
+
+[cols="35%,65%"]
+|===
+|*Non Patchable Attributes*|*Rule*
+
+{{#nonPatchable}}
+|{{name}} |{{rule}}
+{{/nonPatchable}}
+|===
+
+{{/isPartialUpdate}}
+					
+{{#hasSamples}}
+*Usage samples*
+
+{{#samples}}
+{{description}}
+
+*Request*
+
+[code]
+----
+{{#requestSource}}
+include::{samples}/{{filename}}[]
+{{/requestSource}}
+----
+
+*Response*
+
+[code]
+----
+{{#responseSource}}
+include::{samples}/{{filename}}[]
+{{/responseSource}}
+----
+
+{{/samples}}
+{{/hasSamples}}
+{{/operations}}
+{{/resourcesData}}

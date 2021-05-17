@@ -1,0 +1,16 @@
+
+
+== API PATCH Operation Conformance
+
+All the PATCH operations in this API share the same status code pattern.
+
+The mandatory application context is JSON Merge.
+
+[cols=",",options="header",]
+|===
+|PATCH |Mandatory/Optional
+|Status Code 200 if resource modified |M
+|===
+
+include::../generated/PatchOperationConformance.adoc[]
+

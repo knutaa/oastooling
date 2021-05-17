@@ -1,0 +1,13 @@
+
+== API PUT Operation Conformance
+
+All the PUT operations in this API share the same status code pattern.
+
+[cols=",",options="header",]
+|===
+|PUT |Mandatory/Optional
+|Status Code 201 if resource modified |M
+|===
+
+include::../generated/PutOperationConformance.adoc[]
+

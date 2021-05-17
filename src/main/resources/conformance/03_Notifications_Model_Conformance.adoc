@@ -1,0 +1,11 @@
+
+== Notificiation Model Conformance
+
+The Pub/Sub models are common and described in the TMF REST Design Guidelines. Use the following templates to describe the Hub Mandatory and Optional attributes and filtering support.
+
+=== API Mandatory Notifications 
+
+The following table indicates the mandatory notifications for this API.
+
+include::../generated/NotificationConformanceOverview.adoc[]
+

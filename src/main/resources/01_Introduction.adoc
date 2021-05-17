@@ -1,0 +1,6 @@
+
+== Introduction
+
+The following document is the user guide of the REST API for Any management. It includes the model definition as well as all available operations.
+
+

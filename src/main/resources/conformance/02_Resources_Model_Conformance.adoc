@@ -1,0 +1,28 @@
+== Resource Model Conformance
+
+=== API Mandatory Resources 
+
+The following table indicates the mandatory resources for this API.
+
+include::../generated/ResourceConformanceOverview.adoc[]
+
+=== General Notes on Resource Attribute Conformance
+
+There are three situations that could occur for an attribute:
+
+* Mandatory attribute,
+* Mandatory attribute if the optional parent attribute is present,
+* Non-mandatory/Optional attribute. Those are all the other attributes not mentioned in the following subsections. Please refer to the corresponding API REST Specification for more details.
+
+* The tables in the subsections below indicate which attributes are mandatory including mandatory when an optional parent is present.
+* Where a resource is an input into an API (e.g. POST, PATCH), Mandatory means that the attribute value must be supplied by the API consumer in the input (and must not be blank or null).
+* Where a resource is an output from an API (e.g. GET, POST), Mandatory means that the attribute value must be supplied by the API provider in the output (and must not be blank or null).
+* For a sub-resource that is not an array, Mandatory (cardinality 1..1) means that the sub-resource must be present, while Optional (cardinality 0..1) means that the sub-resource may be absent. Mandatory and Optional on the sub-resource attributes apply to the sub-resource if present.
+* For a sub-resource that is an array, Mandatory (cardinality 1..*) means that at least one sub-resource must be present in the array, while Optional (cardinality 0..*) means that the array may be absent. Mandatory and Optional on the sub-resource attributes apply to each of the sub-resources if present.
+
+In this table are listed all mandatory attributes. A mandatory attribute MUST be retrieved in resource representation when no attribute selection is used (e.g. GET /../\{id}) without any attribute selection
+
+When an attribute is listed with an indentation (in second column) it means this attribute is mandatory if root (parent) attribute is present.
+
+include::../generated/ResourceDetailedConformance.adoc[]
+

@@ -1,0 +1,137 @@
+
+{{#resources}}
+== {{resource}} resource
+
+{{description}}
+
+=== Resource model
+
+{{#diagrams}}
+[.text-center]
+[plantuml, puml, svg]
+....
+{{{puml}}}
+....
+[.text-center]
+Figure {counter:figure} - {{caption}}
+
+{{/diagrams}}
+
+{{#fields}}
+*Field descriptions*
+
+{{#hasResourceFields}}
+pass:q[<u>{{resource}} fields</u>]
+
+[cols="35%,65%"]
+|===
+{{#mainResourceFields}}
+|{{name}} |{{description}}
+{{/mainResourceFields}}
+|===
+{{/hasResourceFields}}
+
+{{#subResources}}
+{{#hasFields}}
+pass:q[<u>{{subResource}} sub-resource fields</u>]
+
+[cols="35%,65%"]
+|===
+{{#fields}}
+|{{name}} |{{description}}
+{{/fields}}
+|===
+
+{{/hasFields}}
+{{/subResources}}
+
+{{/fields}}
+
+*Json representation sample*
+
+We provide below the json representation of an example of a '{{resource}}' resource object
+
+----
+{{{json}}}
+----
+
+{{/resources}}
+
+
+== Notification Resource Models
+
+{{#allNotifications}}
+{{count}} notifications are defined for this API."
+
+{{#notificationsForResources}}
+Notifications related to {{resource}}:
+
+{{#notifications}}
+* {{notification}}
+{{/notifications}}
+
+{{/notificationsForResources}}
+{{/allNotifications}}
+
+The notification structure for all notifications in this API follow the pattern depicted by the figure below.
+A notification event resource (depicted by "SpecificEvent" placeholder) is a sub class of a generic Event structure containing at least an id of the event occurrence (eventId), an event timestamp (eventTime), and the name of the resource (eventType). 
+This notification structure owns an event payload structure ("SpecificEventPayload" placeholder) linked to the resource concerned by the notification using the resource name as access field ("resourceName" placeholder).
+
+[.text-center]
+image::NotificationsPattern.png[]
+
+{{#allNotifications}}
+{{count}} notifications are defined for this API.
+
+{{#notificationsForResources}}
+{{#notifications}}
+=== {{label}}
+
+Notification {{notification}} case for resource {{resource}}
+
+*Json representation sample*
+
+We provide below the json representation of an example of a '{{resource}}' resource object
+
+----
+{{{json}}}
+----
+
+{{/notifications}}
+
+{{/notificationsForResources}}
+{{/allNotifications}}
+
+ 
+{{#operations}}
+== Operations on {{resourceLabel}}
+{{#operations}}
+=== {{label}}
+{{{url}}}
+
+*Description*
+
+{{description}}
+
+{{#hasSamples}}
+*Usage samples*
+
+{{#samples}}
+[cols="100%"]
+|===
+| *Request*
+a|----
+{{{request}}}
+----
+
+| *Response*
+a|----
+{{{response}}}
+----
+
+|===
+
+{{/samples}}
+{{/hasSamples}}
+{{/operations}}
+{{/operations}}

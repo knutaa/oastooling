@@ -1,0 +1,27 @@
+include::../config/Environment.adoc[]
+
+{{#resources}}
+{{#post}}
+=== POST {{path}}?fields=...&{filtering}
+
+{{description}}
+
+The following table provides the list of mandatory attributes when creating an instance of the ProductOffering resource, including any possible rule, conditions and applicable default values.
+
+
+[cols="50%,50%", options="header"]
+|===
+|*Mandatory Attribute*	| *Rule*
+{{#mandatoryAttributes}}
+
+|{{label}} 
+|{{condition}}
+
+{{comment}}
+{{/mandatoryAttributes}}
+|===
+
+{{/post}}
+
+{{/resources}}
+

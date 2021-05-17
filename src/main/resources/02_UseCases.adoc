@@ -1,0 +1,6 @@
+
+== Sample Use Cases
+
+Reader will find example of use cases using Usage API in “Open Digital Business Scenarios and Use Cases” document.
+
+
