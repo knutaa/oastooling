@@ -26,7 +26,7 @@
       <AppenderRef ref="Logging" />
     </Root>
          
-    <Logger name="org.tmforum.openapi.utils.Out" level="VERBOSE">
+    <Logger name="no.paneon.api.utils.Out" level="VERBOSE">
       <AppenderRef ref="Progress" level="VERBOSE" />
     </Logger>
           

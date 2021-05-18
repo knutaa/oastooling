@@ -123,8 +123,7 @@ public class ConformanceData {
 		this.resourceDetails = generateResourceDetails();
 		
 		this.resources = generateOperationsDetails();
-		
-		
+				
 	}
 
 	private List<ConformanceOperationsDetails> generateOperationsDetails() {
@@ -175,8 +174,6 @@ public class ConformanceData {
 					
 				}
 				
-				Out.debug("resource={} paths={}",  resource, paths);
-
 			}
 			
 			res.add(resourceOperation);
@@ -198,7 +195,7 @@ public class ConformanceData {
 		List<ConformanceItem> res = new LinkedList<>();
 		
 		for(String resource : model.getOrderedResources()) {
-							
+										
 			String condition = model.getCondition(resource, RESOURCE);
 			String comment = model.getComment(resource);
 			

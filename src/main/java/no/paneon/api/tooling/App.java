@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger;
 import com.beust.jcommander.JCommander;
 
 import no.paneon.api.conformance.GenerateConformance;
-import no.paneon.api.conformance2.GenerateConformanceAsciiDoc;
+import no.paneon.api.conformance2.GenerateConformanceGuide;
 import no.paneon.api.tooling.userguide.GenerateUserGuide;
 import no.paneon.api.utils.Out;
 import no.paneon.api.utils.Timestamp;
@@ -17,10 +17,10 @@ public class App {
 		
 	JCommander commandLine;
 
-	Args.UserGuide     argsUserGuide ;
-	Args.UserGuide     argsAsciiDocGuide ;
-	Args.Conformance   argsConformance   ;
-	Args.ConfDoc  	   argsConfDocument  ;
+	Args.UserGuide         argsUserGuide ;
+	Args.UserGuide         argsAsciiDocGuide ;
+	Args.Conformance       argsConformance   ;
+	Args.ConformanceGuide  argsConfDocument  ;
 
 	static final String ARG_USER_GUIDE  = "userguide";
 	static final String ARG_GEN_CONF    = "generate-conformance";
@@ -30,9 +30,9 @@ public class App {
 		     		
 		Args args = new Args();
 				
-		argsUserGuide  = args.new UserGuide();
-		argsConformance    = args.new Conformance();
-		argsConfDocument   = args.new ConfDoc();
+		argsUserGuide    = args.new UserGuide();
+		argsConformance  = args.new Conformance();
+		argsConfDocument = args.new ConformanceGuide();
 
 		commandLine = JCommander.newBuilder()
 		    .addCommand("userguide",             argsUserGuide)
@@ -106,7 +106,7 @@ public class App {
        		if(argsConfDocument.outputFileName==null) {
     			Out.println("... missing output file argument");
     		} else {
-    			GenerateConformanceAsciiDoc genconf = new GenerateConformanceAsciiDoc(argsConfDocument);
+    			GenerateConformanceGuide genconf = new GenerateConformanceGuide(argsConfDocument);
     			genconf.execute();
     		}
     		break;

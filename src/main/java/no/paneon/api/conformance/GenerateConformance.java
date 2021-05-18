@@ -35,6 +35,19 @@ public class GenerateConformance extends GenerateCommon {
 	public void execute() {
 		
 		super.execute();
+		
+		model.init();
+		
+		model.extractFromSwagger();
+		
+		model.extractFromRules();
+		
+		model.expandDefaults();
+		
+		
+		
+		model.generateConformance();
+
 
 		try {	
 			JSONObject conformance = null;

@@ -33,7 +33,7 @@ public class Args {
 
 	}
 
-	public class ConfDoc extends Common {
+	public class ConformanceGuide extends Common {
 
 		@Parameter(names = { "--template-directory" }, description = "Document template directory, defaults to current directory")
 		public String templateDirectory = ".";

@@ -867,7 +867,7 @@ public class ConformanceModel extends CoreModel {
 	@LogMethod(level=LogLevel.DEBUG)
 	public String getCondition(String item, String type) {				
 		String res = getValueAsString(item,CONDITION);
-		
+				
 		if(res.isEmpty()) {
 			JSONObject conformance = model.optJSONObject(DEFAULT_CONFORMANCE);
 			res = getValueAsString(conformance,type,CONDITION);
@@ -1061,11 +1061,12 @@ public class ConformanceModel extends CoreModel {
 	@LogMethod(level=LogLevel.DEBUG)
 	public JSONObject getConformance() {
 		JSONObject conformance = getCoreConformance();
+				
 		if(conformance!=null && conformance.has(CONFORMANCE)) conformance = conformance.optJSONObject(CONFORMANCE);
 		return conformance;
 	}
 	
-	private static boolean generatedConformance = false;
+	private boolean generatedConformance = false;
 	@LogMethod(level=LogLevel.DEBUG)
 	public JSONObject generateConformance() {
 				
@@ -1616,7 +1617,7 @@ public class ConformanceModel extends CoreModel {
 	@LogMethod(level=LogLevel.DEBUG)
 	public List<String> getOrderedResources() {
 		List<String> res = getOrderedList( getResources(), getOrdering(RESOURCES));
-		
+				
 		if(Config.getBoolean("onlyMandatoryResources")) {
 			res = res.stream()
 					.filter(resource -> getCondition(resource, RESOURCE).contains("M"))

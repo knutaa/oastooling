@@ -74,7 +74,7 @@ public class ConformanceGenerator {
 	
 	private static final String COMMENT = "comment";
 	
-	Args.ConfDoc args;
+	Args.ConformanceGuide args;
 	
 	APIGraph apiGraph;
 	
@@ -82,12 +82,12 @@ public class ConformanceGenerator {
 
 	ConformanceData conformanceData;
 
-	public ConformanceGenerator(Args.ConfDoc args, ConformanceModel conformanceModel) {
+	public ConformanceGenerator(Args.ConformanceGuide args, ConformanceModel conformanceModel) {
 		
 		this.args = args;	
 		this.conformance = conformanceModel;				
 		this.conformanceData = new ConformanceData(conformanceModel);
-		
+
 	}
 
 

@@ -20,18 +20,21 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
-public class GenerateConformanceAsciiDoc extends GenerateCommon {
+public class GenerateConformanceGuide extends GenerateCommon {
 
-	static final Logger LOG = LogManager.getLogger(GenerateConformanceAsciiDoc.class);
+	static final Logger LOG = LogManager.getLogger(GenerateConformanceGuide.class);
 
-	Args.ConfDoc args;
+	Args.ConformanceGuide args;
 	ConformanceModel model;
 
-	public GenerateConformanceAsciiDoc(Args.ConfDoc args) {
+	public GenerateConformanceGuide(Args.ConformanceGuide args) {
 		super(args);
 		this.args = args;
 		this.model  = new ConformanceModel();
 
+    	if(this.args.conformance!=null) {
+    		this.model.setConformance(this.args.conformance);
+    	}
 	}
 	
 	@Override
@@ -40,6 +43,15 @@ public class GenerateConformanceAsciiDoc extends GenerateCommon {
 		
 		super.execute();
 
+		model.init();
+		
+		model.extractFromSwagger();
+		
+		model.extractFromRules();
+		
+		model.expandDefaults();
+
+		
 		ConformanceGenerator confGen = new ConformanceGenerator(args, this.model);        	     
 		confGen.generateDocument();			
 			  

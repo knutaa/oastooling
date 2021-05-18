@@ -23,7 +23,7 @@ import com.github.mustachejava.MustacheFactory;
 
 import no.paneon.api.conformance.ConformanceModel;
 import no.paneon.api.tooling.Args;
-import no.paneon.api.tooling.Args.ConfDoc;
+import no.paneon.api.tooling.Args.ConformanceGuide;
 
 import java.util.List;
 import java.util.Map;
