@@ -8,18 +8,18 @@ include::../config/Environment.adoc[]
 |===
 2+|*Mandatory attribute when parent is present*	| *Rule*
 {{#conformanceItems}}
-{{#isIndented}}
+{{#isSubordinate}}
 | |{{label}} 
 |{{condition}}
 
 {{comment}}
-{{/isIndented}}
-{{^isIndented}}
+{{/isSubordinate}}
+{{^isSubordinate}}
 2+|{{label}} 
 |{{condition}}
 
 {{comment}}
-{{/isIndented}}
+{{/isSubordinate}}
 {{/conformanceItems}}
 |===
 {{/resourceDetails}}

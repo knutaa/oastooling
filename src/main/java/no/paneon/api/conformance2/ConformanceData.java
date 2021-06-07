@@ -12,6 +12,7 @@ import java.util.OptionalInt;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.Map.Entry;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Level;
@@ -58,6 +59,8 @@ public class ConformanceData {
 	
 	public ConformanceData(ConformanceModel model) {
 		this.model = model;
+		
+		Out.println("... ConformanceData");
 	}
 				
 	static public class FileData {
@@ -300,6 +303,8 @@ public class ConformanceData {
 		ordering.addAll( getOrderingOfProperties(mandatoryPart));		
 		ordering.addAll( getOrderingOfProperties(remainingPart) );
 		
+		Out.println("arrangeByLevel::" + ordering.stream().collect(Collectors.joining("\n")));
+
 		return ordering;
 		
 	}
@@ -366,17 +371,42 @@ public class ConformanceData {
 		List<String> getOrdering() {
 			List<String> res = new LinkedList<>();
 			
-			if(!label.isEmpty()) res.add(label);
+			// if(!label.isEmpty()) res.add(label);
 
+//			if(!subGroups.isEmpty()) {
+//				subGroups.forEach(group -> {	
+//					if(!group.label.isEmpty()) res.add( group.label );
+//				});
+//				
+//				subGroups.forEach(group -> {					
+//					res.addAll(  group.getOrdering() );
+//				});
+//				
+//			} else if(!collection.isEmpty()) {
+//				res.addAll(  collection.stream().sorted().collect(Collectors.toList()) );
+//			}
+//				
+			
+			Predicate<String> notEmpty = s -> !s.isEmpty();
+			
 			if(!subGroups.isEmpty()) {
-				subGroups.forEach(group -> {					
+				res.addAll(  subGroups.stream().map(PropertyCollection::getLabel).filter(notEmpty).sorted().collect(Collectors.toList()) );
+				
+				Out.println("getOrdering: interim res=" + res);
+				
+				subGroups.forEach(group -> {	
+					Out.println("getOrdering: adding " + group.label);
+
 					res.addAll(  group.getOrdering() );
 				});
 				
-			} else {
+			} else if(!collection.isEmpty()) {
+				Out.println("getOrdering: adding:: " + collection.stream().sorted().collect(Collectors.toList()));
+
 				res.addAll(  collection.stream().sorted().collect(Collectors.toList()) );
 			}
-							
+
+			
 			return res;
 			
 		}
@@ -451,6 +481,8 @@ public class ConformanceData {
 		List<String> ordering = group.getOrdering();
 				
 		res.addAll( ordering);
+		
+		Out.println("getOrderingOfProperties::" + res.stream().collect(Collectors.joining("\n")));
 		
 		return res;
 	}

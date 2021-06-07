@@ -43,9 +43,7 @@ public class GenerateConformance extends GenerateCommon {
 		model.extractFromRules();
 		
 		model.expandDefaults();
-		
-		
-		
+				
 		model.generateConformance();
 
 
