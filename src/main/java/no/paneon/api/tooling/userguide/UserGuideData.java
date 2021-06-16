@@ -7,7 +7,10 @@ import java.util.Map;
 
 public class UserGuideData {
 
+	public String imageFormat; 
 	
+	public String generatePath = "../../generated"; 
+
 	public Map<String,ResourceData> resources;
 	
 	public Collection<ResourceData> resourcesData;

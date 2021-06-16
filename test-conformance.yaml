@@ -1,0 +1,466 @@
+conformance:
+
+  resources:
+   - EventSubscription
+   - Quote
+
+  notifications:
+   - QuoteAttributevaluechangeEvent
+   - QuoteInformationrequiredEvent
+   - QuoteStatechangeEvent
+   - QuoteCreateEvent
+   - QuoteDeleteEvent
+
+  EventSubscription:
+    operations:
+      POST:
+        condition:
+        comment:
+      DELETE:
+        condition:
+        comment:
+    attributes:
+      callback:
+        condition: M
+      id:
+        condition: M
+      query:
+        condition:
+        comment:
+    operations-details:
+      POST:
+        mandatory:
+          callback:
+            rule:
+      PATCH:
+        patchable: {}
+
+  Quote:
+    operations:
+      GET:
+        condition:
+        comment:
+      POST:
+        condition:
+        comment:
+      PATCH:
+        condition:
+        comment:
+      DELETE:
+        condition:
+        comment:
+    attributes:
+      agreement:
+        comment: Array of AgreementRef
+      authorization:
+        comment: Array of Authorization
+      authorization.approver:
+        comment: Array of RelatedParty
+      authorization.approver.@referredType:
+        condition:
+        comment:
+      authorization.approver.role:
+        condition:
+        comment:
+      authorization.givenDate:
+        condition:
+        comment:
+      authorization.name:
+        condition:
+        comment:
+      authorization.requestedDate:
+        condition:
+        comment:
+      authorization.signatureRepresentation:
+        condition:
+        comment:
+      authorization.state:
+        condition:
+        comment:
+      billingAccount:
+        comment: Array of BillingAccountRef
+      billingAccount.ratingType:
+        condition:
+        comment:
+      category:
+        condition:
+        comment:
+      contactMedium:
+        comment: Array of ContactMedium
+      contactMedium.contactMediumIdentifier:
+        condition:
+        comment:
+      contactMedium.contactType:
+        condition:
+        comment:
+      contactMedium.preferred:
+        condition:
+        comment:
+      contactMedium.validFor:
+        condition:
+        comment:
+      contactMedium.validFor.endDateTime:
+        condition:
+        comment:
+      contactMedium.validFor.startDateTime:
+        condition:
+        comment:
+      description:
+        condition:
+        comment:
+      effectiveQuoteCompletionDate:
+        condition:
+        comment:
+      expectedFulfillmentStartDate:
+        condition:
+        comment:
+      expectedQuoteCompletionDate:
+        condition:
+        comment:
+      externalId:
+        condition:
+        comment:
+      instantSyncQuote:
+        condition:
+        comment:
+      note:
+        comment: Array of Note
+      note.author:
+        condition:
+        comment:
+      note.date:
+        condition:
+        comment:
+      note.id:
+        condition:
+        comment:
+      productOfferingQualification:
+        comment: Array of ProductOfferingQualificationRef
+      quoteItem:
+        condition: M
+        comment: Array of QuoteItem
+      quoteItem.appointment:
+        comment: Array of AppointmentRef
+      quoteItem.appointment.@referredType:
+        condition:
+        comment:
+      quoteItem.appointment.description:
+        condition:
+        comment:
+      quoteItem.appointment.href:
+        condition:
+        comment:
+      quoteItem.appointment.id:
+        condition:
+        comment:
+      quoteItem.attachment:
+        comment: Array of AttachmentRefOrValue
+      quoteItem.note:
+        comment: Array of Note
+      quoteItem.note.author:
+        condition:
+        comment:
+      quoteItem.note.date:
+        condition:
+        comment:
+      quoteItem.note.id:
+        condition:
+        comment:
+      quoteItem.product:
+        condition:
+        comment:
+      quoteItem.productOffering:
+        condition:
+        comment:
+      quoteItem.productOfferingQualificationItem:
+        condition:
+        comment:
+      quoteItem.productOfferingQualificationItem.@referredType:
+        condition:
+        comment:
+      quoteItem.productOfferingQualificationItem.productOfferingQualificationHref:
+        condition:
+        comment:
+      quoteItem.productOfferingQualificationItem.productOfferingQualificationName:
+        condition:
+        comment:
+      quoteItem.quantity:
+        condition:
+        comment:
+      quoteItem.quoteItem:
+        comment: Array of QuoteItem
+      quoteItem.quoteItemAuthorization:
+        comment: Array of Authorization
+      quoteItem.quoteItemAuthorization.approver:
+        comment: Array of RelatedParty
+      quoteItem.quoteItemAuthorization.approver.@referredType:
+        condition:
+        comment:
+      quoteItem.quoteItemAuthorization.approver.role:
+        condition:
+        comment:
+      quoteItem.quoteItemAuthorization.givenDate:
+        condition:
+        comment:
+      quoteItem.quoteItemAuthorization.name:
+        condition:
+        comment:
+      quoteItem.quoteItemAuthorization.requestedDate:
+        condition:
+        comment:
+      quoteItem.quoteItemAuthorization.signatureRepresentation:
+        condition:
+        comment:
+      quoteItem.quoteItemAuthorization.state:
+        condition:
+        comment:
+      quoteItem.quoteItemPrice:
+        comment: Array of QuotePrice
+      quoteItem.quoteItemPrice.description:
+        condition:
+        comment:
+      quoteItem.quoteItemPrice.name:
+        condition:
+        comment:
+      quoteItem.quoteItemPrice.price:
+        condition:
+        comment:
+      quoteItem.quoteItemPrice.price.dutyFreeAmount:
+        condition:
+        comment:
+      quoteItem.quoteItemPrice.price.dutyFreeAmount.unit:
+        condition:
+        comment:
+      quoteItem.quoteItemPrice.price.dutyFreeAmount.value:
+        condition:
+        comment:
+      quoteItem.quoteItemPrice.price.percentage:
+        condition:
+        comment:
+      quoteItem.quoteItemPrice.price.taxIncludedAmount:
+        condition:
+        comment:
+      quoteItem.quoteItemPrice.price.taxIncludedAmount.unit:
+        condition:
+        comment:
+      quoteItem.quoteItemPrice.price.taxIncludedAmount.value:
+        condition:
+        comment:
+      quoteItem.quoteItemPrice.price.taxRate:
+        condition:
+        comment:
+      quoteItem.quoteItemPrice.priceAlteration:
+        comment: Array of PriceAlteration
+      quoteItem.quoteItemPrice.priceAlteration.applicationDuration:
+        condition:
+        comment:
+      quoteItem.quoteItemPrice.priceAlteration.description:
+        condition:
+        comment:
+      quoteItem.quoteItemPrice.priceAlteration.name:
+        condition:
+        comment:
+      quoteItem.quoteItemPrice.priceAlteration.price:
+        condition: M
+      quoteItem.quoteItemPrice.priceAlteration.price.dutyFreeAmount:
+        condition:
+        comment:
+      quoteItem.quoteItemPrice.priceAlteration.price.dutyFreeAmount.unit:
+        condition:
+        comment:
+      quoteItem.quoteItemPrice.priceAlteration.price.dutyFreeAmount.value:
+        condition:
+        comment:
+      quoteItem.quoteItemPrice.priceAlteration.price.percentage:
+        condition:
+        comment:
+      quoteItem.quoteItemPrice.priceAlteration.price.taxIncludedAmount:
+        condition:
+        comment:
+      quoteItem.quoteItemPrice.priceAlteration.price.taxIncludedAmount.unit:
+        condition:
+        comment:
+      quoteItem.quoteItemPrice.priceAlteration.price.taxIncludedAmount.value:
+        condition:
+        comment:
+      quoteItem.quoteItemPrice.priceAlteration.price.taxRate:
+        condition:
+        comment:
+      quoteItem.quoteItemPrice.priceAlteration.priceType:
+        condition: M
+      quoteItem.quoteItemPrice.priceAlteration.priority:
+        condition:
+        comment:
+      quoteItem.quoteItemPrice.priceAlteration.productOfferingPrice:
+        condition:
+        comment:
+      quoteItem.quoteItemPrice.priceAlteration.recurringChargePeriod:
+        condition:
+        comment:
+      quoteItem.quoteItemPrice.priceAlteration.unitOfMeasure:
+        condition:
+        comment:
+      quoteItem.quoteItemPrice.productOfferingPrice:
+        condition:
+        comment:
+      quoteItem.quoteItemPrice.recurringChargePeriod:
+        condition:
+        comment:
+      quoteItem.quoteItemPrice.unitOfMeasure:
+        condition:
+        comment:
+      quoteItem.quoteItemRelationship:
+        comment: Array of QuoteItemRelationship
+      quoteItem.relatedParty:
+        comment: Array of RelatedParty
+      quoteItem.relatedParty.@referredType:
+        condition:
+        comment:
+      quoteItem.relatedParty.role:
+        condition:
+        comment:
+      quoteTotalPrice:
+        comment: Array of QuotePrice
+      quoteTotalPrice.description:
+        condition:
+        comment:
+      quoteTotalPrice.name:
+        condition:
+        comment:
+      quoteTotalPrice.price:
+        condition:
+        comment:
+      quoteTotalPrice.price.dutyFreeAmount:
+        condition:
+        comment:
+      quoteTotalPrice.price.dutyFreeAmount.unit:
+        condition:
+        comment:
+      quoteTotalPrice.price.dutyFreeAmount.value:
+        condition:
+        comment:
+      quoteTotalPrice.price.percentage:
+        condition:
+        comment:
+      quoteTotalPrice.price.taxIncludedAmount:
+        condition:
+        comment:
+      quoteTotalPrice.price.taxIncludedAmount.unit:
+        condition:
+        comment:
+      quoteTotalPrice.price.taxIncludedAmount.value:
+        condition:
+        comment:
+      quoteTotalPrice.price.taxRate:
+        condition:
+        comment:
+      quoteTotalPrice.priceAlteration:
+        comment: Array of PriceAlteration
+      quoteTotalPrice.priceAlteration.applicationDuration:
+        condition:
+        comment:
+      quoteTotalPrice.priceAlteration.description:
+        condition:
+        comment:
+      quoteTotalPrice.priceAlteration.name:
+        condition:
+        comment:
+      quoteTotalPrice.priceAlteration.price:
+        condition: M
+      quoteTotalPrice.priceAlteration.price.dutyFreeAmount:
+        condition:
+        comment:
+      quoteTotalPrice.priceAlteration.price.dutyFreeAmount.unit:
+        condition:
+        comment:
+      quoteTotalPrice.priceAlteration.price.dutyFreeAmount.value:
+        condition:
+        comment:
+      quoteTotalPrice.priceAlteration.price.percentage:
+        condition:
+        comment:
+      quoteTotalPrice.priceAlteration.price.taxIncludedAmount:
+        condition:
+        comment:
+      quoteTotalPrice.priceAlteration.price.taxIncludedAmount.unit:
+        condition:
+        comment:
+      quoteTotalPrice.priceAlteration.price.taxIncludedAmount.value:
+        condition:
+        comment:
+      quoteTotalPrice.priceAlteration.price.taxRate:
+        condition:
+        comment:
+      quoteTotalPrice.priceAlteration.priceType:
+        condition: M
+      quoteTotalPrice.priceAlteration.priority:
+        condition:
+        comment:
+      quoteTotalPrice.priceAlteration.productOfferingPrice:
+        condition:
+        comment:
+      quoteTotalPrice.priceAlteration.recurringChargePeriod:
+        condition:
+        comment:
+      quoteTotalPrice.priceAlteration.unitOfMeasure:
+        condition:
+        comment:
+      quoteTotalPrice.productOfferingPrice:
+        condition:
+        comment:
+      quoteTotalPrice.recurringChargePeriod:
+        condition:
+        comment:
+      quoteTotalPrice.unitOfMeasure:
+        condition:
+        comment:
+      relatedParty:
+        comment: Array of RelatedParty
+      relatedParty.@referredType:
+        condition:
+        comment:
+      relatedParty.role:
+        condition:
+        comment:
+      requestedQuoteCompletionDate:
+        condition:
+        comment:
+      validFor:
+        condition:
+        comment:
+      validFor.endDateTime:
+        condition:
+        comment:
+      validFor.startDateTime:
+        condition:
+        comment:
+      version:
+        condition:
+        comment:
+    operations-details:
+      POST:
+        mandatory:
+          quoteItem:
+            rule:
+      PATCH:
+        patchable: {}
+
+  QuoteAttributevaluechangeEvent:
+    condition:
+    comment:
+
+  QuoteCreateEvent:
+    condition:
+    comment:
+
+  QuoteDeleteEvent:
+    condition:
+    comment:
+
+  QuoteInformationrequiredEvent:
+    condition:
+    comment:
+
+  QuoteStatechangeEvent:
+    condition:
+    comment:

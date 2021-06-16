@@ -27,11 +27,13 @@ import no.paneon.api.tooling.Args.ConformanceGuide;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import static java.util.stream.Collectors.toList;
@@ -41,6 +43,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
+// import java.nio.file.Path;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -64,6 +67,8 @@ public class UserGuideGenerator {
 		this.args = args;	
 		this.conformance = conformanceModel;				
 		this.userGuideData = new UserGuideData();
+		
+		this.userGuideData.imageFormat = this.args.imageFormat;
 		
 	}
 
@@ -124,10 +129,28 @@ public class UserGuideGenerator {
 	}
 
 	private void processTemplates(UserGuideData data) {
-		Map<String,String> templatesToProcess = Config.getMap("userguide.templates");
+		Map<String,String> templatesToProcess = Config.getMap("userguide.generated.templates");
 		
-		String targetDirectory = this.getGeneratedTargetDirectory("./");
+		String targetDirectory = this.getTargetDirectory("./");
 		
+		String generatedTargetDirectory = this.getGeneratedTargetDirectory("./");
+		
+		String relativePathToGeneratedDirectory = extractRelativePath(targetDirectory,generatedTargetDirectory);
+				
+		data.generatePath = relativePathToGeneratedDirectory;
+		
+		LOG.debug("relativePathToGeneratedDirectory: {}", relativePathToGeneratedDirectory); 
+		
+		templatesToProcess.entrySet().stream().forEach(entry -> {
+			String template = entry.getKey();
+			String destination = entry.getValue();
+			
+			processTemplate(template, data, generatedTargetDirectory + destination);
+
+		});
+
+		templatesToProcess = Config.getMap("userguide.templates");
+								
 		templatesToProcess.entrySet().stream().forEach(entry -> {
 			String template = entry.getKey();
 			String destination = entry.getValue();
@@ -136,6 +159,51 @@ public class UserGuideGenerator {
 
 		});
 
+		
+		
+	}
+
+
+	private String extractRelativePath(String dir1, String dir2) {
+		
+		StringBuilder prefix = new StringBuilder();
+		boolean done = false;
+		int pos=0;
+		
+		while(!done) {
+			if(pos>=dir1.length()) done=true;
+			if(pos>=dir2.length()) done=true;
+			
+			if(!done) {
+				if(dir1.charAt(pos) == dir2.charAt(pos)) {
+					pos++;
+				} else {
+					done=true;
+				}
+			}
+		}
+		
+		dir1 = dir1.substring(pos);
+		dir2 = dir2.substring(pos);
+
+		dir1 = dir1.replace("./", "");
+		dir2 = dir2.replace("./", "");
+
+		String offset = Config.getString("userguide.generatedTarget");
+		dir1 = dir1 + File.separator + offset;
+		if(!dir1.endsWith(File.separator)) dir1 = dir1 + File.separator;
+		
+		int steps = dir1.replaceAll("[^/]*", "").replaceAll("^/", "").length();
+		
+		StringBuilder res = new StringBuilder();
+		while(steps>0) {
+			res.append("../");
+			steps--;
+		}
+		
+		res.append(dir2);
+		
+		return res.toString();
 		
 	}
 
@@ -166,6 +234,8 @@ public class UserGuideGenerator {
 
 	protected void processTemplate(String template, Object data, String outputFileName) {
 		
+		LOG.debug("processTemplate: {} outputFileName: {}",  template, outputFileName);
+		
 		try {
 			MustacheFactory mf = new DefaultMustacheFactory();
 			InputStream is = Utils.getFileInputStream(template, null, args.workingDirectory, args.templateDirectory);
@@ -181,8 +251,7 @@ public class UserGuideGenerator {
 			Utils.save(text, outputFileName);	
 			
 		} catch(Exception ex) {
-			Out.debug("Exception: {}", ex.getLocalizedMessage());
-			// ex.printStackTrace();
+			Out.debug("*** exception: {}", ex.getLocalizedMessage());
 		}
 	
 	}
@@ -192,14 +261,42 @@ public class UserGuideGenerator {
 	protected String getJSON(String resource, JSONObject config) {
 				
 		String fileName = Utils.getFileName(args.workingDirectory, config, "tableSource").replace("${RESOURCE}", resource);
-				
-		JSONObjectOrArray json = JSONObjectOrArray.readJSONObjectOrArray(fileName);
 		
-		String content = json.toString(2);
-						
+		String content = "";
+		if(isDirectoryPresent(fileName)) {
+			JSONObjectOrArray json = JSONObjectOrArray.readJSONObjectOrArray(fileName);			
+			content = json.toString(2);
+		}
 		return content;
 		
 	}
+
+	
+	Set<String> directoriesNotSeen = new HashSet<>();
+	
+	private boolean isDirectoryPresent(String fileName) {
+		File file = new File(fileName);
+		
+		if(file!=null) file = file.getParentFile();
+		
+		boolean isPresent = file!=null && file.getParentFile().isDirectory();
+		
+		if(isPresent)
+			return true;
+		
+		if(file!=null) {	
+			String dir=file.getName();
+			if(!directoriesNotSeen.contains(dir)) {
+				Out.printAlways("... *** unable to locate directory " + dir);
+				directoriesNotSeen.add(dir);
+			}
+		} else
+			Out.printAlways("... unable to locate file " + fileName);
+		
+		return false;
+		
+	}
+
 
 	@LogMethod(level=LogLevel.DEBUG)
 	protected String constructStatement(String ... statements) {

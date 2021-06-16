@@ -125,6 +125,9 @@ public class Args {
 		@Parameter(names = { "-t", "--template" }, description = "Document template (.docx or .mustache file) - defaults to embedded version")
 		public String template = null;
 
+		@Parameter(names = { "--image-format" }, description = "Image format to use - legal values are puml, svg, png. Default is svg")
+		public String imageFormat = "svg";
+		
 	}
 
 	public class Usage {

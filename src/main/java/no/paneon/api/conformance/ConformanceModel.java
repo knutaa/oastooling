@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import no.paneon.api.conformance.ConformanceItem;
 import no.paneon.api.logging.AspectLogger.LogLevel;
 import no.paneon.api.logging.LogMethod;
 import no.paneon.api.model.APIModel;
@@ -507,6 +508,11 @@ public class ConformanceModel extends CoreModel {
 		
 		Map<String,String> propertyConditions = APIModel.getMandatoryOptional(APIModel.getResourceForPost(resource));
 		JSONObject conformance = getConformance(resource, OPERATIONS_DETAILS, POST, MANDATORY);
+		
+		if(conformance==null) {
+			List<String[]> res = new LinkedList<>();
+			return res;
+		}
 		
 		if(Config.getBoolean("removeConditionalMandatoryInPost")) {
 			Set<String> propsToRemove = new HashSet<>();

@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -93,7 +94,7 @@ public class OperationsFragment {
 		LOG.debug("addOperationConfig: samplesFiles={}",  sampleFiles);
 		
 		JSONObject combinedConfig = new JSONObject();
-		sampleFiles.stream().forEach( file -> {			
+		sampleFiles.forEach( file -> {			
 			JSONObject json = Utils.readJSONOrYaml(file);
 			if(json!=null) {
 				json.keySet().stream().forEach(key -> combinedConfig.put(key, json.get(key)));
@@ -102,6 +103,7 @@ public class OperationsFragment {
 		JSONObject operationConfig = new JSONObject();
 		operationConfig.put(OPERATION_CONFIG, combinedConfig);
 		Config.addConfiguration(operationConfig);
+		
 	}
 
 	private List<String> getOperationConfig(JSONObject config) {
@@ -119,7 +121,7 @@ public class OperationsFragment {
 				if( pattern.stream().anyMatch(file::endsWith)) res.add(dir + "/" + file);
 			}
 		} else {
-			Out.printAlways("... unable to locate operation sample directory: " + dir);
+			Out.printAlways("... *** unable to locate operation sample directory: " + dir);
 		}
 			
 		return res;
@@ -138,10 +140,14 @@ public class OperationsFragment {
 			Out.println("... unable to locate unique file with pattern " + pattern);
 		} else {
 			String file = matches.get(0);
-			res = Utils.readFile(file);
 			
 			try {
+				res = Utils.readFile(file);
+
 				JSONObjectOrArray json = JSONObjectOrArray.readJSONObjectOrArray(file);
+//			} catch(FileNotFoundException ex) {
+//				Out.printAlways("... file not found: " + new File(matches.get(0)).getName());
+//			
 			} catch(Exception ex) {
 				Out.printAlways("... error in JSON file: " + new File(matches.get(0)).getName());
 				Out.printAlways("... error message: " + ex.getLocalizedMessage());
@@ -259,7 +265,7 @@ public class OperationsFragment {
 					List<UserGuideData.OperationSampleData> sampleResults = new LinkedList<>();
 					
 					if(samples==null) {
-						Out.printAlways("... samples not found for resource '" + resource + "' and operation '" + operation + "'");
+						Out.printAlways("... *** samples not found for resource '" + resource + "' and operation '" + operation + "'");
 					} else {
 						for(int idx=0; idx<samples.length(); idx++ ) {	
 							UserGuideData.OperationSampleData sampleDetails = userGuideData.new OperationSampleData();

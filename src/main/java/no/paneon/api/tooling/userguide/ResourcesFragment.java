@@ -1,5 +1,6 @@
 package no.paneon.api.tooling.userguide;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import no.paneon.api.conformance.ConformanceItem;
@@ -22,7 +23,10 @@ import no.paneon.api.tooling.userguide.UserGuideData.FieldsData;
 import no.paneon.api.tooling.userguide.UserGuideData.ResourceData;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -32,6 +36,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -84,11 +89,11 @@ public class ResourcesFragment {
 		directories.add("");
 		
 		String filename = args.diagrams!=null ? args.diagrams : "diagrams.yaml";
-		
+				
 		try {
 			
 			File file = Utils.getFile(filename, directories);
-			if(!file.exists()) {
+			if(file==null || !file.exists()) {
 				Out.printAlways("... unable to locate the configuration file with diagram source locations (" + filename + ")" );
 				System.exit(0);
 			}
@@ -99,6 +104,7 @@ public class ResourcesFragment {
 
 		} catch(Exception ex) {
 			Out.printAlways("... unable to read the configuration file with diagram source locations (" + filename + ")" );
+			ex.printStackTrace();
 			System.exit(0);
 		}
 		
@@ -138,25 +144,59 @@ public class ResourcesFragment {
 
 		JSONObject diagramConfig = config.optJSONObject("diagrams");
 		
-		// config = Config.getConfig(config, RESOURCE_MODEL);
-		  				
-		if(diagramConfig.has(resource)) {
-				
-			res.add( getDiagramDetails(diagramConfig, resource, config) );
+		LOG.debug("diagramConfig:{} " , diagramConfig);
+				  				
+		if(diagramConfig.has("graphs")) {
+					
+			Predicate<JSONObject> isNotNull = o -> o != null;
+
+			Predicate<String> isDiagramForResource = s -> s.contentEquals(resource) || s.startsWith(resource + "_");
+
+			Predicate<JSONObject> diagramForResource = o -> o.keySet().stream().anyMatch(isDiagramForResource);
 						
-			Set<String> subDiagrams = diagramConfig.keySet().stream().filter(s -> s.startsWith(resource + "_")).collect(toSet());
+			JSONArray diagramArray = diagramConfig.optJSONArray("graphs");
 			
-			for(String subDiagram : subDiagrams) {
-				res.add( getDiagramDetails(diagramConfig, resource, subDiagram, config) );
+			List<JSONObject> diagrams = extractJSONObjects(diagramArray).stream()
+											.filter(JSONObject.class::isInstance)
+											.map(JSONObject.class::cast)
+											.filter(isNotNull)
+											.collect(toList());
+			
+			Optional<JSONObject> optResourceDiagram = diagrams.stream().filter(diagramForResource).findFirst();
+			
+			if(optResourceDiagram.isPresent()) {
+					
+				res.add( getDiagramDetails(optResourceDiagram.get(), resource, config) );
+							
+				Set<String> subDiagrams = diagramConfig.keySet().stream().filter(s -> s.startsWith(resource + "_")).collect(toSet());
+				
+				for(String subDiagram : subDiagrams) {
+					
+					Out.debug("resource: {} subDiagram:{} " , resource, subDiagram);
+
+					res.add( getDiagramDetails(diagramConfig, resource, subDiagram, config) );
+				}
+				
+			} else {
+				Out.debug("... possible incorrect diagram configuration: resource " + resource + " not found in {}", diagramConfig);
 			}
-			
 		} else {
-			Out.printAlways("... possible incorrect diagram configuration: resource " + resource + " not found in " + diagramConfig.toString(2));
+			Out.debug("... possible incorrect diagram configuration: 'graphs' not found in {}", diagramConfig);
 		}
 		
 		return res;
 		
 	}
+
+	private Collection<JSONObject> extractJSONObjects(JSONArray array) {
+		List<JSONObject> res = new LinkedList<>();
+		for(int i=0; i<array.length(); i++) {
+			JSONObject o = array.optJSONObject(i);
+			if(o!=null) res.add(o);
+		}
+		return res;
+	}
+
 
 	private DiagramData getDiagramDetails(JSONObject diagramConfig, String resource, JSONObject config) {
 		return getDiagramDetails(diagramConfig, resource, resource, config) ;
@@ -173,15 +213,22 @@ public class ResourcesFragment {
 		
 		LOG.debug("dir=" + config.getString("diagrams-directory") );
 		
-		String puml = Utils.readFile(dir + imgFile.replace(".png",  ".puml"));		
+		UserGuideData.DiagramData data = userGuideData.new DiagramData();
+
+		String fileName = dir + imgFile.replace(".png",  ".puml");
+		try {
+			String puml = Utils.readFile(fileName);		
+			data.puml = puml;
+
+		} catch(Exception ex) {
+			Out.printAlways("... unable to read from file: " + fileName);
+			return data;
+		}
 
 		String sourceDir = new File(dir).getPath();
 		
-		UserGuideData.DiagramData data = userGuideData.new DiagramData();
-
 		data.sourceLocation = sourceDir;		
 		data.imgfile = imgFile;
-		data.puml = puml;
 
 		data.resource = activeResource;
 		
@@ -191,7 +238,7 @@ public class ResourcesFragment {
 		} else {
 			data.resourceLabel = resource;			
 		}
-
+		
 		return data;
 	}
 
