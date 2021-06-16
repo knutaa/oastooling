@@ -150,9 +150,9 @@ public class ResourcesFragment {
 					
 			Predicate<JSONObject> isNotNull = o -> o != null;
 
-			Predicate<String> isDiagramForResource = s -> s.contentEquals(resource) || s.startsWith(resource + "_");
+			Predicate<String> isDiagramForPivotResource = s -> s.contentEquals(resource);
 
-			Predicate<JSONObject> diagramForResource = o -> o.keySet().stream().anyMatch(isDiagramForResource);
+			Predicate<JSONObject> isDiagramForResource = o -> o.keySet().stream().anyMatch(isDiagramForPivotResource);
 						
 			JSONArray diagramArray = diagramConfig.optJSONArray("graphs");
 			
@@ -162,19 +162,25 @@ public class ResourcesFragment {
 											.filter(isNotNull)
 											.collect(toList());
 			
-			Optional<JSONObject> optResourceDiagram = diagrams.stream().filter(diagramForResource).findFirst();
+			Optional<JSONObject> optResourceDiagram = diagrams.stream().filter(isDiagramForResource).findFirst();
 			
 			if(optResourceDiagram.isPresent()) {
 					
 				res.add( getDiagramDetails(optResourceDiagram.get(), resource, config) );
-							
-				Set<String> subDiagrams = diagramConfig.keySet().stream().filter(s -> s.startsWith(resource + "_")).collect(toSet());
-				
-				for(String subDiagram : subDiagrams) {
-					
-					Out.debug("resource: {} subDiagram:{} " , resource, subDiagram);
+											
+				Predicate<String> isDiagramForSubResource = s -> s.startsWith(resource + "_");
 
-					res.add( getDiagramDetails(diagramConfig, resource, subDiagram, config) );
+				Predicate<JSONObject> diagramForSubResource = o -> o.keySet().stream().anyMatch(isDiagramForSubResource);	
+				
+				List<JSONObject> subDiagrams = diagrams.stream().filter(diagramForSubResource).collect(toList());
+							
+				for(JSONObject subDiagram : subDiagrams) {
+					
+					String subResource = subDiagram.keys().next();
+					
+					LOG.debug("resource: {} subDiagram:{} " , resource, subDiagram);
+
+					res.add( getDiagramDetails(subDiagram, resource, subResource, config) );
 				}
 				
 			} else {
