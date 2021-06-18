@@ -1,0 +1,48 @@
+@startuml
+hide circle
+hide methods
+hide stereotype
+hide attributes
+show <<Enumeration>> stereotype
+show <<Main>> attributes
+
+skinparam class {
+   BackgroundColor<<Enumeration>> #E6F5F7
+   BackgroundColor<<Ref>> #FFFFE0
+   BackgroundColor<<Pivot>> #FFFFFFF
+   BackgroundColor #FCF2E3
+}
+
+class Event <<Main>> {
+    correlationId : String
+    description : String
+    domain : String
+    eventId : Strng
+    eventTime : DateTime
+    eventType : String
+    fieldPath : String
+    href : String
+    id : String
+    priority : String
+    timeOccurred : DateTime
+    title : String
+}
+
+class SpecificEvent {
+
+}
+
+class SpecificEventPayload {
+}
+
+class SpecificResource {
+}
+
+Event <|-- SpecificEvent
+
+SpecificEvent -- "1" SpecificEventPayload : event
+
+SpecificEventPayload -- "1" SpecificResource : resourceName
+
+@enduml
+

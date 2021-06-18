@@ -44,8 +44,6 @@ public class GenerateConformance extends GenerateCommon {
 		
 		model.expandDefaults();
 				
-		model.generateConformance();
-
 
 		try {	
 			JSONObject conformance = null;
@@ -55,7 +53,7 @@ public class GenerateConformance extends GenerateCommon {
 			} else {
 							
 				conformance = model.generateConformance();
-								
+												
 				if(!args.complete) {
 					conformance = model.removeOptional(conformance);
 					Out.println("... removed optional resource items ...");

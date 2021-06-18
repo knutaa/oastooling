@@ -21,10 +21,11 @@ public class App {
 	Args.UserGuide         argsAsciiDocGuide ;
 	Args.Conformance       argsConformance   ;
 	Args.ConformanceGuide  argsConfDocument  ;
+	Args.Usage  		   argsUsage  ;
 
 	static final String ARG_USER_GUIDE  = "userguide";
-	static final String ARG_GEN_CONF    = "generate-conformance";
-	static final String ARG_CONFORMANCE = "conformance";
+	static final String ARG_GEN_CONF    = "conformance-data";
+	static final String ARG_CONFORMANCE = "conformance-guide";
 
 	App(String ... argv) {
 		     		
@@ -33,11 +34,14 @@ public class App {
 		argsUserGuide    = args.new UserGuide();
 		argsConformance  = args.new Conformance();
 		argsConfDocument = args.new ConformanceGuide();
+		argsUsage 		 = args.new Usage();
 
 		commandLine = JCommander.newBuilder()
-		    .addCommand("userguide",             argsUserGuide)
-		    .addCommand("generate-conformance",  argsConformance)
-		    .addCommand("conformance",           argsConfDocument)
+		    .addCommand(ARG_USER_GUIDE,      	argsUserGuide)
+		    .addCommand(ARG_GEN_CONF,  			argsConformance)
+		    .addCommand(ARG_CONFORMANCE,     	argsConfDocument)
+		    .addCommand("--help",       		argsUsage)
+		    .addCommand("help",               	argsUsage)
 		    .build();
 
 		try {
@@ -79,6 +83,11 @@ public class App {
 
     	switch(commandLine.getParsedCommand()) {
     	
+       	case "--help":
+    	case "help":
+    		commandLine.usage();
+    		break;
+ 
     	case ARG_USER_GUIDE:    		
     		if(argsUserGuide.outputFileName==null && !argsUserGuide.generatedOnly) {
     			Out.println("... missing output file argument");

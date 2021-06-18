@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="494px" preserveAspectRatio="none" style="width:181px;height:494px;" version="1.1" viewBox="0 0 181 494" width="181px" zoomAndPan="magnify"><defs><filter height="300%" id="f10okb0uzbvuh7" width="300%" x="-1" y="-1"><feGaussianBlur result="blurOut" stdDeviation="2.0"/><feColorMatrix in="blurOut" result="blurOut2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0"/><feOffset dx="4.0" dy="4.0" in="blurOut2" result="blurOut3"/><feBlend in="SourceGraphic" in2="blurOut3" mode="normal"/></filter></defs><g><!--class Event--><rect fill="#FCF2E3" filter="url(#f10okb0uzbvuh7)" height="187.5938" id="Event" style="stroke: #A80036; stroke-width: 1.5;" width="145" x="6" y="8"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="31" x="63" y="24.6016">Event</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="7" x2="150" y1="32.1328" y2="32.1328"/><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="110" x="12" y="46.7676">correlationId : String</text><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="102" x="12" y="59.7227">description : String</text><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="81" x="12" y="72.6777">domain : String</text><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="77" x="12" y="85.6328">eventId : Strng</text><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="114" x="12" y="98.5879">eventTime : DateTime</text><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="96" x="12" y="111.543">eventType : String</text><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="87" x="12" y="124.498">fieldPath : String</text><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="63" x="12" y="137.4531">href : String</text><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="51" x="12" y="150.4082">id : String</text><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="81" x="12" y="163.3633">priority : String</text><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="133" x="12" y="176.3184">timeOccurred : DateTime</text><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="61" x="12" y="189.2734">title : String</text><!--class SpecificEvent--><rect fill="#FCF2E3" filter="url(#f10okb0uzbvuh7)" height="24.1328" id="SpecificEvent" style="stroke: #A80036; stroke-width: 1.5;" width="80" x="38.5" y="257"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="74" x="41.5" y="273.6016">SpecificEvent</text><!--class SpecificEventPayload--><rect fill="#FCF2E3" filter="url(#f10okb0uzbvuh7)" height="24.1328" id="SpecificEventPayload" style="stroke: #A80036; stroke-width: 1.5;" width="125" x="16" y="358"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="119" x="19" y="374.6016">SpecificEventPayload</text><!--class SpecificResource--><rect fill="#FCF2E3" filter="url(#f10okb0uzbvuh7)" height="24.1328" id="SpecificResource" style="stroke: #A80036; stroke-width: 1.5;" width="102" x="27.5" y="459"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="96" x="30.5" y="475.6016">SpecificResource</text><!--link Event to SpecificEvent--><path d="M78.5,216.37 C78.5,232.71 78.5,247.16 78.5,256.59 " fill="none" id="Event-SpecificEvent" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="none" points="71.5,216.11,78.5,196.11,85.5,216.11,71.5,216.11" style="stroke: #A80036; stroke-width: 1.0;"/><!--link SpecificEvent to SpecificEventPayload--><path d="M78.5,281.36 C78.5,300.45 78.5,338.77 78.5,357.78 " fill="none" id="SpecificEvent-SpecificEventPayload" style="stroke: #A80036; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="34" x="79.5" y="324.5684">event</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="8" x="68.85" y="347.2505">1</text><!--link SpecificEventPayload to SpecificResource--><path d="M78.5,382.36 C78.5,401.45 78.5,439.77 78.5,458.78 " fill="none" id="SpecificEventPayload-SpecificResource" style="stroke: #A80036; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="90" x="79.5" y="425.5684">resourceName</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="8" x="68.85" y="448.2505">1</text><!--
+@startuml
+hide circle
+hide methods
+hide stereotype
+hide attributes
+show <<Enumeration>> stereotype
+show <<Main>> attributes
+
+skinparam class {
+   BackgroundColor<<Enumeration>> #E6F5F7
+   BackgroundColor<<Ref>> #FFFFE0
+   BackgroundColor<<Pivot>> #FFFFFFF
+   BackgroundColor #FCF2E3
+}
+
+class Event <<Main>> {
+    correlationId : String
+    description : String
+    domain : String
+    eventId : Strng
+    eventTime : DateTime
+    eventType : String
+    fieldPath : String
+    href : String
+    id : String
+    priority : String
+    timeOccurred : DateTime
+    title : String
+}
+
+class SpecificEvent {
+
+}
+
+class SpecificEventPayload {
+}
+
+class SpecificResource {
+}
+
+Event <|- - SpecificEvent
+
+SpecificEvent - - "1" SpecificEventPayload : event
+
+SpecificEventPayload - - "1" SpecificResource : resourceName
+
+@enduml
+
+PlantUML version 1.2019.00(Sun Jan 13 16:46:42 CET 2019)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Java Version: 15.0.2+7-27
+Operating System: Mac OS X
+OS Version: 10.16
+Default Encoding: UTF-8
+Language: nb
+Country: NO
+--></g></svg>
