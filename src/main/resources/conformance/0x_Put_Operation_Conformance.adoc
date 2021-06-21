@@ -1,3 +1,5 @@
+include::../config/Environment.adoc[]
+ifdef::backend-pdf[<<<]
 
 == API PUT Operation Conformance
 
@@ -9,5 +11,5 @@ All the PUT operations in this API share the same status code pattern.
 |Status Code 201 if resource modified |M
 |===
 
-include::../generated/PutOperationConformance.adoc[]
+include::{generated}/PutOperationConformance.adoc[]
 

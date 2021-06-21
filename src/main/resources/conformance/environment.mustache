@@ -5,15 +5,13 @@ ifndef::complete[]
 :{{imageFormat}}:
 {{/imageFormat}}
 
-ifndef::maindoc[]
-:generated: ../
-:diagrams:  {generated}/images
-:imagesdir: {generated}/images/
+ifdef::maindoc[]
+:parts: ./
+:imagesdir: ./images/
+:generated: {{generatedPath}}
+:diagrams: {generated}/images
 endif::[]
 
-ifdef::isGenerated[]
-:samples: {generated}/samples
-endif::[]
 
 endif::[]
 

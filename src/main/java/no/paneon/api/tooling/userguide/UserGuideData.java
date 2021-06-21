@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import no.paneon.api.tooling.DocumentInfo;
+
 public class UserGuideData {
 
 	public String imageFormat; 
@@ -16,6 +18,8 @@ public class UserGuideData {
 	public Collection<ResourceData> resourcesData;
 
 	public int numberOfNotifications;
+
+	public DocumentInfo documentInfo;
 		
 	public class ResourceData {
 		

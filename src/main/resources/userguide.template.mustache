@@ -13,22 +13,27 @@
 :maindoc:
 :doctype: book
 :backend: docbook
+
 include::config/Environment.adoc[]
 
 :toc: macro
+:toclevels: 3
+
 toc::[]
 
-include::parts/01_Conformance_Introduction.adoc[]
+:sectnums:
 
-include::parts/02_Resources_Model_Conformance.adoc[]
+include::parts/01_Introduction.adoc[]
 
-include::parts/03_Notifications_Model_Conformance.adoc[]
+include::parts/02_UseCases.adoc[]
 
-include::parts/04_Operations_Conformance.adoc[]
+include::parts/03_PolymorphismAndExtensions.adoc[]
 
-{{#parts}}
-include::parts/{{filename}}[]
-{{/parts}}
+include::parts/04_Resources.adoc[]
 
+include::parts/05_Operations.adoc[]
 
+include::parts/06_Common_notifications.adoc[]
+
+include::parts/07_Acknowledgements.adoc[]
 

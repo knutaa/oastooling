@@ -25,6 +25,7 @@ import no.paneon.api.conformance.ConformanceModel;
 import no.paneon.api.logging.AspectLogger.LogLevel;
 import no.paneon.api.logging.LogMethod;
 import no.paneon.api.model.APIModel;
+import no.paneon.api.tooling.ConformanceDocumentInfo;
 import no.paneon.api.utils.Config;
 import no.paneon.api.utils.Out;
 
@@ -53,14 +54,32 @@ public class ConformanceData {
 		
 	public List<ConformanceOperationsDetails> resources;
 
+	public List<ConformanceMandatoryOperations>     resourceMandatoryOperations;
+	
+	public List<String>  mandatoryNotifications;
+	public boolean hasMandatoryNotifications = false;
+	
 	public List<FileData> parts;
 		
+	public String generatedPath;
+
 	private ConformanceModel model;
+	
+	public ConformanceDocumentInfo documentInfo;
+	
+//	public String title;
+//	public String docid;
+//	public String release;
+//	public String date;
+//	public String year;
+//	public String revision;
+//	public String iprMode;
+//	public String status;
+//	public String releaseStatus;
 	
 	public ConformanceData(ConformanceModel model) {
 		this.model = model;
 		
-		Out.println("... ConformanceData");
 	}
 				
 	static public class FileData {
@@ -106,6 +125,27 @@ public class ConformanceData {
 
 	}
 	
+	public class ConformanceMandatoryOperations {
+		public String resource;
+		
+		public ConformanceMandatoryOperations(String resource) {
+			this.resource=resource;
+		}
+		
+		public List<String> mandatoryOperations;
+
+	}
+	
+	public class ConformanceMandatoryNotifications {
+		
+		public ConformanceMandatoryNotifications() {
+		}
+		
+		public List<String> mandatoryNotifications;
+
+	}
+
+	
 	public class OperationConformance {
 		public String path;
 		public String description;
@@ -127,6 +167,13 @@ public class ConformanceData {
 		
 		this.resources = generateOperationsDetails();
 				
+		this.resourceMandatoryOperations = generateResourceMandatoryOperations();
+		
+		this.mandatoryNotifications = generateMandatoryNotifications();
+		this.hasMandatoryNotifications = !this.mandatoryNotifications.isEmpty();
+		
+		this.documentInfo = new ConformanceDocumentInfo(this.model.getRules());
+		
 	}
 
 	private List<ConformanceOperationsDetails> generateOperationsDetails() {
@@ -187,6 +234,56 @@ public class ConformanceData {
 	    
 	}
 
+	private List<ConformanceMandatoryOperations> generateResourceMandatoryOperations() {
+		List<ConformanceMandatoryOperations> res = new LinkedList<>();
+		
+		List<String> orderedResources = model.getOrderedResources();
+				
+		List<String> allOps = APIModel.ALL_OPS;
+
+	    for(String resource : orderedResources) {
+	    	
+	    	ConformanceMandatoryOperations mandatoryOperations = new ConformanceMandatoryOperations(resource); 
+
+	    	List<String> mandatory = new LinkedList<>();
+	    	for(String op : allOps) {
+	    		String condition = model.getOperationConditionByResource(resource, op);
+	    		
+		    	LOG.debug("resource: {} op={} condition={}",  resource, op, condition);
+
+				if(!ConformanceModel.isOptional(condition)) {
+					mandatory.add(op);
+				}
+
+	    	}
+	    	
+			if(!mandatory.isEmpty()) {
+				mandatoryOperations.mandatoryOperations = mandatory;
+			}
+			
+			res.add(mandatoryOperations);
+
+	    }
+	    
+	    return res;
+	    
+	}
+	
+	
+	private List<String> generateMandatoryNotifications() {
+		List<String> res = new LinkedList<>();
+								
+		Set<String> allMandatoryNotifications = model.getMandatoryNotifications();
+		
+		LOG.debug("allMandatoryNotifications:{}"  , allMandatoryNotifications);
+		
+		res.addAll( allMandatoryNotifications.stream().sorted().collect(toList()) );
+		
+	    return res;
+	    
+	}
+	
+	
 	private OperationConformance getPathConformance(String path, String description) {
 		OperationConformance res = new OperationConformance(path, description);
 		
@@ -224,6 +321,8 @@ public class ConformanceData {
 		SortedMap<String,ConformanceItem> rowDetails = new java.util.TreeMap<>();
 		Set<String> seenResources = new HashSet<>();
 		
+		LOG.debug("properties: {}", properties);
+
 		for(String property : properties) {
 			rowDetails.putAll( createResourceDetailsForProperty(resource, property, seenResources) );
 		}
@@ -232,6 +331,8 @@ public class ConformanceData {
 									
 			List<String> ordering = arrangeByLevel(rowDetails);
 
+			LOG.debug("ordering: {}", ordering);
+			
 			Map<String,String> processed = new HashMap<>();
 						
 			for(String key : ordering) {
@@ -268,7 +369,6 @@ public class ConformanceData {
 		
 		List<String> mandatoryPart = rowDetails.entrySet().stream()
 				.filter(entry -> getStructuralDepth(entry.getKey())==1 && entry.getValue().condition.contains("M"))
-				// .map(entry -> entry.getKey())
 				.map(Entry::getKey)
 				.sorted()
 				.collect(Collectors.toList());
@@ -303,7 +403,7 @@ public class ConformanceData {
 		ordering.addAll( getOrderingOfProperties(mandatoryPart));		
 		ordering.addAll( getOrderingOfProperties(remainingPart) );
 		
-		Out.println("arrangeByLevel::" + ordering.stream().collect(Collectors.joining("\n")));
+		LOG.debug("arrangeByLevel:: {}", ordering.stream().collect(Collectors.joining("\n")));
 
 		return ordering;
 		
@@ -370,38 +470,22 @@ public class ConformanceData {
 				
 		List<String> getOrdering() {
 			List<String> res = new LinkedList<>();
-			
-			// if(!label.isEmpty()) res.add(label);
-
-//			if(!subGroups.isEmpty()) {
-//				subGroups.forEach(group -> {	
-//					if(!group.label.isEmpty()) res.add( group.label );
-//				});
-//				
-//				subGroups.forEach(group -> {					
-//					res.addAll(  group.getOrdering() );
-//				});
-//				
-//			} else if(!collection.isEmpty()) {
-//				res.addAll(  collection.stream().sorted().collect(Collectors.toList()) );
-//			}
-//				
-			
+						
 			Predicate<String> notEmpty = s -> !s.isEmpty();
 			
 			if(!subGroups.isEmpty()) {
 				res.addAll(  subGroups.stream().map(PropertyCollection::getLabel).filter(notEmpty).sorted().collect(Collectors.toList()) );
 				
-				Out.println("getOrdering: interim res=" + res);
+				LOG.debug("getOrdering: interim res={}", res);
 				
 				subGroups.forEach(group -> {	
-					Out.println("getOrdering: adding " + group.label);
+					LOG.debug("getOrdering: adding {}", group.label);
 
 					res.addAll(  group.getOrdering() );
 				});
 				
 			} else if(!collection.isEmpty()) {
-				Out.println("getOrdering: adding:: " + collection.stream().sorted().collect(Collectors.toList()));
+				LOG.debug("getOrdering: adding:: {}", collection.stream().sorted().collect(Collectors.toList()));
 
 				res.addAll(  collection.stream().sorted().collect(Collectors.toList()) );
 			}
@@ -482,7 +566,7 @@ public class ConformanceData {
 				
 		res.addAll( ordering);
 		
-		Out.println("getOrderingOfProperties::" + res.stream().collect(Collectors.joining("\n")));
+		LOG.debug("getOrderingOfProperties:: {}", res.stream().collect(Collectors.joining("\n")));
 		
 		return res;
 	}
@@ -509,7 +593,6 @@ public class ConformanceData {
 	Comparator<String> compareRule = Comparator
 			.comparing(ConformanceData::getStructuralDepth)
 			.thenComparing(String::toString);
-
 	
 	private Set<String> getElementsWithPrefixDirect(Collection<String> remaining, String key) {
 				
@@ -528,6 +611,8 @@ public class ConformanceData {
 		String condition = model.getResourceCondition(resource,property,path);
 		String comment   = model.getResourceComment(resource,property,path);
 
+		LOG.debug("path: {} condition: {} comment: {}", path, condition, comment);
+
 		LOG.log(Level.TRACE, "comment: {}", comment);
 
 		boolean filter = Config.getBoolean("filterResourceDetails");		
@@ -535,6 +620,8 @@ public class ConformanceData {
 		seenResources.clear();
 		Map<String,ConformanceItem>  extracted = extractEmbeddedResourceDetails(resource, property, condition, comment, path, seenResources);
 				
+		LOG.debug("extracted: {}", extracted);
+
 		return extracted.entrySet().stream()
 						.filter(entry -> !filter || (filter && !ConformanceModel.isOptional(entry.getValue().condition)))
 						.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));

@@ -25,11 +25,11 @@ public class ConformanceGuideTest  {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
     
-	String TARGETDIR = folder.toString();
+	String TARGETDIR = "."; // folder.toString();
 
     String API = "./src/test/resources/Quote_Management_5.0.0_oas.yaml";
     
-	String CONFORMANCE_FILE = TARGETDIR + "/test-conf.yaml";
+	String CONFORMANCE_FILE = "test-conf.yaml";
 
 	String TARGET = TARGETDIR + "/conf-test";
 	String RESOURCE_OVERVIEW =  TARGET + "/generated/ResourceConformanceOverview.adoc";
@@ -67,9 +67,9 @@ public class ConformanceGuideTest  {
     @Test
     public void generateConformanceGuide() {
     	    	
-    	generateConformanceSpec(API, ".", CONFORMANCE_FILE);
-    	
-    	JSONObject conformance = Utils.readJSONOrYaml(CONFORMANCE_FILE);
+    	generateConformanceSpec(API, TARGETDIR, CONFORMANCE_FILE);
+    	    	
+    	JSONObject conformance = Utils.readJSONOrYaml(TARGETDIR + "/" + CONFORMANCE_FILE);
     	
     	update(conformance, "#/conformance/Quote", "condition", "M");
     	update(conformance, "#/conformance/Quote", "comment",   "Test case - set to mandatory");
@@ -80,7 +80,7 @@ public class ConformanceGuideTest  {
 		Args.ConformanceGuide argsConformanceGuide = args.new ConformanceGuide();
     	
 		argsConformanceGuide.openAPIFile     = API;
-		argsConformanceGuide.targetDirectory = TARGET;
+		argsConformanceGuide.targetDirectory = TARGETDIR;
 		argsConformanceGuide.conformance     = CONFORMANCE_FILE;
 		argsConformanceGuide.silentMode      = true;
 		
@@ -114,9 +114,9 @@ public class ConformanceGuideTest  {
 		Args args                        = new Args();
 		Args.Conformance argsConformance = args.new Conformance();
 
-		argsConformance.openAPIFile = api;
+		argsConformance.openAPIFile     = api;
 		argsConformance.targetDirectory = targetDirectory;
-		argsConformance.outputFileName = output;
+		argsConformance.outputFileName  = output;
 
 		GenerateConformance generator = new GenerateConformance(argsConformance);
 

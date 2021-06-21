@@ -25,7 +25,7 @@
 	],
 
 
-"userguide::resourceFragments": {
+	"userguide::resourceFragments": {
 		"heading": "%s resource",
 		"headingLevel": "3",
 		"resourceModel": {
@@ -401,54 +401,69 @@
 		"NotificationsPattern.svg":               "./images",
 	},
 		
-	"userguide.generatedTarget": "userguide/",
+	"userguide.generatedTarget": "",
 	
 	"userguide.generated.templates": {
-		"userguide.resources.mustache":           		"userguide/Resources.adoc",
-		"userguide.notifications.mustache":       		"userguide/Notifications.adoc",
-		"userguide.operations.mustache":          		"userguide/Operations.adoc",
-		"userguide.generated.environment.mustache":		"userguide/Environment.adoc"	
+		"userguide.resources.mustache":           		"Resources.adoc",
+		"userguide.notifications.mustache":       		"Notifications.adoc",
+		"userguide.operations.mustache":          		"Operations.adoc",
+		"userguide.generated.environment.mustache":		"Environment.adoc"	
 	},
 	
 	"userguide.templates": {
-		"userguide.environment.mustache":         "config/Environment.adoc"	
+		"userguide.environment.mustache":         "config/Environment.adoc",
+		"userguide.template.mustache":            "$output"	
 	},
 	
 	"conformance.templates": {
-		"conformance/conformance.template.mustache":               "conformance.adoc",
-		"conformance/conformance.resources_overview.mustache":     "generated/ResourceConformanceOverview.adoc",
-		"conformance/conformance.resources_detailed.mustache":     "generated/ResourceDetailedConformance.adoc",
+		"conformance/conformance.template.mustache":               "$output",
+		"conformance/environment.mustache":		                   "config/Environment.adoc",		
+	},
+	
+	"conformance.generated.templates": {
+		"conformance/conformance.resources_overview.mustache":     "ResourceConformanceOverview.adoc",
+		"conformance/conformance.resources_detailed.mustache":     "ResourceDetailedConformance.adoc",
 		
-		"conformance/conformance.get_operations.mustache":         "generated/GetOperationConformance.adoc",
-		"conformance/conformance.post_operations.mustache":        "generated/PostOperationConformance.adoc",
-		"conformance/conformance.delete_operations.mustache":      "generated/DeleteOperationConformance.adoc",
-		"conformance/conformance.put_operations.mustache":         "generated/PutOperationConformance.adoc",
-		"conformance/conformance.patch_operations.mustache":       "generated/PatchOperationConformance.adoc"
+		"conformance/conformance.get_operations.mustache":         "GetOperationConformance.adoc",
+		"conformance/conformance.post_operations.mustache":        "PostOperationConformance.adoc",
+		"conformance/conformance.delete_operations.mustache":      "DeleteOperationConformance.adoc",
+		"conformance/conformance.put_operations.mustache":         "PutOperationConformance.adoc",
+		"conformance/conformance.patch_operations.mustache":       "PatchOperationConformance.adoc",
+		
+		"conformance/environment.generated.mustache":		       "Environment.adoc",
+		
+		"conformance/conformance.resources_mandatory_operations.mustache":     "ResourceMandatoryOperations.adoc",
+		"conformance/conformance.resources_mandatory_notifications.mustache":  "NotificationConformanceOverview.adoc",
 		
 	},
 	
 	"conformance.filesToNumber": {
-		"GET": "conformance/0x_Get_Operation_Conformance.adoc",
-		"POST": "conformance/0x_Post_Operation_Conformance.adoc",
-		"PUT": "conformance/0x_Put_Operation_Conformance.adoc",
-		"PATCH": "conformance/0x_Patch_Operation_Conformance.adoc",
-		"DELETE": "conformance/0x_Delete_Operation_Conformance.adoc",
-		"Acknowledgement": "conformance/0x_Acknowledgements.adoc"
+		"GET":              "conformance/0x_Get_Operation_Conformance.adoc",
+		"POST":             "conformance/0x_Post_Operation_Conformance.adoc",
+		"PUT":              "conformance/0x_Put_Operation_Conformance.adoc",
+		"PATCH":            "conformance/0x_Patch_Operation_Conformance.adoc",
+		"DELETE":           "conformance/0x_Delete_Operation_Conformance.adoc",
+		"Acknowledgement":  "conformance/0x_Acknowledgements.adoc"
 	},
 	
-	"conformance.filesToNumber.start": 5,"conformance.filesToNumber.destination":"parts",
+	"conformance.filesToNumber.start":        5,
+	"conformance.filesToNumber.destination":  "parts",
 	
-	"conformance.template.mustache":"conformance.adoc",
+	"conformance.template.mustache":          "conformance.adoc",
 	
 	"conformance.filesToCopy": {
-		"conformance/01_Conformance_Introduction.adoc": "parts",
-		"conformance/02_Resources_Model_Conformance.adoc": "parts",
+		"conformance/01_Conformance_Introduction.adoc":        "parts",
+		"conformance/02_Resources_Model_Conformance.adoc":     "parts",
 		"conformance/03_Notifications_Model_Conformance.adoc": "parts",
-		"conformance/04_Operations_Conformance.adoc": "parts",
-		"conformance/Environment.adoc": "config"
+		"conformance/04_Operations_Conformance.adoc":          "parts",
 	},
 	
-	"conformance.generatedTarget": "generated/"
+	"conformance.generatedTarget": "",
+	
+	"conformance.iprMode": "RAND",
+	"conformance.docId.postfix": "B",
+	
+	"iprMode": "RAND",
 	
 	
 	

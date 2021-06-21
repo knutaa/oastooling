@@ -1,10 +1,13 @@
+include::../config/Environment.adoc[]
+ifdef::backend-pdf[<<<]
+
 == Resource Model Conformance
 
 === API Mandatory Resources 
 
 The following table indicates the mandatory resources for this API.
 
-include::../generated/ResourceConformanceOverview.adoc[]
+include::{generated}/ResourceConformanceOverview.adoc[]
 
 === General Notes on Resource Attribute Conformance
 
@@ -24,5 +27,5 @@ In this table are listed all mandatory attributes. A mandatory attribute MUST be
 
 When an attribute is listed with an indentation (in second column) it means this attribute is mandatory if root (parent) attribute is present.
 
-include::../generated/ResourceDetailedConformance.adoc[]
+include::{generated}/ResourceDetailedConformance.adoc[]
 

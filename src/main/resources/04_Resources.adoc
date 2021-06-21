@@ -5,9 +5,9 @@ ifdef::backend-pdf[<<<]
 
 === Managed Entity and Task Resource Models
 
-include::{generated}/userguide/Resources.adoc[]
+include::{generated}/Resources.adoc[]
 
 === Notification Resource Models
 
-include::{generated}/userguide/Notifications.adoc[]
+include::{generated}/Notifications.adoc[]
 

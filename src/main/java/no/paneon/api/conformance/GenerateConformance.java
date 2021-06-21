@@ -72,8 +72,14 @@ public class GenerateConformance extends GenerateCommon {
 	@LogMethod(level=LogLevel.DEBUG)
 	public void saveConformance(JSONObject conformance) {
 
-		String destination = Utils.getFilenameWithDirectory(common.workingDirectory, common.outputFileName);			
+		String targetDirectory = !args.targetDirectory.isEmpty()  ? args.targetDirectory    :
+								 !args.workingDirectory.isEmpty() ? args.workingDirectory   : 
+							     ".";
+		
+		String destination = Utils.getFilenameWithDirectory(targetDirectory, args.outputFileName);			
 
+		LOG.debug("destination; {}", destination);
+		
 		try {
 			if(destination==null) {
 				Out.println("... missing output file argument ...");

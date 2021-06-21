@@ -23,6 +23,7 @@ import com.github.mustachejava.MustacheFactory;
 
 import no.paneon.api.conformance.ConformanceModel;
 import no.paneon.api.tooling.Args;
+import no.paneon.api.tooling.DocumentInfo;
 import no.paneon.api.tooling.Args.ConformanceGuide;
 
 import java.util.List;
@@ -69,7 +70,7 @@ public class UserGuideGenerator {
 		this.userGuideData = new UserGuideData();
 		
 		this.userGuideData.imageFormat = this.args.imageFormat;
-		
+				
 	}
 
 
@@ -82,6 +83,8 @@ public class UserGuideGenerator {
 				
 			Timestamp.timeStamp("finished user guide data");
 
+			this.userGuideData.documentInfo = new DocumentInfo(conformance.getRules());
+			
 			generatePartials(userGuideData);
 
 			processTemplates(userGuideData);
@@ -91,12 +94,12 @@ public class UserGuideGenerator {
 			if(!args.generatedOnly) {
 				copyFiles();
 							
-				Boolean res = Utils.copyFile("UserGuide_template.adoc", args.outputFileName, args.targetDirectory, args.templateDirectory);
-				if(!res) {
-					Out.debug("... unable to copy user guide to file {}", args.outputFileName);
-				} else {
-					Out.println("... saved user guide to file {}", args.outputFileName);
-				}
+				// Boolean res = Utils.copyFile("UserGuide_template.adoc", args.outputFileName, args.targetDirectory, args.templateDirectory);
+				//if(!res) {
+				//	Out.debug("... unable to copy user guide to file {}", args.outputFileName);
+				//} else {
+				//	Out.println("... saved user guide to file {}", args.outputFileName);
+				// }
 			} else {
 				Out.println("... template files are not copied (only the files with generated content from the API specification)" );
 			}
@@ -131,9 +134,9 @@ public class UserGuideGenerator {
 	private void processTemplates(UserGuideData data) {
 		Map<String,String> templatesToProcess = Config.getMap("userguide.generated.templates");
 		
-		String targetDirectory = this.getTargetDirectory("./");
+		String targetDirectory = this.getTargetDirectory("");
 		
-		String generatedTargetDirectory = this.getGeneratedTargetDirectory("./");
+		String generatedTargetDirectory = this.getGeneratedTargetDirectory("");
 		
 		String relativePathToGeneratedDirectory = extractRelativePath(targetDirectory,generatedTargetDirectory);
 				
@@ -155,6 +158,8 @@ public class UserGuideGenerator {
 			String template = entry.getKey();
 			String destination = entry.getValue();
 			
+			if(destination.contentEquals("$output")) destination = args.outputFileName;
+			
 			processTemplate(template, data, targetDirectory + destination);
 
 		});
@@ -165,17 +170,19 @@ public class UserGuideGenerator {
 
 
 	private String extractRelativePath(String dir1, String dir2) {
-		
-		StringBuilder prefix = new StringBuilder();
+				
+		String[] dir1parts = dir1.split("/");
+		String[] dir2parts = dir2.split("/");
+
 		boolean done = false;
 		int pos=0;
 		
 		while(!done) {
-			if(pos>=dir1.length()) done=true;
-			if(pos>=dir2.length()) done=true;
+			if(pos>=dir1parts.length) done=true;
+			if(pos>=dir2parts.length) done=true;
 			
 			if(!done) {
-				if(dir1.charAt(pos) == dir2.charAt(pos)) {
+				if(dir1parts[pos].contentEquals(dir2parts[pos])) {
 					pos++;
 				} else {
 					done=true;
@@ -183,17 +190,18 @@ public class UserGuideGenerator {
 			}
 		}
 		
-		dir1 = dir1.substring(pos);
-		dir2 = dir2.substring(pos);
+		dir1parts = Arrays.copyOfRange(dir1parts, pos, dir1parts.length);
+		dir2parts = Arrays.copyOfRange(dir2parts, pos, dir2parts.length);
+
+		dir1 = String.join("/", dir1parts);
+		dir2 = String.join("/", dir2parts);
 
 		dir1 = dir1.replace("./", "");
 		dir2 = dir2.replace("./", "");
-
-		String offset = Config.getString("userguide.generatedTarget");
-		dir1 = dir1 + File.separator + offset;
-		if(!dir1.endsWith(File.separator)) dir1 = dir1 + File.separator;
 		
-		int steps = dir1.replaceAll("[^/]*", "").replaceAll("^/", "").length();
+		int steps = 2 + dir1.replaceAll("[^/]*", "").replaceAll("^/", "").length();
+		
+		LOG.debug("dir1=" + dir1 + " dir2=" + dir2 + " steps=" + steps);
 		
 		StringBuilder res = new StringBuilder();
 		while(steps>0) {
@@ -202,7 +210,6 @@ public class UserGuideGenerator {
 		}
 		
 		res.append(dir2);
-		
 		return res.toString();
 		
 	}

@@ -32,4 +32,4 @@ Design Guidelines.
 
 Notifications are also described in a subsequent section.
 
-include::{generated}/userguide/Operations.adoc[]
+include::{generated}/Operations.adoc[]

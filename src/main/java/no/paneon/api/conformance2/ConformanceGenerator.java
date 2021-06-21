@@ -53,6 +53,7 @@ import java.io.StringWriter;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.util.Strings;
 
 
 public class ConformanceGenerator {
@@ -114,28 +115,96 @@ public class ConformanceGenerator {
 
 		} catch(Exception ex) {
 			Out.printAlways("... error generating userguide: exception=" + ex.getLocalizedMessage());
-			ex.printStackTrace();
+			// ex.printStackTrace();
 			System.exit(0);
 		}
 				
 	}
 	
 	private void processTemplates(ConformanceData data) {
-		Map<String,String> templatesToProcess = Config.getMap("conformance.templates");
+
+		Map<String,String> templatesToProcess = Config.getMap("conformance.generated.templates");
 		
-		String targetDirectory = this.getTargetDirectory("./");
+		String targetDirectory = this.getTargetDirectory("");
 		
-		templatesToProcess.entrySet().stream().forEach(entry -> {
-			String template = entry.getKey();
-			String destination = entry.getValue();
+		String generatedTargetDirectory = this.getGeneratedTargetDirectory("");
+		
+		String relativePathToGeneratedDirectory = extractRelativePath(targetDirectory,generatedTargetDirectory);
 			
-			processTemplate(template, data, targetDirectory + destination);
+		data.generatedPath = relativePathToGeneratedDirectory;
+		
+		LOG.debug("relativePathToGeneratedDirectory: {}", relativePathToGeneratedDirectory); 
+		LOG.debug("generatedTargetDirectory: {}", generatedTargetDirectory); 
+		LOG.debug("targetDirectory: {}", targetDirectory); 
 
-		});
+		processTemplatesHelper(data, templatesToProcess, generatedTargetDirectory);
+		
+		templatesToProcess = Config.getMap("conformance.templates");
+								
+		processTemplatesHelper(data, templatesToProcess, targetDirectory);
 
+		
 		
 	}
 
+	private void processTemplatesHelper(ConformanceData data, Map<String, String> templates, String directory) {
+		templates.entrySet().stream().forEach(entry -> {
+			String template = entry.getKey();
+			String destination = entry.getValue();
+			
+			if(destination.contentEquals("$output")) destination = args.outputFileName;
+
+			processTemplate(template, data, directory + destination);
+
+		});		
+	}
+
+
+	private String extractRelativePath(String dir1, String dir2) {
+		
+		String[] dir1parts = dir1.split("/");
+		String[] dir2parts = dir2.split("/");
+
+		boolean done = false;
+		int pos=0;
+		
+		while(!done) {
+			if(pos>=dir1parts.length) done=true;
+			if(pos>=dir2parts.length) done=true;
+			
+			if(!done) {
+				if(dir1parts[pos].contentEquals(dir2parts[pos])) {
+					pos++;
+				} else {
+					done=true;
+				}
+			}
+		}
+		
+		dir1parts = Arrays.copyOfRange(dir1parts, pos, dir1parts.length);
+		dir2parts = Arrays.copyOfRange(dir2parts, pos, dir2parts.length);
+
+		dir1 = String.join("/", dir1parts);
+		dir2 = String.join("/", dir2parts);
+
+		dir1 = dir1.replace("./", "");
+		dir2 = dir2.replace("./", "");
+		
+		int steps = 2 + dir1.replaceAll("[^/]*", "").replaceAll("^/", "").length();
+		
+		LOG.debug("dir1=" + dir1 + " dir2=" + dir2 + " steps=" + steps);
+		
+		StringBuilder res = new StringBuilder();
+		while(steps>0) {
+			res.append("../");
+			steps--;
+		}
+		
+		res.append(dir2);
+		
+		return res.toString();
+		
+	}
 
 	private List<String> copyFiles(Map<String,String> filesToCopy) {
 		
@@ -373,13 +442,23 @@ public class ConformanceGenerator {
 		
 		return resources;
 	}
-
-
+	
 	public String getTargetDirectory(String subdir) {
+		return getTargetDirectory(subdir, args.targetDirectory);		
+	}
+	
+	public String getGeneratedTargetDirectory(String subdir) {
+		String target=args.generatedTargetDirectory;
+		if(target==null) target = Config.getString("conformance.generatedTarget");
+		if(target==null || target.isBlank()) target=args.targetDirectory;
+		return getTargetDirectory(subdir, target);
+	}
+	
+	public String getTargetDirectory(String subdir, String commandArg) {
 		String targetDir;
 		
-		if(args.targetDirectory!=null && !args.targetDirectory.isEmpty()) {
-			targetDir = args.targetDirectory + "/" + subdir;
+		if(commandArg!=null && !commandArg.isEmpty()) {
+			targetDir = commandArg + "/" + subdir;
 		} else {
 			targetDir = args.workingDirectory!=null ? args.workingDirectory : System.getProperty("user.dir");
 			

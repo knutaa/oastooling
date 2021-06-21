@@ -1,5 +1,6 @@
 package no.paneon.api.conformance;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -2361,6 +2362,77 @@ public class ConformanceModel extends CoreModel {
 		if(schemaDefaults!=null) schemaDefaults = schemaDefaults.optJSONObject(resource);
 				
 		return schemaDefaults;
+	}
+
+	public String getDocID() {
+		Optional<String> optDocId = getOptionalString(this.rules,"#/api/tmfId");		
+		Optional<String> optDocIdAPI = getOptionalString(APIModel.getDocumentDetails(), "#/variables/DocumentNumber");
+
+		String docId = optDocId.isPresent()    ? optDocId.get() + Config.getString("conformance.docId.postfix") : 
+			           optDocIdAPI.isPresent() ? optDocIdAPI.get() + Config.getString("conformance.docId.postfix") : 
+					   "TBD";
+
+		return docId;
+	}
+
+	private Optional<String> getOptionalString(JSONObject source, String path) {
+		Optional<String> res = Optional.empty();
+		if(source!=null) {
+			Object value = source.query(path);
+			if(value!=null) res = Optional.of(value.toString() );
+		}
+		return res;
+	}
+
+	public String getRelease() {
+		Optional<String> optReleaseAPI = getOptionalString(APIModel.getDocumentDetails(), "#/variables/Release");
+
+		return optReleaseAPI.isPresent() ? optReleaseAPI.get() : "TBD";	
+	}
+
+	public String getDate() {
+		Optional<String> optDateAPI = getOptionalString(APIModel.getDocumentDetails(), "#/variables/Date");
+
+		return optDateAPI.isPresent() ? optDateAPI.get() : "TBD";	
+	}
+
+	public String getRevision() {
+		Optional<String> optDocId    = getOptionalString(this.rules, "#/api/version");
+		Optional<String> optDocIdAPI = getOptionalString(APIModel.getDocumentDetails(), "#/variables/DocumentVersion");
+
+		LOG.debug("doc details: {}", APIModel.getDocumentDetails().toString(4));
+		
+		return optDocId.isPresent() ? optDocId.get() : 
+			   optDocIdAPI.isPresent() ? optDocIdAPI.get() :
+			   "TBD";	
+		
+	}
+
+	public String getIPRMode() {
+		return Config.getString("conformance.iprMode");
+	}
+
+	public String getStatus() {
+		return "TBD";
+	}
+
+	public String getReleaseStatus() {
+		return "TBD";
+	}
+
+	public String getYear() {
+		Optional<String> optYearAPI = getOptionalString(APIModel.getDocumentDetails(), "#/variables/Year");
+
+		return optYearAPI.isPresent() ? optYearAPI.get() : "TBD";	
+	}
+
+	public String getTitle() {
+		Optional<String> optDocTitle = getOptionalString(this.rules,"#/api/name");
+		Optional<String> optDocTitleAPI = getOptionalString(APIModel.getDocumentDetails(), "#/variables/ApiName");
+
+		return optDocTitle.isPresent() ? optDocTitle.get() : 
+			optDocTitleAPI.isPresent() ? optDocTitleAPI.get() : 
+			"TBD";
 	}
 
 	

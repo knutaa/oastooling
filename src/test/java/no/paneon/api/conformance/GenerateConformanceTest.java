@@ -55,7 +55,7 @@ public class GenerateConformanceTest  {
 		Args.Conformance argsConformance = args.new Conformance();
     	
 		argsConformance.openAPIFile = file;
-		argsConformance.targetDirectory = "."; // folder.toString();
+		argsConformance.targetDirectory = ".";
 		// argsConformance.debug = "all";
 		argsConformance.outputFileName = "test-conformance.yaml";
 

@@ -375,10 +375,10 @@ public class ResourcesFragment {
 
 
 	private void createResourceFragment(ResourceData resourceConfig) {		
-		String generatedTarget = Config.getString("userguide.generatedTarget");		
-		if(generatedTarget.isEmpty()) generatedTarget = "generated/";
+//		String generatedTarget = Config.getString("userguide.generatedTarget");		
+//		if(generatedTarget.isEmpty()) generatedTarget = "generated/";
 		
-		String targetDirectory = generator.getGeneratedTargetDirectory(generatedTarget);
+		String targetDirectory = generator.getGeneratedTargetDirectory("");
 		String outputfile = targetDirectory + resourceConfig.fileSource;
 		
 		generator.processTemplate("userguide.resource.mustache", resourceConfig, outputfile);
@@ -397,11 +397,11 @@ public class ResourcesFragment {
 
 	private void createResourceDiagramFragment(UserGuideData.ResourceData resourceConfig) {		
 		
-		String generatedTarget = Config.getString("userguide.generatedTarget");
+//		String generatedTarget = Config.getString("userguide.generatedTarget");
+//		
+//		if(generatedTarget.isEmpty()) generatedTarget = "generated/";
 		
-		if(generatedTarget.isEmpty()) generatedTarget = "generated/";
-		
-		String targetDirectory = generator.getGeneratedTargetDirectory(generatedTarget);
+		String targetDirectory = generator.getGeneratedTargetDirectory("");
 		
 		String outputfile = targetDirectory + resourceConfig.diagramSource;
 		
