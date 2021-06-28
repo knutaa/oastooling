@@ -148,9 +148,14 @@ public class ConformanceGenerator {
 	}
 
 	private void processTemplatesHelper(ConformanceData data, Map<String, String> templates, String directory) {
+		
+		LOG.debug("processTemplatesHelper: data {}", data.resourceDetails.stream().map(Object::toString).collect(Collectors.joining("\n")));
+
 		templates.entrySet().stream().forEach(entry -> {
 			String template = entry.getKey();
 			String destination = entry.getValue();
+			
+			LOG.debug("processTemplatesHelper: {}", template);
 			
 			if(destination.contentEquals("$output")) destination = args.outputFileName;
 
@@ -325,38 +330,38 @@ public class ConformanceGenerator {
 	}
 
 	
-	private Map<String, Object> getModelFromJson(JSONObject json) throws JSONException {
-	    Map<String,Object> out = new HashMap<String,Object>();
-
-	    Iterator it = json.keys();
-	    while (it.hasNext()) {
-	        String key = (String)it.next();
-
-	        if (json.get(key) instanceof JSONArray) {
-
-	            // Copy an array
-	            JSONArray arrayIn = json.getJSONArray(key);
-	            List<Object> arrayOut = new ArrayList<Object>();
-	            for (int i = 0; i < arrayIn.length(); i++) {
-	                Object item = arrayIn.get(i);
-	                if(item instanceof JSONObject) {
-	                	Map<String, Object> items = getModelFromJson((JSONObject)item);
-	                	arrayOut.add(items);
-	                } else {
-	                	arrayOut.add(item.toString());
-	                }
-	            }
-	            out.put(key, arrayOut);
-	        }
-	        else {
-
-	            // Copy a primitive string
-	            out.put(key, json.getString(key));
-	        }
-	    }
-
-	    return out;
-	}
+//	private Map<String, Object> getModelFromJson(JSONObject json) throws JSONException {
+//	    Map<String,Object> out = new HashMap<String,Object>();
+//
+//	    Iterator it = json.keys();
+//	    while (it.hasNext()) {
+//	        String key = (String)it.next();
+//
+//	        if (json.get(key) instanceof JSONArray) {
+//
+//	            // Copy an array
+//	            JSONArray arrayIn = json.getJSONArray(key);
+//	            List<Object> arrayOut = new ArrayList<Object>();
+//	            for (int i = 0; i < arrayIn.length(); i++) {
+//	                Object item = arrayIn.get(i);
+//	                if(item instanceof JSONObject) {
+//	                	Map<String, Object> items = getModelFromJson((JSONObject)item);
+//	                	arrayOut.add(items);
+//	                } else {
+//	                	arrayOut.add(item.toString());
+//	                }
+//	            }
+//	            out.put(key, arrayOut);
+//	        }
+//	        else {
+//
+//	            // Copy a primitive string
+//	            out.put(key, json.getString(key));
+//	        }
+//	    }
+//
+//	    return out;
+//	}
 
 	
 	@LogMethod(level=LogLevel.DEBUG)	
@@ -577,7 +582,9 @@ public class ConformanceGenerator {
 		for(String property : properties) {
 			rowDetails.putAll( createResourceDetailsForProperty(resource, property, config, seenResources) );
 		}
-						
+					
+		Out.debug("getResourceDetailsForResource: rowDetails = {}", rowDetails);
+		
 		if(Config.getBoolean("compareByLevel")) {
 									
 			List<String> ordering = arrangeByLevel(rowDetails);

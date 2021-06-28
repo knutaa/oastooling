@@ -1,3 +1,5 @@
+include::../config/Environment.adoc[]
+ifdef::backend-pdf[<<<]
 
 == Acknowledgements
 

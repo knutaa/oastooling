@@ -1,3 +1,6 @@
+include::../config/Environment.adoc[]
+ifdef::backend-pdf[<<<]
+
 == API NOTIFICATIONS
 
 For every single of operation on the entities use the following

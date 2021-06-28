@@ -36,6 +36,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 import static java.util.stream.Collectors.toList;
 
@@ -226,22 +227,42 @@ public class UserGuideGenerator {
 	}
 
 	private void copyFiles(Map<String,String> filesToCopy, String targetDirectory) {		
+				
 		filesToCopy.entrySet().stream().forEach(entry -> {
-			String file = entry.getKey();
+			String source = entry.getKey();
+			
+			String file = Utils.getBaseFileName(source);
+						
 			String dir = entry.getValue();
 			
-			Boolean res = Utils.copyFile(file, dir + "/" + file, targetDirectory, args.templateDirectory);
-			if(!res) {
+			String target = dir + "/" + file;
+			
+			Boolean copied = Utils.copyFile(source, target, args.targetDirectory, args.templateDirectory);
+			if(!copied) {
 				Out.debug("... unable to copy file {}", file);
 			}
 
 		});
+		
+		
+//		filesToCopy.entrySet().stream().forEach(entry -> {
+//			String file = entry.getKey();
+//			String dir = entry.getValue();
+//			
+//			Boolean res = Utils.copyFile(file, dir + "/" + file, targetDirectory, args.templateDirectory);
+//			if(!res) {
+//				Out.debug("... unable to copy file {}", file);
+//			}
+//
+//		});
 		
 	}
 
 	protected void processTemplate(String template, Object data, String outputFileName) {
 		
 		LOG.debug("processTemplate: {} outputFileName: {}",  template, outputFileName);
+		
+		if(Config.has(template)) template = Config.getString(template);
 		
 		try {
 			MustacheFactory mf = new DefaultMustacheFactory();

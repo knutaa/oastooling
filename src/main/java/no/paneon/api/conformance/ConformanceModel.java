@@ -1,6 +1,5 @@
 package no.paneon.api.conformance;
 
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -17,7 +16,6 @@ import java.util.stream.Collectors;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import no.paneon.api.conformance.ConformanceItem;
 import no.paneon.api.logging.AspectLogger.LogLevel;
 import no.paneon.api.logging.LogMethod;
 import no.paneon.api.model.APIModel;
@@ -52,7 +50,6 @@ public class ConformanceModel extends CoreModel {
 	private static final String RESOURCE = "resource";
 	private static final String RESOURCES = "resources";
 
-	private static final String OPERATION = "operation";
 	private static final String OPERATIONS = "operations";
 		
 	private static final String ATTRIBUTES = "attributes";
@@ -1135,12 +1132,6 @@ public class ConformanceModel extends CoreModel {
 		
 	}
 
-	private void addVariablesSection(JSONObject res) {
-		JSONObject conformance = res;
-		if(conformance.has(CONFORMANCE)) conformance = conformance.optJSONObject(CONFORMANCE);
-		if(conformance!=null) conformance.put(VARIABLES, new JSONObject());
-	}
-
 	@LogMethod(level=LogLevel.DEBUG)
 	private JSONObject addSchemaConformance(JSONObject res, JSONObject schema_defaults) {
 	
@@ -1592,7 +1583,7 @@ public class ConformanceModel extends CoreModel {
 		JSONObject obj = model.optJSONObject(DEFAULT_CONFORMANCE);
 		
 		if(obj==null) {
-			Out.println("... no conformance defaults found");
+			Out.println("... not using conformance defaults (not found, not required, not an error)");
 			return;
 		}
 		

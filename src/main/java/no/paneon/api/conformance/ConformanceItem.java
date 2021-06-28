@@ -32,4 +32,7 @@ public class ConformanceItem {
 		this.isSubordinate = value;
 	}
 	
+	public String toString() {
+		return this.label + ":: " + this.condition + " " + this.comment;
+	}
 }

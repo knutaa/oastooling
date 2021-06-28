@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.Set;
 import java.util.SortedMap;
@@ -36,15 +35,6 @@ public class ConformanceData {
 	static final Logger LOG = LogManager.getLogger(ConformanceData.class);
 
 	private static final String RESOURCE = "resource";
-	private static final String RESOURCES = "resources";
-
-	private static final String OPERATIONS = "operations";		
-	private static final String NOTIFICATIONS = "notifications";
-	
-	private static final String OPERATIONS_DETAILS = "operations-details";		
-	private static final String RESOURCE_DETAILS = "resource-details";
-
-	private static final String ATTRIBUTES = "attributes";
 	
 	private static final String COMMENT = "comment";
 
@@ -54,7 +44,7 @@ public class ConformanceData {
 		
 	public List<ConformanceOperationsDetails> resources;
 
-	public List<ConformanceMandatoryOperations>     resourceMandatoryOperations;
+	public List<ConformanceMandatoryOperations> resourceMandatoryOperations;
 	
 	public List<String>  mandatoryNotifications;
 	public boolean hasMandatoryNotifications = false;
@@ -66,17 +56,7 @@ public class ConformanceData {
 	private ConformanceModel model;
 	
 	public ConformanceDocumentInfo documentInfo;
-	
-//	public String title;
-//	public String docid;
-//	public String release;
-//	public String date;
-//	public String year;
-//	public String revision;
-//	public String iprMode;
-//	public String status;
-//	public String releaseStatus;
-	
+		
 	public ConformanceData(ConformanceModel model) {
 		this.model = model;
 		
@@ -104,6 +84,9 @@ public class ConformanceData {
 			this.conformanceItems = conformanceItems;
 		}
 		
+		public String toString() {
+			return this.resourceName + "::" + this.conformanceItems.stream().map(Object::toString).collect(Collectors.joining("\n"));
+		}
 		
 	}
 	
@@ -184,9 +167,7 @@ public class ConformanceData {
 	    for(String resource : orderedResources) {
 
 			ConformanceOperationsDetails resourceOperation = new ConformanceOperationsDetails(resource); 
-			
-			List<String> allOps = APIModel.ALL_OPS;
-			
+						
 			for(String operation : APIModel.ALL_OPS) {
 				List<String> paths = model.getPaths(resource, operation);
 		    	
@@ -326,7 +307,9 @@ public class ConformanceData {
 		for(String property : properties) {
 			rowDetails.putAll( createResourceDetailsForProperty(resource, property, seenResources) );
 		}
-						
+			
+		LOG.debug("rowDetails: {}", rowDetails);
+
 		if(Config.getBoolean("compareByLevel")) {
 									
 			List<String> ordering = arrangeByLevel(rowDetails);
@@ -339,6 +322,8 @@ public class ConformanceData {
 				res.addAll( getTableRowCompletePath(key, rowDetails, processed) );
 			}
 	
+			LOG.debug("res: {}", res);
+
 			
 		} else {
 			
@@ -373,6 +358,8 @@ public class ConformanceData {
 				.sorted()
 				.collect(Collectors.toList());
 				
+		LOG.debug("mandatoryPart: {}", mandatoryPart);
+
 		Set<String> remainingPart = rowDetails.keySet().stream()
 						.filter(key -> !mandatoryPart.contains(key))
 						.collect(Collectors.toSet());
@@ -383,6 +370,8 @@ public class ConformanceData {
 									.distinct()
 									.collect(Collectors.toList());
 		
+		LOG.debug("mandatoryWithSubs: {}", mandatoryWithSubs);
+
 		List<String> childenOfMandatoryPart = mandatoryWithSubs.stream()
 								.map(key -> getElementsWithPrefixDirect(allElements, key))
 								.flatMap(Set::stream)
@@ -400,7 +389,12 @@ public class ConformanceData {
 				
 		List<String> ordering = new LinkedList<>();
 		
+		LOG.debug("mandatoryPart: {}", mandatoryPart);
+
 		ordering.addAll( getOrderingOfProperties(mandatoryPart));		
+		
+		LOG.debug("ordering: {}", ordering);
+
 		ordering.addAll( getOrderingOfProperties(remainingPart) );
 		
 		LOG.debug("arrangeByLevel:: {}", ordering.stream().collect(Collectors.joining("\n")));
@@ -556,39 +550,28 @@ public class ConformanceData {
 	private List<String> getOrderingOfProperties(Collection<String> collection) {
 		List<String> res = new LinkedList<>();
 		
-		OptionalInt level = collection.stream().mapToInt(ConformanceData::getStructuralDepth).min();
+		if(collection.size()<=1) {
+			res.addAll(collection);
 		
-		if(!level.isPresent()) return res;
+		} else {
 				
-		PropertyCollection group = new PropertyCollection(collection,level.getAsInt());
-								
-		List<String> ordering = group.getOrdering();
-				
-		res.addAll( ordering);
+			OptionalInt level = collection.stream().mapToInt(ConformanceData::getStructuralDepth).min();
+			
+			LOG.debug("getOrderingOfProperties: level={} collection={}", level, collection);
+
+			PropertyCollection group = new PropertyCollection(collection,level.getAsInt());
+									
+			List<String> ordering = group.getOrdering();
+					
+			res.addAll( ordering);
+		
+		}
 		
 		LOG.debug("getOrderingOfProperties:: {}", res.stream().collect(Collectors.joining("\n")));
 		
 		return res;
 	}
 
-
-	private int compareLeafNodeStatus(String s1, String s2, Set<String> collection) {
-		Optional<String> nonleaf1 = collection.stream().filter(candidate -> candidate.startsWith(s1+".")).findAny();
-		Optional<String> nonleaf2 = collection.stream().filter(candidate -> candidate.startsWith(s2+".")).findAny();
-				
-		if(nonleaf1.isPresent()) {
-			if(nonleaf2.isPresent()) 
-				return nonleaf1.get().compareTo(nonleaf2.get());
-			else
-				return 1;
-		} else {
-			if(nonleaf2.isPresent())
-				return -1;
-			else
-				return 0;
-		}
-			
-	}
 
 	Comparator<String> compareRule = Comparator
 			.comparing(ConformanceData::getStructuralDepth)
@@ -620,10 +603,15 @@ public class ConformanceData {
 		seenResources.clear();
 		Map<String,ConformanceItem>  extracted = extractEmbeddedResourceDetails(resource, property, condition, comment, path, seenResources);
 				
-		LOG.debug("extracted: {}", extracted);
+		LOG.debug("extracted: filter={} extracted={}", filter, extracted);
 
-		return extracted.entrySet().stream()
-						.filter(entry -> !filter || (filter && !ConformanceModel.isOptional(entry.getValue().condition)))
+		Predicate<Entry<String,ConformanceItem>> keepItem = entry -> !ConformanceModel.isOptional(entry.getValue().condition);
+		
+		if(!filter)
+			return extracted.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+		else 
+			return extracted.entrySet().stream()
+						.filter(keepItem)
 						.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 			
 	}
@@ -790,9 +778,7 @@ public class ConformanceData {
 			
 		} else {
 			if(!processed.containsKey(ROWTITLE + parentKey)) {
-				
-				JSONObject schemaDefaults = getSchemaDefaults(parentResource);
-	
+					
 				res.add( createTableRow(new ConformanceItem(parent + Config.getString("parentPresentCondition"), condition, ruleText), 0) );
 				processed.put(ROWTITLE + parentKey,parentKey);
 			} 

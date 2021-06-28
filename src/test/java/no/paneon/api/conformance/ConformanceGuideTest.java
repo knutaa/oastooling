@@ -25,7 +25,7 @@ public class ConformanceGuideTest  {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
     
-	String TARGETDIR = "."; // folder.toString();
+	String TARGETDIR = "test-conformance"; // folder.toString();
 
     String API = "./src/test/resources/Quote_Management_5.0.0_oas.yaml";
     
@@ -33,6 +33,8 @@ public class ConformanceGuideTest  {
 
 	String TARGET = TARGETDIR + "/conf-test";
 	String RESOURCE_OVERVIEW =  TARGET + "/generated/ResourceConformanceOverview.adoc";
+
+	String OUTPUT = TARGETDIR + "/conformance.adoc";
 
         
     @BeforeClass
@@ -83,7 +85,8 @@ public class ConformanceGuideTest  {
 		argsConformanceGuide.targetDirectory = TARGETDIR;
 		argsConformanceGuide.conformance     = CONFORMANCE_FILE;
 		argsConformanceGuide.silentMode      = true;
-		
+		argsConformanceGuide.outputFileName  = OUTPUT;
+
 		try {
 	    	GenerateConformanceGuide generator = new GenerateConformanceGuide(argsConformanceGuide);
 	    	
@@ -91,6 +94,7 @@ public class ConformanceGuideTest  {
 	    	
 	    	String overview = Utils.readFile(RESOURCE_OVERVIEW);
 	    	
+	    	Out.debug("test RESOURCE_OVERVIEW={}", RESOURCE_OVERVIEW);
 	    	assert(overview.contains("Test case - set to mandatory"));
 	    	
 		} catch(Exception ex) {

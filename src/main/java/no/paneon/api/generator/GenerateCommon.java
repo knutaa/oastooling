@@ -1,7 +1,5 @@
 package no.paneon.api.generator;
 
-import org.json.JSONObject;
-
 import no.paneon.api.tooling.Args;
 
 import no.paneon.api.logging.AspectLogger;
@@ -18,9 +16,6 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.config.Configuration;
-import org.apache.logging.log4j.core.config.LoggerConfig;
 
 public class GenerateCommon {
 	
@@ -72,12 +67,12 @@ public class GenerateCommon {
 
 	@LogMethod(level=LogLevel.DEBUG)
 	protected void setLogLevel(org.apache.logging.log4j.Level level) {
-		LoggerContext context = (LoggerContext) LogManager.getContext(false);
-		Configuration config = context.getConfiguration();
-		LoggerConfig rootConfig = config.getLoggerConfig(LogManager.ROOT_LOGGER_NAME);
-		rootConfig.setLevel(level);	
-		
-		AspectLogger.setGlobalDebugLevel(level);
+//		LoggerContext context = (LoggerContext) LogManager.getContext(false);
+//		Configuration config = context.getConfiguration();
+//		LoggerConfig rootConfig = config.getLoggerConfig(LogManager.ROOT_LOGGER_NAME);
+//		rootConfig.setLevel(level);	
+//		
+//		AspectLogger.setGlobalDebugLevel(level);
 		
 	}
 

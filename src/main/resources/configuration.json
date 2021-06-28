@@ -374,26 +374,26 @@
 	"expandPropertiesFromAllOfs": false,
 	
 	"userguide.partials":                  true,
-	"userguide.mustache":                  "userguide.mustache",
-	"userguide.mustache.partial":          "userguide.mustache.partial",
-	"userguide.mustache.diagram":          "userguide.mustache.diagram",
-	"userguide.resource_diagram.mustache": "userguide.resource_diagram.mustache",
-	"userguide.resource.mustache":         "userguide.resource.mustache",
-	"userguide.resources.mustache":        "userguide.resources.mustache",
-	"userguide.notifications.mustache":    "userguide.notifications.mustache",
-	"userguide.operations.mustache":       "userguide.operations.mustache",
- 	"userguide.environment.mustache":      "userguide.environment.mustache",
+	"userguide.mustache":                  "userguide/userguide.mustache",
+	"userguide.mustache.partial":          "userguide/userguide.mustache.partial",
+	"userguide.mustache.diagram":          "userguide/userguide.mustache.diagram",
+	"userguide.resource_diagram.mustache": "userguide/userguide.resource_diagram.mustache",
+	"userguide.resource.mustache":         "userguide/userguide.resource.mustache",
+	"userguide.resources.mustache":        "userguide/userguide.resources.mustache",
+	"userguide.notifications.mustache":    "userguide/userguide.notifications.mustache",
+	"userguide.operations.mustache":       "userguide/userguide.operations.mustache",
+ 	"userguide.environment.mustache":      "userguide/userguide.environment.mustache",
 	
 	"diagrams.yaml": "generated/diagrams/diagrams.yaml",
 	
 	"userguide.filesToCopy": {
-		"01_Introduction.adoc":                   "parts",
-		"02_UseCases.adoc":                       "parts",
-		"03_PolymorphismAndExtensions.adoc":      "parts",
-		"04_Resources.adoc":                      "parts",
-		"05_Operations.adoc":                     "parts",
-		"06_Common_notifications.adoc":           "parts",
-		"07_Acknowledgements.adoc":               "parts",
+		"userguide/01_Introduction.adoc":                   "parts",
+		"userguide/02_UseCases.adoc":                       "parts",
+		"userguide/03_PolymorphismAndExtensions.adoc":      "parts",
+		"userguide/04_Resources.adoc":                      "parts",
+		"userguide/05_Operations.adoc":                     "parts",
+		"userguide/06_Common_notifications.adoc":           "parts",
+		"userguide/07_Acknowledgements.adoc":               "parts",
 	},
 
 	"userguide.generated.filesToCopy": {
@@ -404,20 +404,22 @@
 	"userguide.generatedTarget": "",
 	
 	"userguide.generated.templates": {
-		"userguide.resources.mustache":           		"Resources.adoc",
-		"userguide.notifications.mustache":       		"Notifications.adoc",
-		"userguide.operations.mustache":          		"Operations.adoc",
-		"userguide.generated.environment.mustache":		"Environment.adoc"	
+		"userguide/userguide.resources.mustache":           		"Resources.adoc",
+		"userguide/userguide.notifications.mustache":       		"Notifications.adoc",
+		"userguide/userguide.operations.mustache":          		"Operations.adoc",
+		"userguide/userguide.generated.environment.mustache":		"Environment.adoc"	
 	},
 	
 	"userguide.templates": {
-		"userguide.environment.mustache":         "config/Environment.adoc",
-		"userguide.template.mustache":            "$output"	
+		"userguide/userguide.environment.mustache":         "config/Environment.adoc",
+		"userguide/userguide.copyright.mustache":           "config/Copyright.adoc",
+		"userguide/userguide.template.mustache":            "$output"	
 	},
 	
 	"conformance.templates": {
 		"conformance/conformance.template.mustache":               "$output",
-		"conformance/environment.mustache":		                   "config/Environment.adoc",		
+		"conformance/environment.mustache":		                   "config/Environment.adoc",	
+		"conformance/conformance.copyright.mustache":              "config/Copyright.adoc",	
 	},
 	
 	"conformance.generated.templates": {
