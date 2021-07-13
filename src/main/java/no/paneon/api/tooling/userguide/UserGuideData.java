@@ -5,13 +5,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import no.paneon.api.generator.GeneratorData;
 import no.paneon.api.tooling.DocumentInfo;
 
-public class UserGuideData {
+public class UserGuideData extends GeneratorData {
 
 	public String imageFormat; 
 	
-	public String generatePath = "../../generated"; 
+	// public String generatePath = "../../generated"; 
 
 	public Map<String,ResourceData> resources;
 	
@@ -19,7 +20,7 @@ public class UserGuideData {
 
 	public int numberOfNotifications;
 
-	public DocumentInfo documentInfo;
+	// public DocumentInfo documentInfo;
 		
 	public class ResourceData {
 		

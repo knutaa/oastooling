@@ -21,6 +21,7 @@ import org.json.JSONObject;
 
 import no.paneon.api.conformance.ConformanceItem;
 import no.paneon.api.conformance.ConformanceModel;
+import no.paneon.api.generator.GeneratorData;
 import no.paneon.api.logging.AspectLogger.LogLevel;
 import no.paneon.api.logging.LogMethod;
 import no.paneon.api.model.APIModel;
@@ -30,7 +31,7 @@ import no.paneon.api.utils.Out;
 
 import static java.util.stream.Collectors.toList;
 
-public class ConformanceData {
+public class ConformanceData extends GeneratorData {
 
 	static final Logger LOG = LogManager.getLogger(ConformanceData.class);
 
@@ -51,13 +52,10 @@ public class ConformanceData {
 	
 	public List<FileData> parts;
 		
-	public String generatedPath;
-
 	private ConformanceModel model;
-	
-	public ConformanceDocumentInfo documentInfo;
-		
+			
 	public ConformanceData(ConformanceModel model) {
+		super();
 		this.model = model;
 		
 	}

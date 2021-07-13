@@ -1287,6 +1287,8 @@ public class ConformanceModel extends CoreModel {
 	private void addResourcesAndNotificationsDefaults(Set<String> keys, JSONObject conformance, List<String> resources, JSONObject defaults) {
 		for(String key : keys) {
 					
+			LOG.debug("addResourcesAndNotificationsDefaults: keuy={}",  key);
+			
 			JSONObject obj = conformance.optJSONObject(key);
 			if(resources.contains(key)) {		
 				addResourcesDefaults(obj, conformance, defaults);
@@ -1308,6 +1310,9 @@ public class ConformanceModel extends CoreModel {
 
 	@LogMethod(level=LogLevel.DEBUG)
 	private void addResourcesDefaults(JSONObject resource, JSONObject conformance, JSONObject defaults) {
+		
+		LOG.debug("addResourcesDefaults: resource={} conformance={} defaults={}",  resource, conformance.toString(2), defaults.toString(2));
+		
 		if(resource!=null) {
 			JSONObject candidate = defaults.optJSONObject(RESOURCE);
 			

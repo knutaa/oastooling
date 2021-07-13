@@ -38,6 +38,10 @@ public class GenerateConformance extends GenerateCommon {
 		
 		model.init();
 		
+		if(args.defaults!=null) {
+			model.setDefaults(args.defaults);
+		}
+		
 		model.extractFromSwagger();
 		
 		model.extractFromRules();

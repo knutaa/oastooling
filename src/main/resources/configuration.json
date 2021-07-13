@@ -1,6 +1,5 @@
 {
 	"###NOTE###": "This configuration is included in the jar file",
-	"userguide::eventsubscription": "NotificationsPattern.png",
 
 	"userguide": {
 		"variables": {
@@ -397,6 +396,7 @@
 	},
 
 	"userguide.generated.filesToCopy": {
+		"NotificationsPattern.puml":              "./images",
 		"NotificationsPattern.png":               "./images",
 		"NotificationsPattern.svg":               "./images",
 	},

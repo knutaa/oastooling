@@ -27,11 +27,6 @@ public class NotificationsFragment {
 	static final Logger LOG = LogManager.getLogger(NotificationsFragment.class);
 	
 	private static final String JSON_REPRESENTATIONS = "jsonRepresentations";
-	private static final String JSON_TABLE = "jsonTable";
-		
-	private static final String NOTIFICATION_TAG = "First Notification";
-
-	private static final String EVENT_IMAGE = "userguide::eventsubscription";
 		
 	private static final String EVENT_TEMPLATE = "template";
 

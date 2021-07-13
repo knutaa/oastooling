@@ -6,6 +6,7 @@ import org.json.JSONObject;
 
 import no.paneon.api.conformance.ConformanceItem;
 import no.paneon.api.conformance.ConformanceModel;
+import no.paneon.api.generator.GenerateCommon;
 import no.paneon.api.graph.APIGraph;
 import no.paneon.api.graph.Node;
 import no.paneon.api.logging.AspectLogger.LogLevel;
@@ -23,6 +24,7 @@ import com.github.mustachejava.MustacheFactory;
 
 import no.paneon.api.conformance.ConformanceModel;
 import no.paneon.api.tooling.Args;
+import no.paneon.api.tooling.userguide.UserGuideData;
 
 import java.util.List;
 import java.util.Map;
@@ -103,15 +105,12 @@ public class ConformanceGenerator {
 
 			generatePartials(conformanceData);
 
-			processTemplates(conformanceData);
+			boolean keepExisting=true;
+			GenerateCommon.processTemplates(this.args, conformanceData, "conformance.generated.templates", "conformance.templates", keepExisting);
 					
-			if(!args.generatedOnly) {
-				Map<String,String> filesToCopy = Config.getMap("conformance.filesToCopy");
-				copyFiles(filesToCopy);
-				
-			} else {
-				Out.println("... template files are not copied (only the files with generated content from the API specification)" );
-			}
+			Map<String,String> filesToCopy = Config.getMap("conformance.filesToCopy");
+			copyFiles(filesToCopy, args.generatedOnly);
+
 
 		} catch(Exception ex) {
 			Out.printAlways("... error generating userguide: exception=" + ex.getLocalizedMessage());
@@ -121,7 +120,51 @@ public class ConformanceGenerator {
 				
 	}
 	
-	private void processTemplates(ConformanceData data) {
+//	private void processTemplates(UserGuideData data, boolean generatedOnly) {
+//		Map<String,String> templatesToProcess = Config.getMap("conformance.generated.templates");
+//		
+//		String targetDirectory = this.getTargetDirectory("");
+//		
+//		String generatedTargetDirectory = this.getGeneratedTargetDirectory();
+//		
+//		String relativePathToGeneratedDirectory = extractRelativePath(targetDirectory,generatedTargetDirectory);
+//				
+//		data.generatePath = relativePathToGeneratedDirectory;
+//		
+//		LOG.debug("relativePathToGeneratedDirectory: {}", relativePathToGeneratedDirectory); 
+//		
+//		templatesToProcess.entrySet().stream().forEach(entry -> {
+//			String template = entry.getKey();
+//			String destination = entry.getValue();
+//			
+//			String target = generatedTargetFileName(generatedTargetDirectory, destination);
+//
+//			processTemplate(template, data, target);
+//
+//		});
+//
+//		templatesToProcess = Config.getMap("conformance.templates");
+//								
+//		templatesToProcess.entrySet().stream().forEach(entry -> {
+//			String template = entry.getKey();
+//			String destination = entry.getValue();
+//			
+//			if(destination.contentEquals("$output")) destination = args.outputFileName;
+//			
+//			String target = generatedTargetFileName(targetDirectory, destination);
+//			
+//			if(!generatedOnly || !fileExists(target) ) {
+//				processTemplate(template, data, target);
+//			} else {
+//				Out.println("... file " + destination + " exists - not overwritten");
+//			}
+//			
+//		});
+//
+//		
+//	}
+
+	private void processTemplates_old(ConformanceData data) {
 
 		Map<String,String> templatesToProcess = Config.getMap("conformance.generated.templates");
 		
@@ -211,7 +254,7 @@ public class ConformanceGenerator {
 		
 	}
 
-	private List<String> copyFiles(Map<String,String> filesToCopy) {
+	private List<String> copyFiles(Map<String,String> filesToCopy, boolean keepExisting) {
 		
 		List<String> res = new LinkedList<>();
 		
