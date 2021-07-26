@@ -56,13 +56,17 @@ public class App {
 	}
 	
 	public static void main(String ... args) {
-		App app = new App(args);
 		
-		try {			
+		try {	
+			
+			Timestamp.timeStamp("... start");
+			
+			App app = new App(args);
+
 			app.run();
+			
 		} catch(Exception ex) {
 			Out.println("error: " + ex.getLocalizedMessage());	
-			ex.printStackTrace();
 			System.exit(1);			
 		}
 		
@@ -76,7 +80,7 @@ public class App {
 						
 		if (commandLine.getParsedCommand()==null) {
             commandLine.usage();
-            return;
+			System.exit(1);			
         }
 		
 		Timestamp.timeStamp("arguments available");
@@ -91,6 +95,7 @@ public class App {
     	case ARG_USER_GUIDE:    		
     		if(argsUserGuide.outputFileName==null && !argsUserGuide.generatedOnly) {
     			Out.println("... missing output file argument");
+    			
     		} else {
     			
     			if(argsUserGuide.generatedTargetDirectory==null) {
@@ -98,7 +103,9 @@ public class App {
     			}
     			
     			GenerateUserGuide genUserGuideAsciiDoc = new GenerateUserGuide(argsUserGuide);
+    			
     			genUserGuideAsciiDoc.execute();
+    			
     		}
     		break;
  

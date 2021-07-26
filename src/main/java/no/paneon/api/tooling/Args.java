@@ -25,18 +25,12 @@ public class Args {
 		@Parameter(names = { "--diagrams" }, description = "Diagram source configuration (diagrams.yaml)")
 		public String diagrams = null;
 		
-		@Parameter(names = { "--template-directory" }, description = "Document template directory, defaults to current directory")
-		public String templateDirectory = ".";
-
 		@Parameter(names = { "--generated-only" }, description = "Only create the files with generated content, do not add the template files")
 		public boolean generatedOnly = false;
 
 	}
 
 	public class ConformanceGuide extends Common {
-
-		@Parameter(names = { "--template-directory" }, description = "Document template directory, defaults to current directory")
-		public String templateDirectory = ".";
 
 		@Parameter(names = { "--generated-only" }, description = "Only create the files with generated content, do not add the template files")
 		public boolean generatedOnly = false;
@@ -126,7 +120,13 @@ public class Args {
 		public String template = null;
 
 		@Parameter(names = { "--image-format" }, description = "Image format to use - legal values are puml, svg, png. Default is svg")
-		public String imageFormat = "svg";
+		public String imageFormat = "png";
+		
+		@Parameter(names = { "--template-directory" }, description = "Document template directory, defaults to current directory")
+		public String templateDirectory = ".";
+
+		@Parameter(names = { "--time-stamp" }, description = "Include time stamp details")
+		public boolean timestamp = false;
 		
 	}
 

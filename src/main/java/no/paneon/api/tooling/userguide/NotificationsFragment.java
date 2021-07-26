@@ -5,6 +5,7 @@ import org.json.JSONObject;
 
 import no.paneon.api.model.APIModel;
 import no.paneon.api.utils.Config;
+import no.paneon.api.utils.Timestamp;
 import no.paneon.api.utils.Utils;
 
 import no.paneon.api.tooling.Args;
@@ -70,6 +71,8 @@ public class NotificationsFragment {
 	
 		}				
 		
+		Timestamp.timeStamp("finished notification fragment");
+
 	}
 
 	private UserGuideData.NotificationData getNotificationDetailsForNotification(JSONObject config, String resource, String notification) {

@@ -1,11 +1,9 @@
 package no.paneon.api.tooling.userguide;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import no.paneon.api.conformance.ConformanceItem;
 import no.paneon.api.conformance.ConformanceModel;
+import no.paneon.api.generator.GenerateCommon;
 import no.paneon.api.graph.APIGraph;
 import no.paneon.api.graph.Node;
 import no.paneon.api.logging.AspectLogger.LogLevel;
@@ -16,28 +14,21 @@ import no.paneon.api.utils.JSONObjectOrArray;
 import no.paneon.api.utils.Out;
 import no.paneon.api.utils.Timestamp;
 import no.paneon.api.utils.Utils;
-import no.paneon.api.utils.Utils.CopyStyle;
 
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
 
-import no.paneon.api.conformance.ConformanceModel;
 import no.paneon.api.tooling.Args;
 import no.paneon.api.tooling.DocumentInfo;
-import no.paneon.api.tooling.Args.ConformanceGuide;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
 
 import static java.util.stream.Collectors.toList;
 
@@ -65,14 +56,21 @@ public class UserGuideGenerator {
 
 	UserGuideData userGuideData;
 
-	public UserGuideGenerator(Args.UserGuide args, ConformanceModel conformanceModel) {
+	GenerateUserGuide generator;
+	
+	public UserGuideGenerator(GenerateUserGuide generator) {
 		
-		this.args = args;	
-		this.conformance = conformanceModel;				
+		Timestamp.timeStamp("... start set-up");
+		
+		this.generator = generator;
+		this.args = generator.args;	
+		this.conformance = generator.model;				
 		this.userGuideData = new UserGuideData();
 		
 		this.userGuideData.imageFormat = this.args.imageFormat;
 				
+		Timestamp.timeStamp("... finished set-up");
+
 	}
 
 
@@ -81,19 +79,29 @@ public class UserGuideGenerator {
 				
 		try {
 			
+			Timestamp.timeStamp("start user guide data");
+
+			// this.conformance.setRulesSource(this.args.rulesFile);
+			
 			generateUserGuideData();
 				
 			Timestamp.timeStamp("finished user guide data");
 
-			this.userGuideData.documentInfo = new DocumentInfo(conformance.getRules());
+			this.userGuideData.documentInfo = new DocumentInfo(Config.getRules());
 			
 			generatePartials(userGuideData);
 
-			processTemplates(userGuideData, args.generatedOnly);
-					
-			copyFilesForGenerated();
+			// processTemplates(userGuideData, args.generatedOnly);
+			// String generatedTemplates, String templates
 			
-			copyFiles(args.generatedOnly);
+			generator.processTemplates(args, userGuideData, "userguide.generated.templates", "userguide.templates", args.generatedOnly);
+
+			Map<String,String> filesToCopy = Config.getMap("userguide.generated.filesToCopy");
+					
+			generator.copyFiles(filesToCopy, args.generatedTargetDirectory, args.generatedOnly);
+			
+			filesToCopy = Config.getMap("userguide.filesToCopy");
+			generator.copyFiles(filesToCopy, args.generatedOnly);
 
 
 		} catch(Exception ex) {
@@ -108,7 +116,7 @@ public class UserGuideGenerator {
 	private void generateUserGuideData() {
 		
 		new ResourcesFragment(this).process();
-				
+		
 		new NotificationsFragment(this).process();
 		
 		new OperationsFragment(this).process();
@@ -124,45 +132,52 @@ public class UserGuideGenerator {
 	}
 
 	private void processTemplates(UserGuideData data, boolean generatedOnly) {
-		Map<String,String> templatesToProcess = Config.getMap("userguide.generated.templates");
 		
 		String targetDirectory = this.getTargetDirectory("");
 		
 		String generatedTargetDirectory = this.getGeneratedTargetDirectory();
 		
-		String relativePathToGeneratedDirectory = extractRelativePath(targetDirectory,generatedTargetDirectory);
+		String relativePathToGeneratedDirectory = GenerateCommon.extractRelativePath(targetDirectory,generatedTargetDirectory);
 				
 		data.generatedPath = relativePathToGeneratedDirectory;
 		
 		LOG.debug("relativePathToGeneratedDirectory: {}", relativePathToGeneratedDirectory); 
 		
-		templatesToProcess.entrySet().stream().forEach(entry -> {
-			String template = entry.getKey();
-			String destination = entry.getValue();
-			
-			String target = generatedTargetFileName(generatedTargetDirectory, destination);
+		Map<String,String> templatesToProcess = Config.getMap("userguide.generated.templates");
 
-			processTemplate(template, data, target);
-
-		});
+		templatesToProcess.entrySet().stream()
+	       .sorted(Map.Entry.comparingByKey())
+			.forEach(entry -> {
+				String template = entry.getKey();
+				String destination = entry.getValue();
+				
+				String target = generatedTargetFileName(generatedTargetDirectory, destination);
+	
+				processTemplate(template, data, target);
+	
+			});
 
 		templatesToProcess = Config.getMap("userguide.templates");
 								
-		templatesToProcess.entrySet().stream().forEach(entry -> {
-			String template = entry.getKey();
-			String destination = entry.getValue();
-			
-			if(destination.contentEquals("$output")) destination = args.outputFileName;
-			
-			String target = generatedTargetFileName(targetDirectory, destination);
-			
-			if(!generatedOnly || !fileExists(target) ) {
-				processTemplate(template, data, target);
-			} else {
-				Out.println("... file " + destination + " exists - not overwritten");
-			}
-			
-		});
+		templatesToProcess.entrySet().stream()
+	       .sorted(Map.Entry.comparingByKey())
+			.forEach(entry -> {
+				String template = entry.getKey();
+				String destination = entry.getValue();
+				
+				Out.debug("template: {}", template);
+				
+				if(destination.contentEquals("$output")) destination = args.outputFileName;
+				
+				String target = generatedTargetFileName(targetDirectory, destination);
+				
+				if(!generatedOnly || !fileExists(target) ) {
+					processTemplate(template, data, target);
+				} else {
+					Out.println("... file " + destination + " exists - not overwritten");
+				}
+				
+			});
 
 		
 	}
@@ -186,93 +201,6 @@ public class UserGuideGenerator {
 		return target;
 	}
 
-
-	private String extractRelativePath(String dir1, String dir2) {
-				
-		String[] dir1parts = dir1.split("/");
-		String[] dir2parts = dir2.split("/");
-
-		boolean done = false;
-		int pos=0;
-		
-		while(!done) {
-			if(pos>=dir1parts.length) done=true;
-			if(pos>=dir2parts.length) done=true;
-			
-			if(!done) {
-				if(dir1parts[pos].contentEquals(dir2parts[pos])) {
-					pos++;
-				} else {
-					done=true;
-				}
-			}
-		}
-		
-		dir1parts = Arrays.copyOfRange(dir1parts, pos, dir1parts.length);
-		dir2parts = Arrays.copyOfRange(dir2parts, pos, dir2parts.length);
-
-		dir1 = String.join("/", dir1parts);
-		dir2 = String.join("/", dir2parts);
-
-		dir1 = dir1.replace("./", "");
-		dir2 = dir2.replace("./", "");
-		
-		int steps = 2 + dir1.replaceAll("[^/]*", "").replaceAll("^/", "").length();
-		
-		LOG.debug("dir1=" + dir1 + " dir2=" + dir2 + " steps=" + steps);
-		
-		StringBuilder res = new StringBuilder();
-		while(steps>=0) {
-			res.append("../");
-			steps--;
-		}
-		
-		res.append(dir2);
-		return res.toString();
-		
-	}
-
-
-	private void copyFiles(boolean keepExisting) {
-		Map<String,String> filesToCopy = Config.getMap("userguide.filesToCopy");	
-		String targetDirectory = getTargetDirectory();
-
-		copyFiles(filesToCopy, targetDirectory, keepExisting);
-	}
-
-	private void copyFilesForGenerated() {
-		Map<String,String> filesToCopy = Config.getMap("userguide.generated.filesToCopy");
-		String targetDirectory = getGeneratedTargetDirectory();
-				
-		copyFiles(filesToCopy, targetDirectory);
-	}
-
-	private void copyFiles(Map<String, String> filesToCopy, String targetDirectory) {
-		copyFiles(filesToCopy, targetDirectory, false);
-	}
-
-	private void copyFiles(Map<String,String> filesToCopy, String targetDirectory, boolean keepExisting) {		
-				
-		filesToCopy.entrySet().stream().forEach(entry -> {
-			String source = entry.getKey();
-			
-			String file = Utils.getBaseFileName(source);
-						
-			String dir = entry.getValue();
-			
-			String target = dir + "/" + file;
-			
-			CopyStyle copyStyle = keepExisting ? CopyStyle.KEEP_ORIGINAL : CopyStyle.OVERWRITE;
-			
-			Boolean copied = Utils.copyFile(source, target, targetDirectory, args.templateDirectory, copyStyle);
-			
-			if(!copied) {
-				Out.debug("... unable to copy file {}", file);
-			}
-
-		});
-		
-	}
 
 	protected void processTemplate(String template, Object data, String outputFileName) {
 		

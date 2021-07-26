@@ -3,7 +3,8 @@
   
   
   <CustomLevels>
-    <CustomLevel name="VERBOSE" intLevel="50" />
+    <CustomLevel name="VERBOSE" intLevel="0" />
+    <CustomLevel name="ALWAYS"  intLevel="1" />
   </CustomLevels>
   
   <Appenders>
@@ -13,9 +14,14 @@
       <ThresholdFilter level="VERBOSE" onMatch="ACCEPT" onMismatch="DENY"/>
     </Console>
  
+     <Console name="Info" target="SYSTEM_OUT">
+      <PatternLayout pattern="%m%n"/>
+      <ThresholdFilter level="ALWAYS" onMatch="ACCEPT" onMismatch="DENY"/>
+    </Console>
+    
     <Console name="Logging" target="SYSTEM_OUT">
       <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} :: %msg%n"/>
-      <ThresholdFilter level="VERBOSE" onMismatch="ACCEPT" onMatch="DENY"/>
+      <ThresholdFilter level="ALWAYS" onMismatch="ACCEPT" onMatch="DENY"/>
     </Console>
     
   </Appenders>
@@ -28,6 +34,10 @@
          
     <Logger name="no.paneon.api.utils.Out" level="VERBOSE">
       <AppenderRef ref="Progress" level="VERBOSE" />
+    </Logger>
+          
+    <Logger name="no.paneon.api.utils.Out" level="ALWAYS">
+      <AppenderRef ref="Info" level="ALWAYS" />
     </Logger>
           
   </Loggers>

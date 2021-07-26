@@ -62,6 +62,9 @@ public class ResourcesFragment {
 	
 	private static final String META_PROPERTIES = "userguide::metaProperties";
 				
+	private static final String EXAMPLE  = "example";
+	private static final String EXAMPLES = "examples";
+
 	Args.UserGuide args;
 	
 	UserGuideGenerator generator;
@@ -87,12 +90,16 @@ public class ResourcesFragment {
 		directories.add(args.workingDirectory);
 		directories.add(args.workingDirectory + "/documentation/diagrams" );
 		directories.add("");
-		
+		directories.add(args.workingDirectory + "/diagrams");
+
 		String filename = args.diagrams!=null ? args.diagrams : "diagrams.yaml";
 				
 		try {
 			
+			LOG.debug("diagrams={}", directories);
+			
 			File file = Utils.getFile(filename, directories);
+			
 			if(file==null || !file.exists()) {
 				Out.printAlways("... unable to locate the configuration file with diagram source locations (" + filename + ")" );
 				System.exit(0);
@@ -104,7 +111,6 @@ public class ResourcesFragment {
 
 		} catch(Exception ex) {
 			Out.printAlways("... unable to read the configuration file with diagram source locations (" + filename + ")" );
-			ex.printStackTrace();
 			System.exit(0);
 		}
 		
@@ -112,10 +118,15 @@ public class ResourcesFragment {
 				
 		for(String resource : resources) {		
 			UserGuideData.ResourceData data = createResourceDetailsForResource(resource, config);
+			
+			Timestamp.timeStamp("finished resources fragment: " + resource);
+
 			userGuideData.resources.put(resource, data);
 			userGuideData.resourcesData.add(data);
 		}
-						
+				
+		Timestamp.timeStamp("finished resources fragment");
+
 	}
 	
 
@@ -124,6 +135,8 @@ public class ResourcesFragment {
 		UserGuideData.ResourceData res = userGuideData.new ResourceData();
 	
 		APIGraph apiGraph = new APIGraph(resource);
+
+		Timestamp.timeStamp("finished resources fragment: API graph for resource=" + resource);
 
 		res.resource = resource;		
 		
@@ -190,6 +203,8 @@ public class ResourcesFragment {
 			Out.debug("... possible incorrect diagram configuration: 'graphs' not found in {}", diagramConfig);
 		}
 		
+		Timestamp.timeStamp("finished resources fragment : diagrams for " + resource);
+
 		return res;
 		
 	}
@@ -274,6 +289,8 @@ public class ResourcesFragment {
 			res.subResources.add(data);
 		}
 		
+		Timestamp.timeStamp("finished resources fragment: field descriptions for " + resource);
+
 		return res;
 		
 	}
@@ -344,7 +361,29 @@ public class ResourcesFragment {
 
 		JSONObject tableConfig = config.optJSONObject(JSON_TABLE);
 									
-		return generator.getJSON(resource, tableConfig);
+		String json = generator.getJSON(resource, tableConfig);
+		
+		if(json.isEmpty()) {			
+			JSONObject definition = APIModel.getDefinition(resource);
+			if(definition!=null) {
+				if(definition.has(EXAMPLE)) {
+					JSONObject value = definition.optJSONObject(EXAMPLE);
+					if(value != null) {
+						json = value.toString(2);		
+					}							
+				} else if(definition.has(EXAMPLES)) {
+					JSONArray array = definition.optJSONArray(EXAMPLES);
+					if(array != null) {
+						JSONObject value = array.getJSONObject(0);
+						json = value.toString(2);
+					}
+				}
+			}
+			if(!json.isBlank()) LOG.debug("... resource sample from API resource={} example={}", resource, json);
+
+		}
+		
+		return json;
 		
 	}
 

@@ -1,8 +1,6 @@
 package no.paneon.api.generator;
 
 import no.paneon.api.tooling.Args;
-import no.paneon.api.tooling.userguide.UserGuideData;
-import no.paneon.api.logging.AspectLogger;
 import no.paneon.api.logging.LogMethod;
 import no.paneon.api.logging.AspectLogger.LogLevel;
 import no.paneon.api.model.APIModel;
@@ -33,6 +31,9 @@ import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
 
+import static java.util.stream.Collectors.toList;
+
+
 public class GenerateCommon {
 	
 	protected Args.Common common;
@@ -44,9 +45,14 @@ public class GenerateCommon {
 		
 		List<String> dirs = getDirectories(common.workingDirectory);
 				
-		APIModel.loadAPI(common.openAPIFile, Utils.getFile(common.openAPIFile, dirs));
+		try {
+			APIModel.loadAPI(common.openAPIFile, Utils.getFile(common.openAPIFile, dirs));
 		
-		Timestamp.timeStamp("api specification loaded");
+			Timestamp.timeStamp("api specification loaded");
+		} catch(Exception ex) {
+			Out.println("... unable to read API specification from " + common.openAPIFile);
+			System.exit(0);
+		}
 
 		Out.silentMode = common.silentMode;
 		
@@ -58,6 +64,10 @@ public class GenerateCommon {
 			setLogLevel( Utils.getLevelmap().get(common.debug) );
     	}
         
+    	if(common.timestamp) {
+    		Timestamp.setActive();  		
+    	}
+    	
     	if(common.openAPIFile!=null) {
     		APIModel.setSwaggerSource(common.openAPIFile);
     	}
@@ -69,7 +79,13 @@ public class GenerateCommon {
     	if(common.defaults!=null) {
     		Config.setDefaults(common.defaults);
     		LOG.debug("set defaults from file={}", common.defaults);
+    	}   	
+    	
+    	if(common.rulesFile!=null) {
+    		Config.setRulesSource(common.rulesFile);
+    		LOG.debug("set rules source ={}", common.rulesFile);
     	}
+    	
 	}
 	
 	@LogMethod(level=LogLevel.DEBUG)
@@ -101,7 +117,7 @@ public class GenerateCommon {
 		Timestamp.timeStamp("common execute finished");
 	}
 	
-	public static void processTemplates(Args.Common args, GeneratorData data, String generatedTemplates, String templates, boolean generatedOnly) {
+	public void processTemplates(Args.Common args, GeneratorData data, String generatedTemplates, String templates, boolean generatedOnly) {
 		
 		String targetDir          = getTargetDirectory("", args.workingDirectory, args.targetDirectory);
 		String generatedTargetDir = getTargetDirectory("", args.workingDirectory, args.generatedTargetDirectory);
@@ -110,38 +126,42 @@ public class GenerateCommon {
 				
 		data.generatedPath = relativePathToGeneratedDirectory;
 		
-		Out.debug("targetDir={}",  targetDir);
-		Out.debug("generatedTargetDir={}",  generatedTargetDir);
+		LOG.debug("targetDir={}",  targetDir);
+		LOG.debug("generatedTargetDir={}",  generatedTargetDir);
 
-		Out.debug("relativePathToGeneratedDirectory: {}", relativePathToGeneratedDirectory); 
+		LOG.debug("relativePathToGeneratedDirectory: {}", relativePathToGeneratedDirectory); 
 		
 		Map<String,String> templatesToProcess = Config.getMap(generatedTemplates);
-		templatesToProcess.entrySet().stream().forEach(entry -> {
-			String template = entry.getKey();
-			String destination = entry.getValue();
-			
-			String target = generatedTargetFileName(generatedTargetDir, destination);
+		templatesToProcess.entrySet().stream()
+	        .sorted(Map.Entry.comparingByKey())
+			.forEach(entry -> {
+				String template = entry.getKey();
+				String destination = entry.getValue();
+				
+				String target = generatedTargetFileName(generatedTargetDir, destination);
+	
+				processTemplate(template, data, target);
 
-			processTemplate(template, data, target);
-
-		});
+			});
 
 		templatesToProcess = Config.getMap(templates); 								
-		templatesToProcess.entrySet().stream().forEach(entry -> {
-			String template = entry.getKey();
-			String destination = entry.getValue();
+		templatesToProcess.entrySet().stream()
+	        .sorted(Map.Entry.comparingByKey())
+			.forEach(entry -> {
+				String template = entry.getKey();
+				String destination = entry.getValue();
+				
+				if(destination.contentEquals("$output")) destination = args.outputFileName;
+				
+				String target = generatedTargetFileName(targetDir, destination);
+				
+				if(!generatedOnly || !fileExists(target) ) {
+					processTemplate(template, data, target);
+				} else {
+					Out.println("... file " + destination + " exists - not overwritten");
+				}
 			
-			if(destination.contentEquals("$output")) destination = args.outputFileName;
-			
-			String target = generatedTargetFileName(targetDir, destination);
-			
-			if(!generatedOnly || !fileExists(target) ) {
-				processTemplate(template, data, target);
-			} else {
-				Out.println("... file " + destination + " exists - not overwritten");
-			}
-			
-		});
+			});
 
 		
 	}
@@ -166,18 +186,23 @@ public class GenerateCommon {
 	}
 
 
-	private static String extractRelativePath(String dir1, String dir2) {
-				
+	public static String extractRelativePath(String dir1, String dir2) {
+
+		
+		if(dir1.isEmpty()) return dir2;
+		
 		String[] dir1parts = dir1.split("/");
 		String[] dir2parts = dir2.split("/");
 
-		boolean done = false;
+		LOG.debug("dir1={} dir1parts.length={} dir2={} dir2parts.length={} steps={}", dir1, dir1parts.length, dir2, dir2parts.length);
+
 		int pos=0;
-		
+		boolean done = dir1parts.length==0;
+
 		while(!done) {
 			if(pos>=dir1parts.length) done=true;
 			if(pos>=dir2parts.length) done=true;
-			
+
 			if(!done) {
 				if(dir1parts[pos].contentEquals(dir2parts[pos])) {
 					pos++;
@@ -186,34 +211,31 @@ public class GenerateCommon {
 				}
 			}
 		}
-		
+
 		dir1parts = Arrays.copyOfRange(dir1parts, pos, dir1parts.length);
 		dir2parts = Arrays.copyOfRange(dir2parts, pos, dir2parts.length);
 
-		dir1 = String.join("/", dir1parts);
-		dir2 = String.join("/", dir2parts);
+		int steps = dir1parts.length;
 
-		dir1 = dir1.replace("./", "");
-		dir2 = dir2.replace("./", "");
-		
-		int steps = 2 + dir1.replaceAll("[^/]*", "").replaceAll("^/", "").length();
-		
-		LOG.debug("dir1=" + dir1 + " dir2=" + dir2 + " steps=" + steps);
-		
 		StringBuilder res = new StringBuilder();
 		while(steps>0) {
 			res.append("../");
 			steps--;
 		}
-		
-		res.append(dir2);
-		return res.toString();
-		
-	}
 
-	protected static void copyFiles(Map<String,String> filesToCopy, String targetDirectory, String templateDirectory, boolean keepExisting) {		
-				
-		filesToCopy.entrySet().stream().forEach(entry -> {
+		res.append(String.join("/", dir2parts));
+
+		LOG.debug("dir1={} dir2={} steps={} res={}", dir1, dir2, steps, res);
+
+		return res.toString().replace("//", "/");
+
+	}
+	
+	public void copyFiles(Map<String,String> filesToCopy, String targetDirectory, boolean keepExisting) {		
+		
+		filesToCopy.entrySet().stream()
+        .sorted(Map.Entry.comparingByKey())
+		.forEach(entry -> {
 			String source = entry.getKey();
 			
 			String file = Utils.getBaseFileName(source);
@@ -224,7 +246,32 @@ public class GenerateCommon {
 			
 			CopyStyle copyStyle = keepExisting ? CopyStyle.KEEP_ORIGINAL : CopyStyle.OVERWRITE;
 			
-			Boolean copied = Utils.copyFile(source, target, targetDirectory, templateDirectory, copyStyle);
+			Boolean copied = Utils.copyFile(source, target, targetDirectory, common.templateDirectory, copyStyle);
+			
+			if(!copied) {
+				Out.debug("... unable to copy file {}", file);
+			}
+
+		});
+		
+	}
+	
+	public void copyFiles(Map<String,String> filesToCopy, boolean keepExisting) {		
+				
+		filesToCopy.entrySet().stream()
+        .sorted(Map.Entry.comparingByKey())
+		.forEach(entry -> {
+			String source = entry.getKey();
+			
+			String file = Utils.getBaseFileName(source);
+						
+			String dir = entry.getValue();
+			
+			String target = dir + "/" + file;
+			
+			CopyStyle copyStyle = keepExisting ? CopyStyle.KEEP_ORIGINAL : CopyStyle.OVERWRITE;
+			
+			Boolean copied = Utils.copyFile(source, target, common.targetDirectory, common.templateDirectory, copyStyle);
 			
 			if(!copied) {
 				Out.debug("... unable to copy file {}", file);
@@ -323,5 +370,30 @@ public class GenerateCommon {
 		return targetDir;
 		
 	}
+		
+
+	public List<String> copyFilesWithDestination(Map<String,String> filesToCopy) {
+		List<String> res = new LinkedList<>();
+
+		filesToCopy.entrySet().stream().forEach(entry -> {
+			String source = entry.getKey();
+			
+			String file = Utils.getBaseFileName(source);
+						
+			String target = entry.getValue();
+			
+			Boolean copied = Utils.copyFile(source, target, common.targetDirectory, common.templateDirectory);
+			if(!copied) {
+				Out.debug("... unable to copy file {}", file);
+			} else {
+				res.add(Utils.getBaseFileName(target));
+			}
+
+		});
+		
+		return res.stream().sorted().collect(toList());
+	}
+
+
 
 }

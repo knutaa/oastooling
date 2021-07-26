@@ -43,7 +43,8 @@ public class DocumentInfo {
 	}
 	
 	public String getDocID() {
-		Optional<String> optDocId = getOptionalString(rules,"#/api/tmfId");		
+		
+		Optional<String> optDocId = getOptionalString(rules,"#/tmfId");		
 		Optional<String> optDocIdAPI = getOptionalString(APIModel.getDocumentDetails(), "#/variables/DocumentNumber");
 
 		String docId = optDocId.isPresent()    ? optDocId.get()    : 
@@ -55,8 +56,8 @@ public class DocumentInfo {
 
 	private Optional<String> getOptionalString(JSONObject source, String path) {
 		Optional<String> res = Optional.empty();
-		if(source!=null) {
-			Object value = source.query(path);
+		if(source!=null && path!=null) {
+			Object value = source.optQuery(path);
 			if(value!=null) res = Optional.of(value.toString() );
 		}
 		
@@ -78,7 +79,7 @@ public class DocumentInfo {
 	}
 
 	public String getRevision() {
-		Optional<String> optDocId    = getOptionalString(rules, "#/api/version");
+		Optional<String> optDocId    = getOptionalString(rules, "#/version");
 		Optional<String> optDocIdAPI = getOptionalString(APIModel.getDocumentDetails(), "#/variables/DocumentVersion");
 
 		LOG.debug("doc details: {}", APIModel.getDocumentDetails().toString(4));
@@ -108,7 +109,7 @@ public class DocumentInfo {
 	}
 
 	public String getTitle() {
-		Optional<String> optDocTitle = getOptionalString(this.rules,"#/api/name");
+		Optional<String> optDocTitle = getOptionalString(this.rules,"#/name");
 		Optional<String> optDocTitleAPI = getOptionalString(APIModel.getDocumentDetails(), "#/variables/ApiName");
 
 		return optDocTitle.isPresent() ? optDocTitle.get() : 

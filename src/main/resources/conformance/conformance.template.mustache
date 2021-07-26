@@ -1,5 +1,11 @@
+:doctype: book
 {{#documentInfo}}
 = {{{title}}}
+:title-page:
+:toc: macro
+:toclevels: 3
+:maindoc:
+
 :COPYRIGHT: Copyright © TM Forum {{{year}}}. All Rights Reserved.
 :DOCID: {{{docid}}}
 :RELEASE: {{{release}}}
@@ -9,13 +15,16 @@
 :STATUS: {{{status}}}
 :RELEASE-STATUS: {{{releaseStatus}}}
 {{/documentInfo}}
-
-:maindoc:
-:doctype: book
-:backend: docbook
-include::config/Environment.adoc[]
-
+{{^documentInfo}}
+:title-page:
 :toc: macro
+:toclevels: 3
+:maindoc:
+{{/documentInfo}}
+
+include::config/Environment.adoc[] 
+include::{generated}/Notice.adoc[]
+
 toc::[]
 
 include::parts/01_Conformance_Introduction.adoc[]

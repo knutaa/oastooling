@@ -6,12 +6,16 @@ ifndef::complete[]
 {{/imageFormat}}
 
 ifdef::maindoc[]
-:parts: ./
-:imagesdir: ./images/
-:generated: {{generatePath}}
-:diagrams: {generated}/images
+:generated: {{generatedPath}}
 endif::[]
 
+ifndef::maindoc[]
+:generated: ../{{generatedPath}}
+endif::[]
+
+:parts: ./
+:diagrams: ./
+:imagesdir: {generated}/images/
 
 endif::[]
 

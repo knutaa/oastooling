@@ -52,7 +52,7 @@ public class GenerateConformanceGuide extends GenerateCommon {
 		model.expandDefaults();
 
 		
-		ConformanceGenerator confGen = new ConformanceGenerator(args, this.model);        	     
+		ConformanceGenerator confGen = new ConformanceGenerator(this);        	     
 		confGen.generateDocument();			
 			  
 		Timestamp.timeStamp("finished conformance generation");

@@ -72,6 +72,7 @@ public class ConformanceData extends GeneratorData {
 	public class ConformanceResourceDetails {
 		public String resourceName;
 		public List<ConformanceItem> conformanceItems;
+		public boolean hasConformanceItems;
 		
 		ConformanceResourceDetails(String resourceName) {
 			this(resourceName, new LinkedList<>() );
@@ -80,6 +81,10 @@ public class ConformanceData extends GeneratorData {
 		ConformanceResourceDetails(String resourceName, List<ConformanceItem> conformanceItems) {
 			this.resourceName = resourceName;
 			this.conformanceItems = conformanceItems;
+			this.hasConformanceItems = !conformanceItems.isEmpty();
+			
+			LOG.debug("ConformanceResourceDetails: resource={} hasConformanceItems={}",  resourceName, hasConformanceItems);
+			
 		}
 		
 		public String toString() {
@@ -153,7 +158,7 @@ public class ConformanceData extends GeneratorData {
 		this.mandatoryNotifications = generateMandatoryNotifications();
 		this.hasMandatoryNotifications = !this.mandatoryNotifications.isEmpty();
 		
-		this.documentInfo = new ConformanceDocumentInfo(this.model.getRules());
+		this.documentInfo = new ConformanceDocumentInfo(Config.getRules());
 		
 	}
 

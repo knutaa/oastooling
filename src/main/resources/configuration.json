@@ -407,7 +407,10 @@
 		"userguide/userguide.resources.mustache":           		"Resources.adoc",
 		"userguide/userguide.notifications.mustache":       		"Notifications.adoc",
 		"userguide/userguide.operations.mustache":          		"Operations.adoc",
-		"userguide/userguide.generated.environment.mustache":		"Environment.adoc"	
+		"userguide/userguide.generated.environment.mustache":		"Environment.adoc",
+		
+		"userguide/notice.mustache":								"Notice.adoc"	
+			
 	},
 	
 	"userguide.templates": {
@@ -436,6 +439,9 @@
 		
 		"conformance/conformance.resources_mandatory_operations.mustache":     "ResourceMandatoryOperations.adoc",
 		"conformance/conformance.resources_mandatory_notifications.mustache":  "NotificationConformanceOverview.adoc",
+		
+		"conformance/notice.mustache":							   "Notice.adoc"	
+		
 		
 	},
 	

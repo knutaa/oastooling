@@ -5,5 +5,5 @@ ifdef::backend-pdf[<<<]
 
 For every single resource the following tables includes mandatory operations.
 
-include::{generated}/ResourceMandatoryOperations.adoc[]
+include::../{generated}/ResourceMandatoryOperations.adoc[]
 

@@ -25,6 +25,7 @@ import com.github.mustachejava.MustacheFactory;
 import no.paneon.api.conformance.ConformanceModel;
 import no.paneon.api.tooling.Args;
 import no.paneon.api.tooling.userguide.UserGuideData;
+import no.paneon.api.tooling.userguide.UserGuideGenerator;
 
 import java.util.List;
 import java.util.Map;
@@ -85,11 +86,14 @@ public class ConformanceGenerator {
 
 	ConformanceData conformanceData;
 
-	public ConformanceGenerator(Args.ConformanceGuide args, ConformanceModel conformanceModel) {
+	GenerateConformanceGuide generator;
+	public ConformanceGenerator(GenerateConformanceGuide generator) {
 		
-		this.args = args;	
-		this.conformance = conformanceModel;				
-		this.conformanceData = new ConformanceData(conformanceModel);
+		this.generator = generator;
+		
+		this.args = generator.args;	
+		this.conformance = generator.model;				
+		this.conformanceData = new ConformanceData(this.conformance);
 
 	}
 
@@ -106,10 +110,10 @@ public class ConformanceGenerator {
 			generatePartials(conformanceData);
 
 			boolean keepExisting=true;
-			GenerateCommon.processTemplates(this.args, conformanceData, "conformance.generated.templates", "conformance.templates", keepExisting);
+			generator.processTemplates(this.args, conformanceData, "conformance.generated.templates", "conformance.templates", keepExisting);
 					
 			Map<String,String> filesToCopy = Config.getMap("conformance.filesToCopy");
-			copyFiles(filesToCopy, args.generatedOnly);
+			generator.copyFiles(filesToCopy, args.generatedOnly);
 
 
 		} catch(Exception ex) {
@@ -120,75 +124,6 @@ public class ConformanceGenerator {
 				
 	}
 	
-//	private void processTemplates(UserGuideData data, boolean generatedOnly) {
-//		Map<String,String> templatesToProcess = Config.getMap("conformance.generated.templates");
-//		
-//		String targetDirectory = this.getTargetDirectory("");
-//		
-//		String generatedTargetDirectory = this.getGeneratedTargetDirectory();
-//		
-//		String relativePathToGeneratedDirectory = extractRelativePath(targetDirectory,generatedTargetDirectory);
-//				
-//		data.generatePath = relativePathToGeneratedDirectory;
-//		
-//		LOG.debug("relativePathToGeneratedDirectory: {}", relativePathToGeneratedDirectory); 
-//		
-//		templatesToProcess.entrySet().stream().forEach(entry -> {
-//			String template = entry.getKey();
-//			String destination = entry.getValue();
-//			
-//			String target = generatedTargetFileName(generatedTargetDirectory, destination);
-//
-//			processTemplate(template, data, target);
-//
-//		});
-//
-//		templatesToProcess = Config.getMap("conformance.templates");
-//								
-//		templatesToProcess.entrySet().stream().forEach(entry -> {
-//			String template = entry.getKey();
-//			String destination = entry.getValue();
-//			
-//			if(destination.contentEquals("$output")) destination = args.outputFileName;
-//			
-//			String target = generatedTargetFileName(targetDirectory, destination);
-//			
-//			if(!generatedOnly || !fileExists(target) ) {
-//				processTemplate(template, data, target);
-//			} else {
-//				Out.println("... file " + destination + " exists - not overwritten");
-//			}
-//			
-//		});
-//
-//		
-//	}
-
-	private void processTemplates_old(ConformanceData data) {
-
-		Map<String,String> templatesToProcess = Config.getMap("conformance.generated.templates");
-		
-		String targetDirectory = this.getTargetDirectory("");
-		
-		String generatedTargetDirectory = this.getGeneratedTargetDirectory("");
-		
-		String relativePathToGeneratedDirectory = extractRelativePath(targetDirectory,generatedTargetDirectory);
-			
-		data.generatedPath = relativePathToGeneratedDirectory;
-		
-		LOG.debug("relativePathToGeneratedDirectory: {}", relativePathToGeneratedDirectory); 
-		LOG.debug("generatedTargetDirectory: {}", generatedTargetDirectory); 
-		LOG.debug("targetDirectory: {}", targetDirectory); 
-
-		processTemplatesHelper(data, templatesToProcess, generatedTargetDirectory);
-		
-		templatesToProcess = Config.getMap("conformance.templates");
-								
-		processTemplatesHelper(data, templatesToProcess, targetDirectory);
-
-		
-		
-	}
 
 	private void processTemplatesHelper(ConformanceData data, Map<String, String> templates, String directory) {
 		
@@ -205,102 +140,6 @@ public class ConformanceGenerator {
 			processTemplate(template, data, directory + destination);
 
 		});		
-	}
-
-
-	private String extractRelativePath(String dir1, String dir2) {
-		
-		String[] dir1parts = dir1.split("/");
-		String[] dir2parts = dir2.split("/");
-
-		boolean done = false;
-		int pos=0;
-		
-		while(!done) {
-			if(pos>=dir1parts.length) done=true;
-			if(pos>=dir2parts.length) done=true;
-			
-			if(!done) {
-				if(dir1parts[pos].contentEquals(dir2parts[pos])) {
-					pos++;
-				} else {
-					done=true;
-				}
-			}
-		}
-		
-		dir1parts = Arrays.copyOfRange(dir1parts, pos, dir1parts.length);
-		dir2parts = Arrays.copyOfRange(dir2parts, pos, dir2parts.length);
-
-		dir1 = String.join("/", dir1parts);
-		dir2 = String.join("/", dir2parts);
-
-		dir1 = dir1.replace("./", "");
-		dir2 = dir2.replace("./", "");
-		
-		int steps = 2 + dir1.replaceAll("[^/]*", "").replaceAll("^/", "").length();
-		
-		LOG.debug("dir1=" + dir1 + " dir2=" + dir2 + " steps=" + steps);
-		
-		StringBuilder res = new StringBuilder();
-		while(steps>0) {
-			res.append("../");
-			steps--;
-		}
-		
-		res.append(dir2);
-		
-		return res.toString();
-		
-	}
-
-	private List<String> copyFiles(Map<String,String> filesToCopy, boolean keepExisting) {
-		
-		List<String> res = new LinkedList<>();
-		
-		filesToCopy.entrySet().stream().forEach(entry -> {
-			String source = entry.getKey();
-			
-			String file = Utils.getBaseFileName(source);
-						
-			String dir = entry.getValue();
-			
-			String target = dir + "/" + file;
-			
-			Boolean copied = Utils.copyFile(source, target, args.targetDirectory, args.templateDirectory);
-			if(!copied) {
-				Out.debug("... unable to copy file {}", file);
-			} else {
-				res.add(Utils.getBaseFileName(target));
-			}
-
-		});
-		
-		return res.stream().sorted().collect(toList());
-		
-	}
-
-
-	private List<String> copyFilesWithDestination(Map<String,String> filesToCopy) {
-		List<String> res = new LinkedList<>();
-
-		filesToCopy.entrySet().stream().forEach(entry -> {
-			String source = entry.getKey();
-			
-			String file = Utils.getBaseFileName(source);
-						
-			String target = entry.getValue();
-			
-			Boolean copied = Utils.copyFile(source, target, args.targetDirectory, args.templateDirectory);
-			if(!copied) {
-				Out.debug("... unable to copy file {}", file);
-			} else {
-				res.add(Utils.getBaseFileName(target));
-			}
-
-		});
-		
-		return res.stream().sorted().collect(toList());
 	}
 
 
@@ -362,7 +201,7 @@ public class ConformanceGenerator {
 			number++;
 		}
 		
-		data.parts = copyFilesWithDestination(filesToCopy).stream().map(file -> new ConformanceData.FileData(file)).collect(toList());
+		data.parts = generator.copyFilesWithDestination(filesToCopy).stream().map(file -> new ConformanceData.FileData(file)).collect(toList());
 				
 		return data;
 		

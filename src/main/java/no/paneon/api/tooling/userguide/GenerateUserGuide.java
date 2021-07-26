@@ -3,17 +3,8 @@ package no.paneon.api.tooling.userguide;
 import no.paneon.api.generator.GenerateCommon;
 import no.paneon.api.logging.AspectLogger.LogLevel;
 import no.paneon.api.logging.LogMethod;
-import no.paneon.api.model.APIModel;
-import no.paneon.api.model.JSONObjectHelper;
-import no.paneon.api.utils.Config;
-import no.paneon.api.utils.Out;
-import no.paneon.api.utils.Utils;
 
-import no.paneon.api.conformance.ConformanceItem;
 import no.paneon.api.conformance.ConformanceModel;
-import no.paneon.api.graph.APIGraph;
-import no.paneon.api.graph.Node;
-import no.paneon.api.utils.JSONObjectOrArray;
 import no.paneon.api.utils.Timestamp;
 
 import no.paneon.api.tooling.Args;
@@ -42,7 +33,10 @@ public class GenerateUserGuide extends GenerateCommon {
 		
 		super.execute();
 
-		UserGuideGenerator userGuide = new UserGuideGenerator(args,this.model);        	     
+		Timestamp.timeStamp("start conformance guide generation");
+		
+		UserGuideGenerator userGuide = new UserGuideGenerator(this);        	     
+
 		userGuide.generateDocument();			
 			  
 		Timestamp.timeStamp("finished conformance guide generation");
