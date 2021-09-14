@@ -1,6 +1,8 @@
 {
 	"###NOTE###": "This configuration is included in the jar file",
 
+	"mergeMainDocument": true,
+
 	"userguide": {
 		"variables": {
 			"intro": "intro ..."

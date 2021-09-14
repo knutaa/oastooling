@@ -155,8 +155,10 @@ public class GenerateCommon {
 				
 				String target = generatedTargetFileName(targetDir, destination);
 				
-				if(!generatedOnly || !fileExists(target) ) {
+				if((!generatedOnly || !fileExists(target)) && !generatedOnly && !destination.contentEquals(args.outputFileName) ) {
 					processTemplate(template, data, target);
+				} if(!generatedOnly && destination.contentEquals(args.outputFileName) && Config.getBoolean("mergeMainDocument")) {
+					processMainDocument(template, data, target);
 				} else {
 					Out.println("... file " + destination + " exists - not overwritten");
 				}
@@ -307,6 +309,75 @@ public class GenerateCommon {
 	
 	}
 
+	protected static void processMainDocument(String template, Object data, String outputFileName) {
+		
+		LOG.debug("processMainDocument: {} outputFileName: {}",  template, outputFileName);
+		
+		if(Config.has(template)) template = Config.getString(template);
+		
+		try {
+			MustacheFactory mf = new DefaultMustacheFactory();
+			InputStream is = Utils.getFileInputStream(template, null);
+			Reader reader = new InputStreamReader(is);
+			Mustache m = mf.compile(reader, "template");
+	
+			StringWriter writer = new StringWriter();
+			
+			m.execute(writer, data).flush();
+			
+			String text = writer.toString();
+
+			mergeWithExistingDocument(text, "include::parts", outputFileName);	
+			
+		} catch(Exception ex) {
+			Out.debug("*** exception: {}", ex.getLocalizedMessage());
+		}
+	
+	}
+	
+	
+	private static void mergeWithExistingDocument(String content, String pattern, String outputFileName) {
+
+		StringBuilder res = new StringBuilder();
+
+		if(!fileExists(outputFileName)) {
+			res.append(content);
+		} else {
+			try {
+				String oldContent = Utils.readFile(outputFileName);
+				
+				LOG.debug("processMainDocument: outputFileName {}",  outputFileName);
+				LOG.debug("processMainDocument: oldContent {}",  oldContent);
+
+				if(!oldContent.isEmpty()) {
+					int partsStart = oldContent.indexOf(pattern);
+					String partsPart = oldContent.substring(partsStart);
+					
+					partsStart = content.indexOf(pattern);
+					String metaPart = content.substring(0, partsStart-1);
+					
+					LOG.debug("processMainDocument: metaPart {}",  metaPart);
+					LOG.debug("processMainDocument: partsPart {}",  partsPart);
+
+					res.append(metaPart);
+					res.append(partsPart);
+					
+					File file = new File(outputFileName);
+					
+					Out.println("... file " + file.getName() + " merging existing document");
+					
+				}
+			} catch(Exception e) {
+				
+				Out.debug("processMainDocument: exception {}",  e.getLocalizedMessage());
+
+				res.append(content);
+			}
+		}
+
+		Utils.save(res.toString(), outputFileName);				
+
+	}
 
 	@LogMethod(level=LogLevel.DEBUG)	
 	protected static String getJSON(String resource, JSONObject config, String workingDirectory) {
