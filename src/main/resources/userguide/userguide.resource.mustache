@@ -40,11 +40,18 @@ include::{{diagramSource}}[]
 
 {{/fields}}
 
+{{#hasSamples}}
+
 *Json representation sample*
 
-We provide below the json representation of an example of a '{{resource}}' resource object.
+We provide below the json representation of example of a '{{resource}}' resource object.
+
+{{#samples}}
 
 [code]
 ----
 include::{samples}/{{sampleSource}}[]
 ----
+{{/samples}}
+{{/hasSamples}}
+

@@ -465,7 +465,7 @@ public class ConformanceGenerator {
 			rowDetails.putAll( createResourceDetailsForProperty(resource, property, config, seenResources) );
 		}
 					
-		Out.debug("getResourceDetailsForResource: rowDetails = {}", rowDetails);
+		LOG.debug("getResourceDetailsForResource: rowDetails = {}", rowDetails);
 		
 		if(Config.getBoolean("compareByLevel")) {
 									

@@ -31,8 +31,11 @@ public class UserGuideData extends GeneratorData {
 		
 		public String description;
 		
-		public String sample;
-		public String sampleSource;
+		public List<Sample> samples;
+		public Boolean hasSamples;
+
+//		public String sample;
+//		public String sampleSource;
 
 		public List<DiagramData> diagrams;
 		
@@ -90,7 +93,10 @@ public class UserGuideData extends GeneratorData {
 	public class NotificationData {
 		public String notification;
 		public String notificationLabel;
+		public String notificationLabelShort;
 		public String sample;
+		
+		public String message;
 		
 	}
 	
@@ -101,26 +107,26 @@ public class UserGuideData extends GeneratorData {
 		
 		public String description;
 		
-		public Boolean isCreate;
-		public Boolean isList;
-		public Boolean isRetrieve;
-		public Boolean isReplace;
-		public Boolean isDelete;
-		public Boolean isPartialUpdate;
+		public Boolean isCreate = false;
+		public Boolean isList = false;
+		public Boolean isRetrieve = false;
+		public Boolean isReplace = false;
+		public Boolean isDelete = false;
+		public Boolean isPartialUpdate = false;
 
-		public Boolean hasPatchable;
-		public Boolean hasNonPatchable;
+		public Boolean hasPatchable = false;
+		public Boolean hasNonPatchable = false;
 
 		public List<PropertyRuleData> patchable = new LinkedList<>();
 		public List<PropertyRuleData> nonPatchable = new LinkedList<>();
 
-		public Boolean hasMandatory;
-		public Boolean hasNonMandatory;
+		public Boolean hasMandatory = false;
+		public Boolean hasNonMandatory = false;
 
 		public List<PropertyRuleData> mandatory = new LinkedList<>();
 		public List<PropertyRuleData> nonMandatory = new LinkedList<>();
 
-		public Boolean hasSamples;
+		public Boolean hasSamples = false;
 		public List<OperationSampleData> samples;
 		
 	}
@@ -153,4 +159,10 @@ public class UserGuideData extends GeneratorData {
 	
 	}
 	
+	public class Sample {		
+		public String sample;
+		public String sampleSource;
+		public String description;
+	}
+
 }

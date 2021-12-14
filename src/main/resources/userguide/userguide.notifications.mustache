@@ -2,8 +2,6 @@
 
 include::Environment.adoc[]
 
-=== Notification Resource Models
-
 {{numberOfNotifications}} notifications are defined for this API.
 
 {{#resourcesData}}
@@ -23,17 +21,24 @@ This notification structure owns an event payload structure ("SpecificEventPaylo
 image::{diagrams}/NotificationsPattern.png[]
 [.text-center]
 Figure {counter:figure} - Notification Pattern
+[.text-left]
 
 {{#resourcesData}}
 
 {{#notifications}}
 ==== {{notificationLabel}}
 
+{{#OLD}}
 Notification {{notification}} case for resource {{resource}}.
-
+{{/OLD}}
 *Json representation sample*
 
-We provide below the json representation of an example of a '{{notification}}' notification event object.
+{{#message}}
+{{{message}}}
+{{/message}}
+{{^message}}
+Json representation of an example of '{{notificationLabelShort}}' event object:
+{{/message}}
 
 [code]
 ----

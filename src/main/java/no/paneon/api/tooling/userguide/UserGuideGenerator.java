@@ -160,7 +160,7 @@ public class UserGuideGenerator {
 				String template = entry.getKey();
 				String destination = entry.getValue();
 				
-				Out.debug("template: {}", template);
+				LOG.debug("template: {}", template);
 				
 				if(destination.contentEquals("$output")) destination = args.outputFileName;
 				
@@ -233,6 +233,9 @@ public class UserGuideGenerator {
 		if(isDirectoryPresent(fileName)) {
 			JSONObjectOrArray json = JSONObjectOrArray.readJSONObjectOrArray(fileName);			
 			content = json.toString(2);
+			
+			LOG.debug("getJSON: file={}", fileName);
+
 		}
 		return content;
 		
@@ -243,23 +246,18 @@ public class UserGuideGenerator {
 	
 	private boolean isDirectoryPresent(String fileName) {
 		File file = new File(fileName);
-		
-		if(file!=null) file = file.getParentFile();
-		
-		boolean isPresent = file!=null && file.getParentFile().isDirectory();
-		
-		if(isPresent)
+				
+		file = file.getParentFile();
+				
+		if(file.isDirectory())
 			return true;
 		
-		if(file!=null) {	
-			String dir=file.getName();
-			if(!directoriesNotSeen.contains(dir)) {
-				Out.printAlways("... *** unable to locate directory " + dir);
-				directoriesNotSeen.add(dir);
-			}
-		} else
-			Out.printAlways("... unable to locate file " + fileName);
-		
+		String dir=file.getName();
+		if(!directoriesNotSeen.contains(dir)) {
+			LOG.info("... *** unable to locate directory " + dir);
+			directoriesNotSeen.add(dir);
+		}
+	
 		return false;
 		
 	}

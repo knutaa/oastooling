@@ -51,6 +51,7 @@ public class GenerateConformanceGuide extends GenerateCommon {
 		
 		model.expandDefaults();
 
+		LOG.debug("GenerateConformanceGuide: model={}", model);
 		
 		ConformanceGenerator confGen = new ConformanceGenerator(this);        	     
 		confGen.generateDocument();			

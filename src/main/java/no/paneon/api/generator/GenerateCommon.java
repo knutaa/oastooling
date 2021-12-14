@@ -2,6 +2,7 @@ package no.paneon.api.generator;
 
 import no.paneon.api.tooling.Args;
 import no.paneon.api.logging.LogMethod;
+import no.paneon.api.conformance2.ConformanceData;
 import no.paneon.api.logging.AspectLogger.LogLevel;
 import no.paneon.api.model.APIModel;
 import no.paneon.api.utils.Config;
@@ -117,7 +118,7 @@ public class GenerateCommon {
 		Timestamp.timeStamp("common execute finished");
 	}
 	
-	public void processTemplates(Args.Common args, GeneratorData data, String generatedTemplates, String templates, boolean generatedOnly) {
+	public void processTemplates(Args.Common args, GeneratorData data, String generatedTemplates, String templates, boolean keepExisting) {
 		
 		String targetDir          = getTargetDirectory("", args.workingDirectory, args.targetDirectory);
 		String generatedTargetDir = getTargetDirectory("", args.workingDirectory, args.generatedTargetDirectory);
@@ -155,10 +156,12 @@ public class GenerateCommon {
 				
 				String target = generatedTargetFileName(targetDir, destination);
 				
-				if((!generatedOnly || !fileExists(target)) && !generatedOnly && !destination.contentEquals(args.outputFileName) ) {
+				if(!fileExists(target)) {
 					processTemplate(template, data, target);
-				} if(!generatedOnly && destination.contentEquals(args.outputFileName) && Config.getBoolean("mergeMainDocument")) {
+				} else if(keepExisting && destination.contentEquals(args.outputFileName) && Config.getBoolean("mergeMainDocument")) {
 					processMainDocument(template, data, target);
+				} else if(!keepExisting) {
+					processTemplate(template, data, target);
 				} else {
 					Out.println("... file " + destination + " exists - not overwritten");
 				}
@@ -286,7 +289,8 @@ public class GenerateCommon {
 	protected static void processTemplate(String template, Object data, String outputFileName) {
 		
 		LOG.debug("processTemplate: {} outputFileName: {}",  template, outputFileName);
-		
+		LOG.debug("processTemplate: data: {}",  data );
+
 		if(Config.has(template)) template = Config.getString(template);
 		
 		try {
@@ -388,6 +392,10 @@ public class GenerateCommon {
 		if(isDirectoryPresent(fileName)) {
 			JSONObjectOrArray json = JSONObjectOrArray.readJSONObjectOrArray(fileName);			
 			content = json.toString(2);
+			
+			LOG.debug("getJSON ##: file={}", fileName);
+
+			
 		}
 		return content;
 		

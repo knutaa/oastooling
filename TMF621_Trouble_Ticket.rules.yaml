@@ -1,0 +1,143 @@
+
+## API rule definitions
+rulesVersion: 1.0.0
+api:
+  shortName: Trouble Ticket
+  name: Trouble Ticket
+  tmfId: TMF621
+  description: "**TMF API Reference : TMF - 621 Trouble Ticket**\nThe Trouble Ticket API provides a standardized client interface to Trouble Ticket Management Systems for creating, tracking and managing trouble tickets as a result of an issue or problem identified by a customer or another system. \nExamples of Trouble Ticket API originators (clients) include CRM applications, network management or fault management systems, or other Trouble Ticket management systems (e.g. B2B).\nThe API supports the ability to send requests to create a new trouble ticket specifying the nature and severity of the trouble or issue as well as all necessary related information. The API also includes mechanisms to search for and update existing trouble tickets. Notifications are defined to provide information when a trouble ticket has been updated, including status changes. A basic set of states of a trouble ticket has been specified (as an example) to handle trouble ticket lifecycle management.\nTrouble Ticketing API manages trouble ticket resource:\n  -\tA trouble ticket represents a record, or an issue raised by requestor that need to be solved, used for reporting and managing the resolution of problems, incidents or request  -\tMain trouble ticket attributes are its description, severity, type, related dates (creation, expected resolution, resolution), state and related information (change reason and change date), related parties (originator, owner, reviser, etc.), related entities (product, product order, customer bill) and notes Trouble Ticket API performs the following operations on trouble ticket -\tRetrieval of a trouble ticket or a collection of trouble ticket depending on filter criteria -\tPartial update of a trouble ticket -\tCreation of a trouble ticket  -\tNotification of events on trouble ticket: o\tTrouble ticket state change o\tTrouble ticket change o\tTrouble ticket resoled o\tTrouble ticket created o\tTrouble ticket Information required "
+  hostUrl: https://serverRoot
+  basePath: /tmf-api/troubleTicket/v5/
+  version: "5.0.0"
+  resources:
+    - name: TroubleTicket
+      schema: "schemas/Tmf/Common/TroubleTicket.schema.json#TroubleTicket"
+      supportedHttpMethods:
+        GET:
+          required: true
+          examples:
+            - name: "retrieveById"
+              content-type: "application/json"
+              description: "Retrieve a specific troubleTicket from its identifier - only a subset of troubleTicket attributes (as defined in the API) are used in this example"
+              response:
+                file: "./documentation/operation-samples/TroubleTicket_retrieve_1_response.sample.json"
+                description: "Retrieve a troubleTicket from its identifier - only a subset of troubleTicket attributes (as defined in the API) are used in this example."
+            - name: "RetrieveTroubleTicketByListwithFieldsSelection"
+              isCollection: true
+              content-type: "application/json"
+              description: "Retrieve a list of troubleTicket(s) with attribute selection (name,@type), and filtering (priority is 'High') - only few attributes are retrieved for each troubleTicket.(?fields=name,@type&filter=priority=='High'"
+              response:
+                file: "./documentation/operation-samples/TroubleTicket_list_1_response.sample.json"
+                description: "Retrieve a list of troubleTicket(s) with attribute selection (name,@type), and filtering (priority is 'High') - only few attributes are retrieved for each troubleTicket.(?fields=name,@type&filter=priority=='High'"
+        DELETE:
+          required: true
+        POST:
+          parameterRestrictions:
+            requiredParameters:
+              - description
+              - severity
+              - ticketType
+            excludedParameters:
+              - creationDate
+              - href
+              - id
+              - lastUpdateDate
+              - statusChangeReason
+              - statusChange
+              - statusChangeDate
+            required: true
+            examples:
+              - name: "CreateTroubleTicket"
+                content-type: "application/json"
+                description: "Creation of a new troubleTicket with POST operation"
+                request:
+                  file: "./documentation/operation-samples/TroubleTicket_create1_request.sample.json"
+                  description: "POST TroubleTicket request example - only a subset of troubleTicket attributes are used in this example"
+                response:
+                  file: "./documentation/operation-samples/TroubleTicket_create1_response.sample.json"
+                  description: "POST TroubleTicket response description."  
+        PATCH:
+          parameterRestrictions:
+            excludedParameters:
+              - creationDate
+              - href
+              - id
+              - lastUpdateDate
+              - statusChange
+              - statusChangeDate
+          required: true
+          examples:
+            - name: "updateTroubleTicket_using_json-patch+json"
+              content-type: "application/json-patch+json"
+              description: "Update a troubleTicket using json-patch+json"
+              request:
+                file: "./documentation/operation-samples/TroubleTicket_partialupdate_1_request.sample.json"
+                description: "PATCH TroubleTicket request leveraging json-patch+json application example"
+              response:
+                file: "./documentation/operation-samples/TroubleTicket_partialupdate_1_response.sample.json"
+                description: "TroubleTicket representation."
+            - name: "updateTroubleTicket_using_merge-patch+json"
+              content-type: "application/merge-patch+json"
+              description: "PATCH TroubleTicket request leveraging merge-patch+json application example"
+              request:
+                file: "./documentation/operation-samples/TroubleTicket_partialupdate_2_request.sample.json"
+                description: "PATCH TroubleTicket request leveraging merge-patch+json application example"
+              response:
+                file: "./documentation/operation-samples/TroubleTicket_partialupdate_2_response.sample.json"
+                description: "TroubleTicket representation."
+      notifications:
+        - name: "create"
+          schema: "schemas/Tmf/Common/Event/TroubleTicketCreateEvent.schema.json#/definitions/TroubleTicketCreateEvent"
+          examples:
+            - name: "TroubleTicketCreateEvent"
+              content-type: "application/json"
+              description: "Message example for TroubleTicketCreateEvent event"
+              request:
+                file: "./documentation/operation-samples/TroubleTicketCreateEvent_request.sample.json"
+                description: "Message example for TroubleTicketCreateEvent event"
+        - name: "attributeValueChange"
+          schema: "schemas/Tmf/Common/Event/TroubleTicketAttributeValueChangeEvent.schema.json#/definitions/TroubleTicketAttributeValueChangeEvent"
+          examples:
+            - name: "TroubleTicketAttributeValueChangeEvent"
+              content-type: "application/json"
+              description: "Message example for TroubleTicketAttributeValueChangeEvent event"
+              request:
+                file: "./documentation/operation-samples/TroubleTicketAttributeValueChangeEvent_request.sample.json"
+                description: "Message example for TroubleTicketAttributeValueChangeEvent event"
+        - name: "statusChange"
+          schema: "schemas/Tmf/Common/Event/TroubleTicketStatusChangeEvent.schema.json#/definitions/TroubleTicketStatusChangeEvent"
+          examples:
+            - name: "TroubleTicketStatusChangeEvent"
+              content-type: "application/json"
+              description: "Message example for TroubleTicketStatusChangeEvent event"
+              request:
+                file: "./documentation/operation-samples/TroubleTicketStatusChangeEvent_request.sample.json"
+                description: "Message example for TroubleTicketStatusChangeEvent_request event"
+        - name: "delete"
+          schema: "schemas/Tmf/Common/Event/TroubleTicketDeleteEvent.schema.json#/definitions/TroubleTicketDeleteEvent"
+          examples:
+            - name: "TroubleTicketDeleteEvent"
+              content-type: "application/json"
+              description: "Message example for TroubleTicketDeleteEvent event"
+              request:
+                file: "./documentation/operation-samples/TroubleTicketDeleteEvent_request.sample.json"
+                description: "Message example for TroubleTicketDeleteEvent event"
+        - name: "informationRequired"
+          schema: "schemas/Tmf/Common/Event/TroubleTicketInformationRequiredEvent.schema.json#/definitions/TroubleTicketInformationRequiredEvent"
+          examples:
+            - name: "TroubleTicketInformationRequiredEvent"
+              content-type: "application/json"
+              description: "Message example for TroubleTicketInformationRequiredEvent event"
+              request:
+                file: "./documentation/operation-samples/TroubleTicketInformationRequiredEvent_request.sample.json"
+                description: "Message example for TroubleTicketInformationRequiredEvent event"
+        - name: "resolved"
+          schema: "schemas/Tmf/Common/Event/TroubleTicketResolvedEvent.schema.json#/definitions/TroubleTicketResolvedEvent"
+          examples:
+            - name: "TroubleTicketResolvedEvent"
+              content-type: "application/json"
+              description: "Message example for TroubleTicketResolvedEvent event"
+              request:
+                file: "./documentation/operation-samples/TroubleTicketResolvedEvent_request.sample.json"
+                description: "Message example for TroubleTicketResolvedEvent event"        
+ 

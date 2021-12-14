@@ -46,7 +46,7 @@ public class ConformanceData extends GeneratorData {
 	public List<ConformanceOperationsDetails> resources;
 
 	public List<ConformanceMandatoryOperations> resourceMandatoryOperations;
-	
+
 	public List<String>  mandatoryNotifications;
 	public boolean hasMandatoryNotifications = false;
 	
@@ -119,7 +119,8 @@ public class ConformanceData extends GeneratorData {
 		}
 		
 		public List<String> mandatoryOperations;
-
+		public boolean hasMandatoryOperations = false;
+		
 	}
 	
 	public class ConformanceMandatoryNotifications {
@@ -155,6 +156,10 @@ public class ConformanceData extends GeneratorData {
 				
 		this.resourceMandatoryOperations = generateResourceMandatoryOperations();
 		
+		this.resourceMandatoryOperations.forEach(mandOps -> {
+			if(mandOps.mandatoryOperations!=null) mandOps.hasMandatoryOperations = !mandOps.mandatoryOperations.isEmpty();
+		});
+		
 		this.mandatoryNotifications = generateMandatoryNotifications();
 		this.hasMandatoryNotifications = !this.mandatoryNotifications.isEmpty();
 		
@@ -167,6 +172,8 @@ public class ConformanceData extends GeneratorData {
 		
 		List<String> orderedResources = model.getOrderedResources();
 				
+		LOG.debug("generateFragment: orderedResources: {}", orderedResources);
+
 	    for(String resource : orderedResources) {
 
 			ConformanceOperationsDetails resourceOperation = new ConformanceOperationsDetails(resource); 
@@ -174,7 +181,7 @@ public class ConformanceData extends GeneratorData {
 			for(String operation : APIModel.ALL_OPS) {
 				List<String> paths = model.getPaths(resource, operation);
 		    	
-				LOG.log(Level.TRACE, "generateFragment: operations: {}", paths);
+				LOG.debug("generateFragment: operations: {}", paths);
 	
 				paths = paths.stream().sorted(Comparator.comparingInt(String::length)).collect(Collectors.toList());
 	

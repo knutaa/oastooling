@@ -3,6 +3,21 @@ package no.paneon.api.tooling.userguide;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.Filter;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.Option;
+import com.jayway.jsonpath.TypeRef;
+
+import static com.jayway.jsonpath.JsonPath.parse;
+import static com.jayway.jsonpath.Criteria.where;
+import static com.jayway.jsonpath.Filter.filter;
+
+import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
+import com.jayway.jsonpath.spi.json.JsonProvider;
+import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
+import com.jayway.jsonpath.spi.mapper.MappingProvider;
+
 import no.paneon.api.conformance.ConformanceItem;
 import no.paneon.api.conformance.ConformanceModel;
 import no.paneon.api.graph.APIGraph;
@@ -21,8 +36,10 @@ import no.paneon.api.tooling.Args;
 import no.paneon.api.tooling.userguide.UserGuideData.DiagramData;
 import no.paneon.api.tooling.userguide.UserGuideData.FieldsData;
 import no.paneon.api.tooling.userguide.UserGuideData.ResourceData;
+import no.paneon.api.tooling.userguide.UserGuideData.Sample;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -35,9 +52,11 @@ import static java.util.stream.Collectors.toSet;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -74,10 +93,30 @@ public class ResourcesFragment {
 		this.generator = generator;		
 		this.args = generator.args;
 		this.userGuideData = generator.userGuideData;
+	
+		Configuration.setDefaults(new Configuration.Defaults() {
+
+		    private final JsonProvider jsonProvider = new JacksonJsonProvider();
+		    private final MappingProvider mappingProvider = new JacksonMappingProvider();
+		      
+		    @Override
+		    public JsonProvider jsonProvider() {
+		        return jsonProvider;
+		    }
+
+		    @Override
+		    public MappingProvider mappingProvider() {
+		        return mappingProvider;
+		    }
+		    
+		    @Override
+		    public Set<Option> options() {
+		        return EnumSet.noneOf(Option.class);
+		    }
+		});
 		
 	}
-
-
+	
 	@LogMethod(level=LogLevel.DEBUG)
 	protected void process() {
 		
@@ -144,7 +183,8 @@ public class ResourcesFragment {
 		res.description = generator.constructStatement(apiGraph.getNode(resource).getDescription() );		
 		res.diagrams = getResourceDiagrams(apiGraph, resource, config);		
 		res.fields = getFieldDescriptions(apiGraph, resource, config);
-		res.sample = getJSONRepresentations(apiGraph, resource, config);
+		res.samples = getResourceSamples(apiGraph, resource, config);
+		res.hasSamples = !res.samples.isEmpty();
 
 		return res;
 		
@@ -356,15 +396,152 @@ public class ResourcesFragment {
 	}
 	
 	@LogMethod(level=LogLevel.DEBUG)
-	private String getJSONRepresentations(APIGraph apiGraph, String resource, JSONObject config) {
+	private List<UserGuideData.Sample> getResourceSamples(APIGraph apiGraph, String resource, JSONObject config) {
+		
+		List<UserGuideData.Sample> sampleResults = new LinkedList<>();
+		
+		int sequenceNumber = 0;
+		int origSequenceNumber = sequenceNumber;
+		
+		if(origSequenceNumber==sequenceNumber) {
+			sequenceNumber = getResourceSamplesFromAPI(sampleResults, sequenceNumber, resource);	
+		}
+		
+		if(origSequenceNumber==sequenceNumber) {
+			sequenceNumber = getResourceSamplesFromRules(sampleResults, sequenceNumber, resource);	
+		}
+			
+		if(origSequenceNumber==sequenceNumber) {
+			sequenceNumber = getResourceSamplesFromSamplesDirectory(sampleResults, sequenceNumber, resource, config);	
+		}
+
+		if(origSequenceNumber==sequenceNumber) {
+			Out.printAlways("... *** resource samples not found for {}", resource );
+		}
+
+		return sampleResults;
+	}
+	
+
+	private int getResourceSamplesFromAPI(List<Sample> sampleResults, int sequenceNumber, String resource) {
+		String json="";
+		
+		JSONObject definition = APIModel.getDefinition(resource);
+		
+		LOG.debug("... resource sample from API resource={} definition='{}'", resource, definition.toString(2));
+
+		if(definition!=null) {
+			if(definition.has(EXAMPLE)) {
+				JSONObject value = definition.optJSONObject(EXAMPLE);
+				if(value != null) {
+					json = value.toString(2);		
+				}							
+			} else if(definition.has(EXAMPLES)) {
+				JSONArray array = definition.optJSONArray(EXAMPLES);
+				if(array != null) {
+					JSONObject value = array.getJSONObject(0);
+					json = value.toString(2);
+				}
+			}
+		}
+		
+		if(!json.isEmpty()) LOG.debug("... resource sample from API resource={} example={}", resource, json);
+	
+		if(!json.isEmpty()) {
+			Sample sample = userGuideData.new Sample();
+			sample.sample = json;
+			sampleResults.add(sample);
+			sequenceNumber++;
+		}		
+		
+		return sequenceNumber;
+
+	}
+
+ 
+	private int getResourceSamplesFromRules(List<Sample> sampleResults, int sequenceNumber, String resource) {		
+		String json="";
+		
+		JSONObject rules = Config.getRules();
+		
+		if(rules==null || rules.isEmpty()) return sequenceNumber;
+		
+		String rule = rules.toString(2);
+		
+		Object document = Configuration.defaultConfiguration().jsonProvider().parse(rule);
+
+		Filter resourceFilter = filter(
+				   where("name").is(resource)
+				);
+		
+		String query = "$.resources.[?].examples";
+		
+		List<List<Map<String,Object>>> examples = JsonPath.parse(document).read(query, resourceFilter);
+
+		if(examples.isEmpty()) return sequenceNumber;
+
+		examples.stream().flatMap(List::stream).forEach(example -> {
+			
+			String fileName = args.workingDirectory + File.separator + example.get("file");	
+
+			try {				
+				String sampleJson = Utils.readFile(fileName);
+				
+				if(!sampleJson.isEmpty()) LOG.debug("... resource sample from rules resource={} example={}", resource, sampleJson);
+				
+				if(!json.isEmpty()) {
+					Sample sample = userGuideData.new Sample();
+					sample.sample = sampleJson;
+					sample.description = example.get("description").toString();
+					sampleResults.add(sample);
+				}	
+				
+			} catch(Exception e) {
+				LOG.debug("... *** error reading example for resource {} from '{}'", resource, fileName);
+			}
+			
+		});
+		
+		return sequenceNumber+sampleResults.size();
+	}
+	
+	
+	private int getResourceSamplesFromSamplesDirectory(List<Sample> sampleResults, int sequenceNumber, String resource, JSONObject config) {
+		
 		config = Config.getConfig(config, JSON_REPRESENTATIONS);
 
 		JSONObject tableConfig = config.optJSONObject(JSON_TABLE);
 									
 		String json = generator.getJSON(resource, tableConfig);
 		
+		LOG.debug("... resource sample from API resource={} json='{}'", resource, json);
+				
+		if(!json.isEmpty()) {
+			Sample sample = userGuideData.new Sample();
+			sample.sample = json;
+			sampleResults.add(sample);
+			sequenceNumber++;
+		}		
+		
+		return sequenceNumber;
+	}
+	
+	@LogMethod(level=LogLevel.DEBUG)
+	private String getJSONRepresentations(APIGraph apiGraph, String resource, JSONObject config) {
+		
+		config = Config.getConfig(config, JSON_REPRESENTATIONS);
+
+		JSONObject tableConfig = config.optJSONObject(JSON_TABLE);
+									
+		String json = generator.getJSON(resource, tableConfig);
+		
+		LOG.debug("... resource sample from API resource={} json='{}'", resource, json);
+		
 		if(json.isEmpty()) {			
 			JSONObject definition = APIModel.getDefinition(resource);
+			
+			LOG.debug("... resource sample from API resource={} definition='{}'", resource, definition.toString(2));
+
 			if(definition!=null) {
 				if(definition.has(EXAMPLE)) {
 					JSONObject value = definition.optJSONObject(EXAMPLE);
@@ -400,7 +577,7 @@ public class ResourcesFragment {
 			resourceConfig.diagramSource = resource + "_diagram.adoc";
 
 			copyImages(resourceConfig);
-			copySample(resource, resourceConfig);
+			copySamples(resource, resourceConfig);
 
 			createResourceDiagramFragment(resourceConfig);						
 			createResourceFragment(resourceConfig);
@@ -424,13 +601,16 @@ public class ResourcesFragment {
 	}
 
 
-	private void copySample(String resource, UserGuideData.ResourceData resourceConfig) {
-		resourceConfig.sampleSource =  "Sample_" + resource + ".json";
-		String targetDirectory = generator.getGeneratedTargetDirectory("samples/");
-		
-		LOG.debug("copySample: target={}",  targetDirectory);
-		
-		Utils.save(resourceConfig.sample, targetDirectory + resourceConfig.sampleSource);
+	private void copySamples(String resource, UserGuideData.ResourceData resourceConfig) {	
+		resourceConfig.samples.forEach(example -> {
+			
+			example.sampleSource =  "Sample_" + resource + ".json";
+			String targetDirectory = generator.getGeneratedTargetDirectory("samples/");
+			
+			LOG.debug("copySample: target={}",  targetDirectory);
+			
+			Utils.save(example.sample, targetDirectory + example.sampleSource);
+		});
 	}
 
 

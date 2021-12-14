@@ -15,7 +15,8 @@
 	],
 	
 	"userguide::excludedResources": [
-		"EventSubscription"
+		"EventSubscription",
+		"Hub"
 	],
 	
 	"rewriteRules": [

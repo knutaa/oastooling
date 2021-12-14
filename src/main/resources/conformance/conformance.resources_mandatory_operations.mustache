@@ -3,6 +3,7 @@ include::Environment.adoc[]
 {{#resourceMandatoryOperations}}
 === {{{resource}}} Mandatory Operations
 
+{{#hasMandatoryOperations}}
 The following table indicates which ones are mandatory for the {{{resource}}} resource:
 
 [cols="100%", options="header"]
@@ -12,6 +13,10 @@ The following table indicates which ones are mandatory for the {{{resource}}} re
 |{{.}}
 {{/mandatoryOperations}}
 |===
+{{/hasMandatoryOperations}}
+{{^hasMandatoryOperations}}
+There are no mandatory operations for the {{{resource}}} resource.
 
+{{/hasMandatoryOperations}}
 {{/resourceMandatoryOperations}}
 

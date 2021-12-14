@@ -1445,7 +1445,8 @@ public class ConformanceModel extends CoreModel {
 			if(!res.has(key)) {
 				
 				if(notAllowUndefined) {
-					Out.println("... found '" + key + "' not expected");
+					Out.debug("... found '{}' not expected", key);
+					LOG.debug("... expecting keys=" + res.keySet());
 				} else {
 					Object candidateValue = candidate.get(key);
 					res.put(key, candidateValue);
@@ -1622,15 +1623,18 @@ public class ConformanceModel extends CoreModel {
 				
 		model.put("default_expanded_conformance", expanded);
 		
-		if(LOG.isTraceEnabled()) {
-			LOG.log(Level.TRACE, "default_expanded_conformance: {}", expanded.toString(2));
-		}
+		LOG.debug("default_expanded_conformance: {}", expanded.toString(2));
+		
 	}
 	
 	@LogMethod(level=LogLevel.DEBUG)
 	public List<String> getOrderedResources() {
 		List<String> res = getOrderedList( getResources(), getOrdering(RESOURCES));
 				
+		LOG.debug("getOrderedResources: {}", res);
+
+		// res.stream().forEach(resource -> Out.debug("getOrderedResources: resource={} condition={}", resource, getCondition(resource, RESOURCE)));
+		
 		if(Config.getBoolean("onlyMandatoryResources")) {
 			res = res.stream()
 					.filter(resource -> getCondition(resource, RESOURCE).contains("M"))

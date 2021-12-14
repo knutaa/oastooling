@@ -147,6 +147,8 @@ public class OperationsFragment {
 
 				JSONObjectOrArray json = JSONObjectOrArray.readJSONObjectOrArray(file);
 
+				Out.println("readOperationDetailsByPattern: file={}", file);
+
 			} catch(Exception ex) {
 				Out.printAlways("... error in JSON file: " + new File(matches.get(0)).getName());
 				Out.printAlways("... error message: " + ex.getLocalizedMessage());
@@ -259,22 +261,21 @@ public class OperationsFragment {
 					List<UserGuideData.OperationSampleData> sampleResults = new LinkedList<>();
 					
 					int origSequenceNumber = sequenceNumber;
-					
-					if(origSequenceNumber==sequenceNumber) {
-						sequenceNumber = processOperationSamplesFromSamples(operationsFragmentsConfig, opConfig, sampleResults, sequenceNumber, resource, op, operation, path, opDetail);	
-
-					}
-					
-					if(origSequenceNumber==sequenceNumber) {
-						sequenceNumber = processOperationSamplesFromAPI(sampleResults, sequenceNumber, resource, op, operation, path, opDetail);	
-					}
-					
+											
 					if(origSequenceNumber==sequenceNumber) {
 						sequenceNumber = processOperationSamplesFromRules(sampleResults, sequenceNumber, resource, op, operation, path, opDetail);	
 					}
-										
+						
 					if(origSequenceNumber==sequenceNumber) {
-						Out.printAlways("... *** samples not found for {} {} ({})", op.toUpperCase(), path, operation );
+						sequenceNumber = processOperationSamplesFromAPI(sampleResults, sequenceNumber, resource, op, operation, path, opDetail);	
+					}
+				
+					if(origSequenceNumber==sequenceNumber) {
+						sequenceNumber = processOperationSamplesFromSamples(operationsFragmentsConfig, opConfig, sampleResults, sequenceNumber, resource, op, operation, path, opDetail);	
+					}
+
+					if(origSequenceNumber==sequenceNumber) {
+						if(!data.isDelete) Out.printAlways("... *** samples not found for {} {} ({})", op.toUpperCase(), path, operation );
 					}
 					
 					data.samples = sampleResults;
@@ -297,12 +298,12 @@ public class OperationsFragment {
 		
 		if(rulesFragmentForRequest==null) return sequenceNumber;
 		
-		LOG.debug("rulesFragmentForRequest={}",  rulesFragmentForRequest.toString());
+		LOG.debug("rulesFragmentForRequest={}", rulesFragmentForRequest.toString());
 
 		JSONObject rulesForOperation = Config.getRulesForOperation(rulesFragmentForRequest, op); 
 			
 		if(rulesForOperation==null) return sequenceNumber;
-		LOG.debug("rulesForOperation={}",  rulesForOperation.toString());
+		LOG.debug("rulesForOperation={}", rulesForOperation.toString());
 			
 		JSONArray examples = rulesForOperation.optJSONArray("examples");
 		
@@ -327,19 +328,19 @@ public class OperationsFragment {
 	
 
 	private int generateOperationSample(List<OperationSampleData> sampleResults, int sequenceNumber, String resource,
-			String op, String operation, String path, JSONObject example) {
+			String op, String operation, String path, JSONObject sample) {
 		
-		LOG.debug("generateOperationSample resource={} op={} operation() =path={} example={}",  resource, op, operation, path, example);
+		LOG.debug("generateOperationSample resource={} op={} operation() =path={} example={}", resource, op, operation, path, sample);
 
-		if(operation.contentEquals("list") && !example.optBoolean("isCollection")) return sequenceNumber;
-		if(operation.contentEquals("retrieve") && example.optBoolean("isCollection")) return sequenceNumber;
+		if(operation.contentEquals("list") && !sample.optBoolean("isCollection")) return sequenceNumber;
+		if(operation.contentEquals("retrieve") && sample.optBoolean("isCollection")) return sequenceNumber;
 
 		UserGuideData.OperationSampleData sampleDetails = userGuideData.new OperationSampleData();
 																	
-		sampleDetails.description = example.optString("description");
+		sampleDetails.description = sample.optString("description");
 																													
-		sampleDetails.request  = generateRequestPayload(op, path, example);				
-		sampleDetails.response = generateResponseBpdy(op, path, example);
+		sampleDetails.request  = generateRequestPayloadFromConfig(op, path, sample);				
+		sampleDetails.response = generateResponseBodyFromConfig(op, path, sample);
 								
 		sequenceNumber++;
 		
@@ -352,16 +353,16 @@ public class OperationsFragment {
 
 	}
 
-	private String generateRequestPayload(String op, String path, JSONObject example) {
+	private String generateRequestPayloadFromConfig(String op, String path, JSONObject config) {
 		StringBuilder res = new StringBuilder();
 		
 		res.append(op.toUpperCase() + " " );
 		
-		String endPoint = updatePathParams(path, example);	
+		String endPoint = updatePathParams(path, config);	
 				
 		res.append(endPoint);
 		
-		String queryParams = generateQueryParam(example);
+		String queryParams = generateQueryParam(config);
 		
 		if(!queryParams.isBlank()) {
 			res.append("?");
@@ -370,14 +371,14 @@ public class OperationsFragment {
 		
 		res.append(NEWLINE);
 		
-		String contentType = example.optString("content-type");
+		String contentType = config.optString("content-type");
 		contentType = !contentType.isEmpty() ? contentType : "application/json";
 		
 		res.append("Content-Type: " + contentType );
 		
-		LOG.debug("example: {}", example);
+		LOG.debug("example: {}", config);
 		
-		String requestPayload = readPayload(example, "request");
+		String requestPayload = Samples.readPayload(this.args.workingDirectory, config, "request");
 		if(!requestPayload.isEmpty()) {
 			res.append(NEWLINE);
 			res.append(requestPayload);			
@@ -449,14 +450,14 @@ public class OperationsFragment {
 
 			JSONObject sampleConfig = samples.optJSONObject(idx);
 					
-			LOG.debug("sampleConfig={}",  sampleConfig);
-
 			if(sampleConfig==null) continue;
-														
+					
+			LOG.debug("sampleConfig={}",  sampleConfig.toString(2));
+
 			sampleDetails.description = sampleConfig.optString("description");
 																														
-			sampleDetails.request = generateRequestPayload(op, path, operationsFragmentsConfig, sampleConfig);				
-			sampleDetails.response = generateResponseBody(op, path, operationsFragmentsConfig, sampleConfig);
+			sampleDetails.request  = generateRequestPayload(op, path, operationsFragmentsConfig, sampleConfig);				
+			sampleDetails.response = generateResponseBody(op, path, sampleConfig);
 									
 			sequenceNumber++;
 			
@@ -483,13 +484,22 @@ public class OperationsFragment {
 		
 		Set<String> validOpCodes = responses.keySet().stream().filter(isValid).collect(toSet());
 				
+		LOG.debug("resource={} validOpCodes={}", resource, validOpCodes);
+		
 		for(String opCode : validOpCodes) {
 			JSONObject response = responses.get(opCode);
 			
 			Map<String,JSONObject> responseExamples = APIModel.getOperationExamples(response);
 
+			LOG.debug("resource={} operation={} responses={} examples={}",  resource, operation, responses.keySet(), responseExamples.keySet());
+
 			if(!responseExamples.isEmpty() || !requestExamples.isEmpty()) {
+				
+				LOG.debug("resource={} operation={} requestExamples={}",  resource, operation, requestExamples.keySet());
+				LOG.debug("resource={} operation={} responseExamples={}",  resource, operation, responseExamples.keySet());
+
 				LOG.debug("resource={} operation={} responses={} examples={}",  resource, operation, responses.keySet(), responseExamples.keySet());
+				LOG.debug("examples={}",  responseExamples);
 
 				UserGuideData.OperationSampleData sampleDetails = userGuideData.new OperationSampleData();
 																																
@@ -497,12 +507,16 @@ public class OperationsFragment {
 							
 				String filtering = "";
 				String contentType = "";
+				
 				JSONObject payload = !requestExamples.isEmpty() ? requestExamples.values().iterator().next() : new JSONObject();
 				sampleDetails.request = generateRequestPayload(op, path, payload, filtering, contentType );
 				
 				if(!responseExamples.isEmpty()) {
 					payload = responseExamples.values().iterator().next();
-					sampleDetails.response = generateResponseBpdy(op, path, payload );
+					
+					LOG.debug("### payload={}",  payload);
+					
+					sampleDetails.response = generateResponseBody(op, path, payload );
 				}
 
 				sequenceNumber++;
@@ -548,7 +562,7 @@ public class OperationsFragment {
 		return res;
 	}
 
-	private String generateResponseBody(String op, String path, JSONObject config, JSONObject sampleConfig) {
+	private String generateResponseBodyFromConfig(String op, String path, JSONObject config, JSONObject sampleConfig) {
 		StringBuilder res = new StringBuilder();
 
 		String responseCode = APIModel.getSuccessResponseCode(path,op);
@@ -563,7 +577,7 @@ public class OperationsFragment {
 		return res.toString();
 	}
 	
-	private String generateResponseBpdy(String op, String path, JSONObject example) {
+	private String generateResponseBodyFromConfig(String op, String path, JSONObject config) {
 		StringBuilder res = new StringBuilder();
 
 		String responseCode = APIModel.getSuccessResponseCode(path,op);
@@ -571,16 +585,28 @@ public class OperationsFragment {
 		if(!responseCode.isEmpty()) {
 			res.append(responseCode);
 			res.append(NEWLINE);
-			
-			String body = readPayload(example, "response");
-			
-			res.append(body);
+			String payload = readPayload(op, path, config, config, "response");
+			if(payload!=null) res.append(payload);
 		}
 		
 		return res.toString();
 	}
 	
+	private String generateResponseBody(String op, String path, JSONObject config) {
+		StringBuilder res = new StringBuilder();
 
+		String responseCode = APIModel.getSuccessResponseCode(path,op);
+
+		if(!responseCode.isEmpty()) {
+			res.append(responseCode);
+			res.append(NEWLINE);
+			String payload = readPayload(op, path, config, config, "response");
+			if(payload!=null) res.append(payload);
+		}
+		
+		return res.toString();
+	}
+	
 	private String generateRequestPayload(String op, String path, JSONObject config, JSONObject sampleConfig) {
 		StringBuilder res = new StringBuilder();
 		
@@ -648,51 +674,28 @@ public class OperationsFragment {
 	private String readPayload(String op, String path, JSONObject config, JSONObject sampleConfig, String requestResponse) {
 		StringBuilder res = new StringBuilder();
 				
-		String source = sampleConfig.optString(requestResponse);
-		if(!source.isEmpty()) {
-			source = source.replaceAll("\\$_", "");
+		if(sampleConfig.optJSONObject(requestResponse)!=null) {
+			String content = Samples.readPayload(args.workingDirectory, sampleConfig, requestResponse);
+			res.append(content);
 			
-			String request = readOperationDetailsByPattern(config, source);
+		} else {
+			String source = sampleConfig.optString(requestResponse);
 			
-			res.append(NEWLINE);
-			res.append(request);
-			
+			LOG.debug("readPayload: op={} path={} source={} ", op, path, source);
+	
+			if(!source.isEmpty()) {
+				source = source.replaceAll("\\$_", "");
+				
+				String request = readOperationDetailsByPattern(config, source);
+				
+				res.append(request);
+				
+			}
 		}
 		
 		return res.toString();
 	}
 	
-	private String readPayload(JSONObject example, String requestResponse) {
-		StringBuilder res = new StringBuilder();
-				
-		if(example==null) return res.toString();
-		
-		LOG.debug("readPayload: requestResponse={} example={}", requestResponse, example.toString(2));
-		
-		try {
-			Object source = example.query("/" + requestResponse + "/file" );
-			
-			if(source!=null) {
-				String sourceFile = source.toString();
-				
-				try {
-					String payload = Utils.readFile(args.workingDirectory + "/" + sourceFile);
-				
-					res.append(NEWLINE);
-					res.append(payload);
-				} catch(Exception e) {
-					Out.printAlways("... unable to read sample payload from " + sourceFile);
-				}
-				
-			}
-			
-		} catch(Exception e) {
-			
-		}
-		
-		
-		return res.toString();
-	}
 	
 	private String getSampleKey(String op, String path, JSONObject opDetail) {
 		String res="";
