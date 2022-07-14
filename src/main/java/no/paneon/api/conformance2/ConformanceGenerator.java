@@ -173,7 +173,11 @@ public class ConformanceGenerator {
 
 		Map<String,String> filesToCopy = new HashMap<>();
 
-		for(String operation : this.conformance.getAllUsedOperationsOrdered() ) {
+		List<String> operationsOrdered = this.conformance.getAllUsedOperationsOrdered();
+		
+		LOG.debug("generatePartials:: operationsOrdered={}", operationsOrdered);
+		
+		for(String operation : operationsOrdered ) {
 			String source = numberAndCopy.get(operation);
 
 			String formattedNumber = String.format("%02d", number);

@@ -24,5 +24,5 @@ Attribute selection (Limiting Response Data): In order to limit which attributes
 Level: The filtering and attribute selection can apply to the top level properties (attributes) and subproperties. The tables below show which attributes need to be supported in top-level or contained resources.
 
 
-include::{generated}//GetOperationConformance.adoc[]
+include::../{generated}/GetOperationConformance.adoc[]
 

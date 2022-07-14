@@ -108,6 +108,7 @@ public class ConformanceData extends GeneratorData {
 
 		public List<ConformanceItem> mandatoryAttributes;
 		public List<ConformanceItem> patchableAttributes;
+		public boolean hasPatchableAttributes;
 
 	}
 	
@@ -181,7 +182,7 @@ public class ConformanceData extends GeneratorData {
 			for(String operation : APIModel.ALL_OPS) {
 				List<String> paths = model.getPaths(resource, operation);
 		    	
-				LOG.debug("generateFragment: operations: {}", paths);
+				LOG.debug("generateFragment: resource={} operation={} paths={}", resource, operation, paths);
 	
 				paths = paths.stream().sorted(Comparator.comparingInt(String::length)).collect(Collectors.toList());
 	
@@ -211,6 +212,7 @@ public class ConformanceData extends GeneratorData {
 				case "PATCH":
 					resourceOperation.patch = opConf;
 					resourceOperation.patchableAttributes = model.getMandatoryConformanceInPatch(resource);
+					resourceOperation.hasPatchableAttributes = !resourceOperation.patchableAttributes.isEmpty();
 					break;
 					
 				}

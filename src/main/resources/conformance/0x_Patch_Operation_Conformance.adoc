@@ -13,5 +13,5 @@ The mandatory application context is JSON Merge.
 |Status Code 200 if resource modified |M
 |===
 
-include::{generated}//PatchOperationConformance.adoc[]
+include::../{generated}/PatchOperationConformance.adoc[]
 

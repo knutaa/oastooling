@@ -512,6 +512,9 @@ public class ConformanceModel extends CoreModel {
 	public List<String[]> getMandatoryInPost(String resource) { 
 		
 		Map<String,String> propertyConditions = APIModel.getMandatoryOptional(APIModel.getResourceForPost(resource));
+				
+		LOG.debug("getMandatoryInPost: resource={} propCond={}", resource, propertyConditions);
+		
 		JSONObject conformance = getConformance(resource, OPERATIONS_DETAILS, POST, MANDATORY);
 		
 		if(conformance==null) {
@@ -690,7 +693,12 @@ public class ConformanceModel extends CoreModel {
 		List<String> ordering = new LinkedList<>();
 				
 		JSONObject layout = getLayout();
-				
+		if(layout==null) layout = getDefaults();
+		if(layout!=null && layout.has(LAYOUT)) layout = layout.optJSONObject(LAYOUT);
+		
+		if(layout==null) layout=Config.getConfig(DEFAULT_CONFORMANCE);
+		if(layout!=null && layout.has(LAYOUT)) layout = layout.optJSONObject(LAYOUT);
+
 		if(layout!=null && layout.has(type)) {
 			JSONArray order = layout.optJSONArray(type);
 			for(Object o : order) {
@@ -901,6 +909,9 @@ public class ConformanceModel extends CoreModel {
 				res.addAll(this.getOperationsForResource(resource));
 			}
 		}
+		
+		LOG.debug("getAllOperations:: res={}", res);
+		
 		return res;
 	}
 

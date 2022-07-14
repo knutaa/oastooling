@@ -11,5 +11,5 @@ All the POST operations in this API share the same status code pattern.
 |Status Code 201 if resource created |M
 |===
 
-include::{generated}//PostOperationConformance.adoc[]
+include::../{generated}/PostOperationConformance.adoc[]
 
