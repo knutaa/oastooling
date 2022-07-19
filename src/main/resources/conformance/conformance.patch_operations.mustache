@@ -5,6 +5,18 @@ include::Environment.adoc[]
 === PATCH {{path}}?fields=...&{filtering}
 
 {{description}}
+
+{{#hasNonPatchableAttributes}}
+[cols="50%,50%", options="header"]
+|===
+|*Non Patchable Attribute*	| *Rule*
+{{#nonPatchableAttributes}}
+|{{label}} 
+|{{comment}}
+{{/nonPatchableAttributes}}
+|===
+{{/hasNonPatchableAttributes}}
+
 {{#hasPatchableAttributes}}
 [cols="50%,50%", options="header"]
 |===

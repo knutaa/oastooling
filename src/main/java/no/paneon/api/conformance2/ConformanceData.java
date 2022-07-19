@@ -109,6 +109,9 @@ public class ConformanceData extends GeneratorData {
 		public List<ConformanceItem> mandatoryAttributes;
 		public List<ConformanceItem> patchableAttributes;
 		public boolean hasPatchableAttributes;
+		
+		public List<ConformanceItem> nonPatchableAttributes;
+		public boolean hasNonPatchableAttributes;
 
 	}
 	
@@ -213,6 +216,10 @@ public class ConformanceData extends GeneratorData {
 					resourceOperation.patch = opConf;
 					resourceOperation.patchableAttributes = model.getMandatoryConformanceInPatch(resource);
 					resourceOperation.hasPatchableAttributes = !resourceOperation.patchableAttributes.isEmpty();
+					
+					resourceOperation.nonPatchableAttributes = model.getNonPatchableConformance(resource);
+					resourceOperation.hasNonPatchableAttributes = !resourceOperation.nonPatchableAttributes.isEmpty();
+					
 					break;
 					
 				}

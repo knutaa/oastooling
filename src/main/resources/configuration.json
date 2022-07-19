@@ -3,6 +3,8 @@
 
 	"mergeMainDocument": true,
 
+	"allAPIResourcesMandatory": true,
+
 	"userguide": {
 		"variables": {
 			"intro": "intro ..."

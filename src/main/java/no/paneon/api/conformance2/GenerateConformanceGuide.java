@@ -50,6 +50,9 @@ public class GenerateConformanceGuide extends GenerateCommon {
 		model.extractFromRules();
 		
 		model.expandDefaults();
+		
+		boolean completeGeneration=true;
+		model.generateConformance(completeGeneration);
 
 		LOG.debug("GenerateConformanceGuide: model={}", model);
 		

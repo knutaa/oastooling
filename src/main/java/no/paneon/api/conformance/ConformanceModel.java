@@ -46,6 +46,7 @@ public class ConformanceModel extends CoreModel {
 	private static final String CONDITIONAL = "conditional";
 	private static final String NON_MANDATORY = "non-mandatory";
 	private static final String PATCHABLE = "patchable";
+	private static final String NON_PATCHABLE = "non-patchable";
 
 	private static final String RESOURCE = "resource";
 	private static final String RESOURCES = "resources";
@@ -126,25 +127,28 @@ public class ConformanceModel extends CoreModel {
 				postItem.put(POST, mandItem);
 				confItem.put(OPERATIONS_DETAILS, postItem);
 			}
+									
+			if(!confItem.has(OPERATIONS_DETAILS)) {
+				confItem.put(OPERATIONS_DETAILS,new JSONObject());
+			}
+			
+			if(!confItem.getJSONObject(OPERATIONS_DETAILS).has(PATCH)) {
+				confItem.getJSONObject(OPERATIONS_DETAILS).put(PATCH, new JSONObject());
+			}
 			
 			JSONObject patchDetails = getPatchableFromSwagger(resource);
 			
 			if(Config.getBoolean("onlyMandatoryAsPatchable")) {
 				patchDetails = retainMandatoryInPatch(resource, confItem, patchDetails);
 			}
+	
+			confItem.getJSONObject(OPERATIONS_DETAILS).getJSONObject(PATCH).put(PATCHABLE,patchDetails);
+
+			JSONObject nonPatchDetails = getNonPatchableFromSwagger(resource);
 			
-			if(true || !patchDetails.isEmpty()) {
-				JSONObject patchable = new JSONObject();
-				patchable.put(PATCHABLE, patchDetails);
-				if(confItem.has(OPERATIONS_DETAILS)) {
-					confItem.getJSONObject(OPERATIONS_DETAILS).put(PATCH, patchable);
-				} else {
-					JSONObject patchItem = new JSONObject();
-					patchItem.put(PATCH, patchable);
-					confItem.put(OPERATIONS_DETAILS, patchItem);
-				}
-			}
-		
+			confItem.getJSONObject(OPERATIONS_DETAILS).getJSONObject(PATCH).put(NON_PATCHABLE,nonPatchDetails);
+	
+			
 		}	
 		
 		conf.put(NOTIFICATIONS,  new JSONArray(allNotifications));
@@ -176,29 +180,40 @@ public class ConformanceModel extends CoreModel {
 		JSONObject attributes = confItem.optJSONObject(ATTRIBUTES);
 		final Set<String> allMandatory = attributes.keySet().stream()
 							.filter(attr -> attributes.optJSONObject(attr).getString(CONDITION).startsWith("M"))
+							.filter(attr -> !attributes.optJSONObject(attr).getString(CONDITION).contains("in response messages"))
 							.collect(Collectors.toSet());
 		
+		LOG.debug("retainMandatoryInPatch:: in patchDetails: {}", patchDetails.toString());
+		LOG.debug("retainMandatoryInPatch:: allMandatory: {}", allMandatory);
+
 		Set<String> mandatoryPatchable = allPatchable.stream().filter(attr -> allMandatory.contains(attr)).collect(Collectors.toSet());
 		
-		Set<String> structured = mandatoryPatchable.stream()
-									.filter(attr -> isComplexType(resource,attr))
-									.collect(Collectors.toSet());
-				
-		Set<String> withoutSubordinates = structured.stream()
-												.filter(attr -> !allMandatory.contains(attr + "."))
-												.collect(Collectors.toSet());
-
-		Set<String> retainedPatchable = new HashSet<>(mandatoryPatchable);
-		
-		retainedPatchable.removeAll(withoutSubordinates);
+//		Set<String> structured = mandatoryPatchable.stream()
+//									.filter(attr -> isComplexType(resource,attr))
+//									.collect(Collectors.toSet());
+//				
+//		Set<String> withoutSubordinates = structured.stream()
+//												.filter(attr -> !allMandatory.contains(attr + "."))
+//												.collect(Collectors.toSet());
+//
+//		Set<String> retainedPatchable = new HashSet<>(mandatoryPatchable);
+//		
+//		retainedPatchable.removeAll(withoutSubordinates);
+//		
+//		Set<String> removeAttributes = new HashSet<>(allPatchable);
+//		
+//		removeAttributes.removeAll(retainedPatchable);
 		
 		Set<String> removeAttributes = new HashSet<>(allPatchable);
-		
-		removeAttributes.removeAll(retainedPatchable);
+		removeAttributes.removeAll(mandatoryPatchable);
 						
+		LOG.debug("retainMandatoryInPatch:: remove non mandatory attributes: {}", removeAttributes);
+		
 		for(String key : removeAttributes) {
 			patchDetails.remove(key);
 		}
+		
+		LOG.debug("retainMandatoryInPatch:: res patchDetails: {}", patchDetails.toString());
 		
 		return patchDetails;
 	}
@@ -456,8 +471,31 @@ public class ConformanceModel extends CoreModel {
 	@LogMethod(level=LogLevel.DEBUG)
 	public JSONObject getPatchableFromSwagger(String resource) {
 		JSONObject res = new JSONObject();
-		Set<String> properties = APIModel.getProperties(resource + "_Update");
+		Set<String> properties = APIModel.getProperties(resource + "_Update");	
+		properties.addAll( APIModel.getProperties(resource + "_MVO"));
+		
+		properties.forEach(property -> {
 			
+			String rule = "";
+			
+			JSONObject item = new JSONObject();
+			item.put("rule",  rule);
+			res.put(property, item);
+		});
+		
+		return res;
+		
+	}
+	
+	@LogMethod(level=LogLevel.DEBUG)
+	public JSONObject getNonPatchableFromSwagger(String resource) {
+		JSONObject res = new JSONObject();
+			
+		JSONObject patchable = getPatchableFromSwagger(resource);
+		
+		Set<String> properties =  APIModel.getProperties(resource);
+		properties.removeAll( patchable.keySet());
+		
 		properties.forEach(property -> {
 			
 			String rule = "";
@@ -476,6 +514,8 @@ public class ConformanceModel extends CoreModel {
 		List<String[]> res = new LinkedList<>();
 		Set<String> properties = APIModel.getProperties(resource + "_Update");
 	
+		properties.addAll( APIModel.getProperties(resource + "_MVO") );
+		
 		properties.forEach(property -> {
 			// String rule = getSpecialProperty(resource, property, "patchRules", RULE);
 			JSONObject conf = getConformance(resource, OPERATIONS_DETAILS, PATCH, PATCHABLE);
@@ -559,6 +599,14 @@ public class ConformanceModel extends CoreModel {
 		
 	}
 	
+	@LogMethod(level=LogLevel.DEBUG)
+	public List<ConformanceItem> getNonPatchableConformance(String resource) { 
+		List<String[]> tmp =  this.getNonPatchable(resource);
+		
+		return tmp.stream().map(ConformanceItem::new).collect(Collectors.toList());
+		
+	}
+	
 	
 	@LogMethod(level=LogLevel.DEBUG)
 	public List<String[]> getMandatoryInPatch(String resource) {
@@ -586,13 +634,15 @@ public class ConformanceModel extends CoreModel {
 			}
 		}
 		
-		for(String property : conformance.keySet()) {
-			JSONObject conf = conformance.optJSONObject(property);
-			if(conf!=null) {
-				String rule = conf.optString(RULE);
-				if("null".contentEquals(rule)) rule = "";
-				res.put(property, new String[] { property, rule });
-				
+		if(conformance!=null) {
+			for(String property : conformance.keySet()) {
+				JSONObject conf = conformance.optJSONObject(property);
+				if(conf!=null) {
+					String rule = conf.optString(RULE);
+					if("null".contentEquals(rule)) rule = "";
+					res.put(property, new String[] { property, rule });
+					
+				}
 			}
 		}
 		
@@ -1091,13 +1141,21 @@ public class ConformanceModel extends CoreModel {
 		return conformance;
 	}
 	
-	private boolean generatedConformance = false;
 	@LogMethod(level=LogLevel.DEBUG)
 	public JSONObject generateConformance() {
+		final boolean forcedStatus=false;
+		return generateConformance(forcedStatus);
+	}
+	
+	private boolean generatedConformance = false;
+	@LogMethod(level=LogLevel.DEBUG)
+	public JSONObject generateConformance(boolean forced) {
 				
-		if(generatedConformance) {
+		if(generatedConformance && !forced) {
 			return model.optJSONObject(GENERATED_CONFORMANCE);
 		}
+			
+		LOG.debug("generateConformance:: model.keys={}",  model.keySet());
 		
 		JSONObject api             = model.optJSONObject("api_extracted_conformance");
 		JSONObject rulesExtract    = model.optJSONObject("rules_extracted_conformance");
@@ -1120,11 +1178,15 @@ public class ConformanceModel extends CoreModel {
 		boolean useConformanceSourceOnly = Config.getBoolean(CONFORMANCE_SOURCE_ONLY);
 				
 		if(!useConformanceSourceOnly) {
+			LOG.debug("combineConformance:: rulesExtract={}", rulesExtract);
+
 			combineConformance(res, rulesExtract);
 			if(LOG.isTraceEnabled()) LOG.log(Level.TRACE, "generateConformance: with rules :: {}", res.toString(2));
 		}
 		
 		if(!useConformanceSourceOnly) {
+			LOG.debug("combineConformance:: ruleConf={}", ruleconf);
+			
 			combineConformance(res, ruleconf);
 			if(LOG.isTraceEnabled()) LOG.log(Level.TRACE, "generateConformance: with ruleconf :: {}", res.toString(2));
 		}
@@ -1449,7 +1511,9 @@ public class ConformanceModel extends CoreModel {
 
 		for(String key : candidate.keySet()) {
 		
-			boolean override = key.startsWith(OPERATIONS_DETAILS) || key.startsWith(VARIABLES);
+			LOG.debug("combineConformanceHelper:: candidate={}", candidate.toString());
+			
+			boolean override = key.startsWith(OPERATIONS_DETAILS) || key.startsWith(VARIABLES) || key.contentEquals(OPERATIONS);
 
 			notAllowUndefined = notAllowUndefined && !override;
 			
@@ -1985,7 +2049,18 @@ public class ConformanceModel extends CoreModel {
 			conf.put(resource, new JSONObject());
 			conf.getJSONObject(resource).put(OPERATIONS_DETAILS, new JSONObject());
 			JSONObject operationDetails = conf.getJSONObject(resource).getJSONObject(OPERATIONS_DETAILS);
-	
+				
+			TreeNode<Conformance> node = getOperationsOverview(resource);
+			conf.getJSONObject(resource).put(OPERATIONS, getConformanceItems(node));
+			for(String op : operations) {
+				Object o = rulesForResource.optQuery("#/supportedHttpMethods/" + GET + "/required");
+				if(o!=null && o.equals(Boolean.TRUE)) {
+					JSONObject opConf = conf.getJSONObject(resource).getJSONObject(OPERATIONS).optJSONObject(op);
+					opConf.put(CONDITION, "M");
+				}
+			}
+			seenDetails=seenDetails || !operations.isEmpty();
+		
 			JSONObject mandConf = new JSONObject();
 			JSONObject condConf = new JSONObject();
 
@@ -2000,6 +2075,9 @@ public class ConformanceModel extends CoreModel {
 			
 			addedDetails = addPatchable(resource, operationDetails); 
 			seenDetails = seenDetails || addedDetails;
+			
+			addedDetails = addNonPatchable(resource, operationDetails); 
+			seenDetails = seenDetails || addedDetails;			
 						
 		}
 				
@@ -2010,6 +2088,7 @@ public class ConformanceModel extends CoreModel {
 			model.put("rules_conformance", res);
 									
 			Out.println("... extracted from API rules");
+			
 		}				
 		return res;
 						
@@ -2038,6 +2117,32 @@ public class ConformanceModel extends CoreModel {
 		return seenDetails;
 	}
 
+	private boolean addNonPatchable(String resource, JSONObject operationDetails) {
+
+		boolean seenDetails = false;
+
+		List<String[]> operationRules = getNonPatchable(resource);
+		
+		LOG.debug("addNonPatchable: operationRules={}",  operationRules);
+		
+		if(!operationRules.isEmpty()) {
+			JSONObject condConf = new JSONObject();
+			for(String[] opRule : operationRules) {
+				JSONObject confItem = new JSONObject();
+				String property = opRule[0];
+				String rule = opRule[1];
+				
+				confItem.put(RULE, rule);																			
+				condConf.put(property, confItem);
+				seenDetails = true;
+			}
+			if(!operationDetails.has(PATCH)) operationDetails.put(PATCH, new JSONObject());
+			operationDetails.getJSONObject(PATCH).put(NON_PATCHABLE, condConf);
+		}			
+
+		return seenDetails;
+	}
+	
 	private boolean addConditionForPost(String resource, JSONObject condConf, JSONObject operationDetails) {
 
 		boolean seenDetails = false;

@@ -51,6 +51,15 @@ Note: If the update operation yields to the creation of sub-resources or relatio
 
 [cols="35%,65%"]
 |===
+|*Non Patchable Attributes*|*Rule*
+
+{{#nonPatchable}}
+|{{name}} |{{rule}}
+{{/nonPatchable}}
+|===
+
+[cols="35%,65%"]
+|===
 |*Patchable Attributes*|*Rule*
 
 {{#patchable}}
@@ -58,14 +67,6 @@ Note: If the update operation yields to the creation of sub-resources or relatio
 {{/patchable}}
 |===
 
-[cols="35%,65%"]
-|===
-|*Non Patchable Attributes*|*Rule*
-
-{{#nonPatchable}}
-|{{name}} |{{rule}}
-{{/nonPatchable}}
-|===
 
 {{/isPartialUpdate}}
 					

@@ -5,10 +5,14 @@ import org.json.JSONObject;
 import no.paneon.api.generator.GenerateCommon;
 import no.paneon.api.logging.AspectLogger.LogLevel;
 import no.paneon.api.logging.LogMethod;
+import no.paneon.api.model.APIModel;
+import no.paneon.api.utils.Config;
 import no.paneon.api.utils.Out;
 import no.paneon.api.utils.Utils;
 
 import no.paneon.api.tooling.Args;
+
+import java.util.List;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -45,18 +49,20 @@ public class GenerateConformance extends GenerateCommon {
 		model.extractFromSwagger();
 		
 		model.extractFromRules();
-		
+
 		model.expandDefaults();
 				
 
+		boolean completeGeneration=true;
+		
 		try {	
 			JSONObject conformance = null;
 			if(args.mandatoryOnly) {
-				conformance = model.mandatoryOnly(model.generateConformance());
+				conformance = model.mandatoryOnly(model.generateConformance(completeGeneration));
 				Out.println("... removed optional resource items (mandatory only)");
 			} else {
 							
-				conformance = model.generateConformance();
+				conformance = model.generateConformance(completeGeneration);
 												
 				if(!args.complete) {
 					conformance = model.removeOptional(conformance);
@@ -66,6 +72,19 @@ public class GenerateConformance extends GenerateCommon {
 			}
 			if(LOG.isTraceEnabled()) LOG.log(Level.TRACE, "conformance: {0}", conformance.toString(2));
 				
+			if(Config.getBoolean("allAPIResourcesMandatory")) {
+				List<String> resources=APIModel.getResources();
+				resources.remove("Hub");
+				JSONObject conf = conformance.optJSONObject("conformance");
+				if(conf!=null) {
+					for(String resource : resources) {
+						JSONObject resourceConf = conf.optJSONObject(resource);
+						if(resourceConf!=null) resourceConf.put("condition", "M");
+					}
+				}
+				
+			}
+			
 			saveConformance(conformance);
 	        
 		} catch(Exception e) {			

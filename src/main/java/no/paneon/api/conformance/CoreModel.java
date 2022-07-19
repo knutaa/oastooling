@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import no.paneon.api.logging.AspectLogger.LogLevel;
 import no.paneon.api.logging.LogMethod;
 import no.paneon.api.utils.Config;
+import no.paneon.api.utils.Out;
 import no.paneon.api.utils.Utils;
 
 import org.apache.logging.log4j.LogManager;
@@ -28,6 +29,7 @@ public class CoreModel {
 	static final String CONFIG = "config";
 
     public CoreModel() {
+    	Out.debug("CoreModel::constructor");
     	this.model = new JSONObject();
     }
  
