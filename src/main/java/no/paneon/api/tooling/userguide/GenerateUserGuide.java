@@ -35,6 +35,11 @@ public class GenerateUserGuide extends GenerateCommon {
 
 		Timestamp.timeStamp("start conformance guide generation");
 		
+		this.model.extractFromSwagger();
+		this.model.extractFromRules();
+		boolean forced=true;
+		this.model.generateConformance(forced);
+		
 		UserGuideGenerator userGuide = new UserGuideGenerator(this);        	     
 
 		userGuide.generateDocument();			

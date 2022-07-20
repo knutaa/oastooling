@@ -516,7 +516,16 @@ public class ConformanceModel extends CoreModel {
 	
 		properties.addAll( APIModel.getProperties(resource + "_MVO") );
 		
+		JSONObject attributesConf = getAttributeConformanceForResource(resource);
+		
 		properties.forEach(property -> {
+			String attributeConf = attributesConf!=null ? attributesConf.optString(property) : null;
+			String attrCond = attributeConf!=null ? attributesConf.optString(CONDITION) : null;
+			
+			//if(attrCond!=null && !attrCond.contentEquals("M")) return;
+			
+			// Out.debug("getPatchable: resource={} attrCond={}", resource, attrCond);
+			
 			// String rule = getSpecialProperty(resource, property, "patchRules", RULE);
 			JSONObject conf = getConformance(resource, OPERATIONS_DETAILS, PATCH, PATCHABLE);
 			String rule = "";
@@ -611,7 +620,10 @@ public class ConformanceModel extends CoreModel {
 	@LogMethod(level=LogLevel.DEBUG)
 	public List<String[]> getMandatoryInPatch(String resource) {
 		
-		Map<String,String> propertyConditions = APIModel.getMandatoryOptional(APIModel.getResourceForPatch(resource));		
+		Map<String,String> propertyConditions = APIModel.getMandatoryOptional(APIModel.getResourceForPatch(resource));	
+		
+		LOG.debug("getMandatoryInPatch: resource={} propertyCondition={}",  resource, propertyConditions);
+		
 		JSONObject conformance = getConformance(resource, OPERATIONS_DETAILS, PATCH, PATCHABLE);
 		
 		return getMandatoryInOperationHelper(conformance, propertyConditions, ValueSource.SET_EMPTY);
@@ -637,6 +649,15 @@ public class ConformanceModel extends CoreModel {
 		if(conformance!=null) {
 			for(String property : conformance.keySet()) {
 				JSONObject conf = conformance.optJSONObject(property);
+//				if(conf!=null) {
+//					String condition = conf.optString(CONDITION);
+//					if(condition!=null && condition.startsWith("M")) {
+//						String rule = conf.optString(RULE);
+//						if("null".contentEquals(rule)) rule = "";
+//						res.put(property, new String[] { property, rule });
+//					}
+//				}
+				
 				if(conf!=null) {
 					String rule = conf.optString(RULE);
 					if("null".contentEquals(rule)) rule = "";
@@ -1084,7 +1105,7 @@ public class ConformanceModel extends CoreModel {
 	}
 	
 	@LogMethod(level=LogLevel.DEBUG)
-	private JSONObject getAttributeConformanceForResource(String resource) {
+	public JSONObject getAttributeConformanceForResource(String resource) {
 		return getConformance(resource, ATTRIBUTES);
 	}
 

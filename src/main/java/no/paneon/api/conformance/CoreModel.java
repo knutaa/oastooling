@@ -29,7 +29,7 @@ public class CoreModel {
 	static final String CONFIG = "config";
 
     public CoreModel() {
-    	Out.debug("CoreModel::constructor");
+    	LOG.debug("CoreModel::constructor");
     	this.model = new JSONObject();
     }
  

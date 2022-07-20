@@ -229,6 +229,8 @@ public class OperationsFragment {
 						
 						List<String[]> propertyRules = generator.conformance.getPatchable(resource);
 
+						LOG.debug("getOperationsDetailsForResource: resource={} propertyRules={}", resource, propertyRules);
+						
 						if(propertyRules!=null) {
 							data.patchable = propertyRules.stream().map(this::createPropertyRuleData).collect(toList());
 						}

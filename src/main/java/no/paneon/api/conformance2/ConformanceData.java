@@ -13,6 +13,7 @@ import java.util.SortedMap;
 import java.util.Map.Entry;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -215,6 +216,7 @@ public class ConformanceData extends GeneratorData {
 				case "PATCH":
 					resourceOperation.patch = opConf;
 					resourceOperation.patchableAttributes = model.getMandatoryConformanceInPatch(resource);
+					
 					resourceOperation.hasPatchableAttributes = !resourceOperation.patchableAttributes.isEmpty();
 					
 					resourceOperation.nonPatchableAttributes = model.getNonPatchableConformance(resource);
