@@ -232,6 +232,8 @@ public class GenerateCommon {
 
 		LOG.debug("dir1={} dir2={} steps={} res={}", dir1, dir2, steps, res);
 
+		if(res.isEmpty()) res.append(".");
+		
 		return res.toString().replace("//", "/");
 
 	}
