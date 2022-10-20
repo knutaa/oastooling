@@ -5,7 +5,7 @@ ifdef::backend-pdf[<<<]
 
 Support of polymorphic collections and types and schema based extension is provided by means of a list of generic meta-attributes that we describe below. Polymorphism in collections occurs when entities inherit from base entities, for instance a BillingAccount and SettlementAccount inheriting properties from the abstract Account entity.
 
-Generic support of polymorphism and pattern extensions is described in the TMF API Guidelines v3.0 Part 2 document.
+Generic support of polymorphism and pattern extensions is described in the TMF API Guidelines, Part 2 (TMF630).
 
 The @type attribute provides a way to represent the actual class type of an entity. For example, within a list of Account instances some may be instances of BillingAccount where other could be instances of SettlementAccount. The @type gives this information. All resources and sub-resources of this API have a @type attributes that can be provided when this is useful.
 
