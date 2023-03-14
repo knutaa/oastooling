@@ -676,6 +676,11 @@ public class OperationsFragment {
 	private String readPayload(String op, String path, JSONObject config, JSONObject sampleConfig, String requestResponse) {
 		StringBuilder res = new StringBuilder();
 				
+		if(sampleConfig==null) {
+			Out.printOnce("... missing payload examples");
+			return res.toString();
+		}
+		
 		if(sampleConfig.optJSONObject(requestResponse)!=null) {
 			String content = Samples.readPayload(args.workingDirectory, sampleConfig, requestResponse);
 			res.append(content);

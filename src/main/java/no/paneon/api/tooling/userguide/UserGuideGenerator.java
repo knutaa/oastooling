@@ -47,7 +47,8 @@ public class UserGuideGenerator {
 	static final Logger LOG = LogManager.getLogger(UserGuideGenerator.class);
 		
 	private static final String EXCLUDED_RESOURCES = "userguide::excludedResources";
-	
+	private static final String RESOURCE_LAYOUT = "userguide::resourceLayout";
+
 	Args.UserGuide args;
 	
 	APIGraph apiGraph;
@@ -329,6 +330,15 @@ public class UserGuideGenerator {
 						.filter(notExcludedResource)
 						.sorted(Comparator.comparingInt(String::length))
 						.collect(toList());
+		
+		List<String> configSequence = Config.get(RESOURCE_LAYOUT);
+		
+		if(!configSequence.isEmpty()) {
+			configSequence = configSequence.stream().filter(configSequence::contains).collect(toList());
+			resources.removeAll(configSequence);
+			configSequence.addAll(resources);
+			resources=configSequence;
+		}
 		
 		return resources;
 	}
