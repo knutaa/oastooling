@@ -1,5 +1,7 @@
 package no.paneon.api.tooling;
 
+import java.util.Properties;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -83,6 +85,18 @@ public class App {
 			System.exit(1);			
         }
 		
+		try {
+			final Properties properties = new Properties();
+			properties.load(this.getClass(). getClassLoader().getResourceAsStream("project.properties"));		
+			String version = properties.getProperty("version");
+			String artifactId = properties.getProperty("artifactId");
+			
+			Out.printAlways("{} {}", artifactId, version);
+			
+		} catch(Exception e) {
+			Out.printAlways("... version information not available: {}", e.getLocalizedMessage());
+		}
+
 		Timestamp.timeStamp("arguments available");
 
     	switch(commandLine.getParsedCommand()) {
