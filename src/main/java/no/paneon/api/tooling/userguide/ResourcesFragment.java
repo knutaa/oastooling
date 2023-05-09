@@ -430,30 +430,46 @@ public class ResourcesFragment {
 		
 		LOG.debug("... resource sample from API resource={} definition='{}'", resource, definition.toString(2));
 
+
 		if(definition!=null) {
+			
 			if(definition.has(EXAMPLE)) {
 				JSONObject value = definition.optJSONObject(EXAMPLE);
 				if(value != null) {
-					json = value.toString(2);		
-				}							
+					json = value.toString(2);	
+					
+					if(!json.isEmpty()) LOG.debug("... resource sample from API resource={} example={}", resource, json);
+					
+					if(!json.isEmpty()) {
+						Sample sample = userGuideData.new Sample();
+						sample.sample = json;
+						sampleResults.add(sample);
+						sequenceNumber++;
+					}
+						
+				}		
+				
 			} else if(definition.has(EXAMPLES)) {
+				Out.debug("samples: api");
 				JSONArray array = definition.optJSONArray(EXAMPLES);
 				if(array != null) {
-					JSONObject value = array.getJSONObject(0);
-					json = value.toString(2);
+					for(int i=0; i<array.length(); i++) {
+						JSONObject value = array.optJSONObject(i);
+						if(value != null) {
+							json = value.toString(2);
+							if(!json.isEmpty()) {
+								Sample sample = userGuideData.new Sample();
+								sample.sample = json;
+								sampleResults.add(sample);
+								sequenceNumber++;
+																
+							}
+						}
+					}
 				}
 			}
 		}
-		
-		if(!json.isEmpty()) LOG.debug("... resource sample from API resource={} example={}", resource, json);
-	
-		if(!json.isEmpty()) {
-			Sample sample = userGuideData.new Sample();
-			sample.sample = json;
-			sampleResults.add(sample);
-			sequenceNumber++;
-		}		
-		
+			
 		return sequenceNumber;
 
 	}
@@ -478,30 +494,42 @@ public class ResourcesFragment {
 		
 		List<List<Map<String,Object>>> examples = JsonPath.parse(document).read(query, resourceFilter);
 
+		LOG.debug("from rules: examples={}", examples);
+		
 		if(examples.isEmpty()) return sequenceNumber;
 
 		examples.stream().flatMap(List::stream).forEach(example -> {
 			
 			String fileName = args.workingDirectory + File.separator + example.get("file");	
 
+			LOG.debug("from rules: filename={}", fileName);
+
 			try {				
 				String sampleJson = Utils.readFile(fileName);
 				
 				if(!sampleJson.isEmpty()) LOG.debug("... resource sample from rules resource={} example={}", resource, sampleJson);
 				
-				if(!json.isEmpty()) {
+				if(!sampleJson.isEmpty()) {
 					Sample sample = userGuideData.new Sample();
 					sample.sample = sampleJson;
-					sample.description = example.get("description").toString();
+
+					if(example.containsKey("description")) {
+						sample.description = example.get("description").toString();
+					} else
+						sample.description = "";
+					
 					sampleResults.add(sample);
+					
 				}	
 				
 			} catch(Exception e) {
-				LOG.debug("... *** error reading example for resource {} from '{}'", resource, fileName);
+				Out.debug("... *** error reading example for resource {} from '{}' ({})", resource, fileName, e.getLocalizedMessage());
 			}
 			
 		});
 		
+		LOG.debug("from rules: #samples={}", sampleResults.size());
+
 		return sequenceNumber+sampleResults.size();
 	}
 	
@@ -601,16 +629,20 @@ public class ResourcesFragment {
 	}
 
 
-	private void copySamples(String resource, UserGuideData.ResourceData resourceConfig) {	
-		resourceConfig.samples.forEach(example -> {
+	private void copySamples(String resource, UserGuideData.ResourceData resourceConfig) {
+		int count=0;
+		for(Sample example : resourceConfig.samples) {
 			
-			example.sampleSource =  "Sample_" + resource + ".json";
+			count++;
+			
+			example.sampleSource =  "Sample_" + resource + "_" + count + ".json";
 			String targetDirectory = generator.getGeneratedTargetDirectory("samples/");
 			
 			LOG.debug("copySample: target={}",  targetDirectory);
 			
 			Utils.save(example.sample, targetDirectory + example.sampleSource);
-		});
+
+		}
 	}
 
 

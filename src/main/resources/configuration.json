@@ -3,6 +3,7 @@
 
 	"mergeMainDocument": true,
 
+
 	"allAPIResourcesMandatory": true,
 
 	"userguide": {
@@ -478,6 +479,6 @@
 	
 	"iprMode": "RAND",
 	
-	
+    "specialProperties": [ "value" ]
 	
 }

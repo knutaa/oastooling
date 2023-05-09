@@ -163,6 +163,8 @@ public class UserGuideData extends GeneratorData {
 		public String sample;
 		public String sampleSource;
 		public String description;
+		
+		public boolean hasDescription() { return !description.isEmpty(); }
 	}
 
 }
