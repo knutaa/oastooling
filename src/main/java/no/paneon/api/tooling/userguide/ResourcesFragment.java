@@ -155,6 +155,8 @@ public class ResourcesFragment {
 		
 		List<String> resources = generator.getResources();
 				
+		LOG.debug("resources={}", resources);
+		
 		for(String resource : resources) {		
 			UserGuideData.ResourceData data = createResourceDetailsForResource(resource, config);
 			

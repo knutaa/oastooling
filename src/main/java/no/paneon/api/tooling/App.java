@@ -10,6 +10,7 @@ import com.beust.jcommander.JCommander;
 import no.paneon.api.conformance.GenerateConformance;
 import no.paneon.api.conformance2.GenerateConformanceGuide;
 import no.paneon.api.tooling.userguide.GenerateUserGuide;
+import no.paneon.api.utils.Config;
 import no.paneon.api.utils.Out;
 import no.paneon.api.utils.Timestamp;
 	
@@ -79,7 +80,9 @@ public class App {
 
 
 	void run() {
-						
+				
+		Config.init();
+		
 		if (commandLine.getParsedCommand()==null) {
             commandLine.usage();
 			System.exit(1);			

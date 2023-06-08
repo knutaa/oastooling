@@ -202,13 +202,17 @@ public class CoreModel {
 	public List<String[]> getSortedPropertiesArray(Collection<String[]> properties) {
 		List<String[]> sorted = new LinkedList<>();
 
-		if(!Config.getBoolean("includeMetaProperties")) {
+		LOG.debug("getSortedPropertiesArray: includeMetaProperties={}", Config.getBoolean("includeMetaProperties"));
+
+		if(Config.getBoolean("includeMetaProperties")) {
 			List<String[]> props1 = properties.stream()
 					.filter(x->x[0].startsWith("@"))
 					.sorted(CoreModel::sortByFirstElement).collect(Collectors.toList());
 			sorted.addAll(props1);
 		}
 		
+		LOG.debug("getStrings: sorted={}", sorted);
+
 		List<String[]> props2 = properties.stream()
 				.filter(x->!x[0].startsWith("@"))
 				.sorted(CoreModel::sortByFirstElement).collect(Collectors.toList());	        	
