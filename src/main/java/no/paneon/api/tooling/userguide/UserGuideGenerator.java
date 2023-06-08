@@ -322,6 +322,8 @@ public class UserGuideGenerator {
 	public List<String> getResources() {
 		List<String> resources = APIModel.getResources();
 		
+		LOG.debug("getResources:: {}", resources);
+
 		final List<String> excludedResources = Config.get(EXCLUDED_RESOURCES);
 		
 		Predicate<String> notExcludedResource  = s -> !excludedResources.contains(s);
