@@ -265,7 +265,7 @@ public class UserGuideGenerator {
 
 
 	@LogMethod(level=LogLevel.DEBUG)
-	protected String constructStatement(String ... statements) {
+	protected String constructStatement(List<String> statements) {
 		StringBuilder res = new StringBuilder();
 		for(String s : statements) {
 			String cleaned =  s.trim();
@@ -277,7 +277,15 @@ public class UserGuideGenerator {
 			if(res.length()>0) res.append(" ");
 			res.append(cleaned);
 		}
+		
+		LOG.debug("constructStatement: statements={} res={}", statements, res);
+
 		return res.toString();
+	}
+	
+	@LogMethod(level=LogLevel.DEBUG)
+	protected String constructStatement(String ... statements) {
+		return constructStatement(Arrays.asList(statements));
 	}
 
 

@@ -188,6 +188,8 @@ public class ResourcesFragment {
 		res.samples = getResourceSamples(apiGraph, resource, config);
 		res.hasSamples = !res.samples.isEmpty();
 
+		LOG.debug("createResourceDetailsForResource: resource={} res={}" , resource, res);
+
 		return res;
 		
 	}
@@ -346,7 +348,9 @@ public class ResourcesFragment {
 			if(!description.endsWith(".")) description = description + ".";
 			res.description = description;
 		}
-					
+				
+		LOG.debug("getFieldsForResource resource={} res='{}'", resource, res.description);
+
 		res.resource = resource.getName();
 		
 		res.fields = getResourceDetailsTable(apiGraph, config, resource);
@@ -382,10 +386,18 @@ public class ResourcesFragment {
 //									     property.getDescription(), 
 //									     generator.getDescriptionForType(apiGraph, property.getType()) };
 				
-				String[] description = { generator.constructDescriptionForType(property.getType()),
-										 property.getDescription()
-					                   };
+				List<String> description = new LinkedList<>();
+				description.add(generator.constructDescriptionForType(property.getType()) );
 				
+				if(!property.getDescription().isEmpty()) {
+					description.add(property.getDescription() );
+				} else {
+					description.add(generator.getDescriptionForType(apiGraph, property.getType()) );
+				}
+
+
+				LOG.debug("getResourceDetailsTable resource={} description={}'", resource, description);
+
 				UserGuideData.FieldData data = userGuideData.new FieldData();
 				data.name = property.getName();
 				data.description = generator.constructStatement(description);
@@ -452,7 +464,7 @@ public class ResourcesFragment {
 				}		
 				
 			} else if(definition.has(EXAMPLES)) {
-				Out.debug("samples: api");
+				LOG.debug("samples: api");
 				JSONArray array = definition.optJSONArray(EXAMPLES);
 				if(array != null) {
 					for(int i=0; i<array.length(); i++) {
