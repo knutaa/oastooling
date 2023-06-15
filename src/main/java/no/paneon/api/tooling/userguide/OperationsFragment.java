@@ -735,14 +735,66 @@ public class OperationsFragment {
 
 	final String FIELD_FILTER = "?fields=...&{filtering}";
 	
+//	private String generateURL(String path, JSONObject opDetail) {
+//		StringBuilder res = new StringBuilder();
+//		res.append(path);
+//		if(path.endsWith("}")) res.append(FIELD_FILTER);
+//		return res.toString();
+//	}
+
 	private String generateURL(String path, JSONObject opDetail) {
 		StringBuilder res = new StringBuilder();
 		res.append(path);
-		if(path.endsWith("}")) res.append(FIELD_FILTER);
+		// if(path.endsWith("}")) res.append(FIELD_FILTER);
+		
+		List<String> paramLabels = new LinkedList<>();
+		JSONArray params = opDetail.optJSONArray("parameters");
+		if(params!=null) {
+			params.forEach(item -> {
+				if(item instanceof JSONObject) {
+					JSONObject o = (JSONObject)item;
+					if(o.has("$ref")) {
+						String ref = o.getString("$ref");
+						String parts[] = ref.split("/");
+						String label = parts[parts.length-1];
+						paramLabels.add(label);
+					}
+				}
+			});
+		}
+		
+		boolean filtering=false;
+		JSONObject responses = opDetail.optJSONObject("responses");
+		if(responses!=null) {
+			if(responses.has("200") || responses.has("202")) filtering=true; 
+		}
+		
+		if(params!=null) {
+			params.forEach(item -> {
+				if(item instanceof JSONObject) {
+					JSONObject o = (JSONObject)item;
+					if(o.has("$ref")) {
+						String ref = o.getString("$ref");
+						String parts[] = ref.split("/");
+						String label = parts[parts.length-1];
+						paramLabels.add(label);
+					}
+				}
+			});
+		}
+		
+		LOG.debug("generateURL: path={} paramLabels={} filtering={}", path, paramLabels, filtering);
+
+		if(paramLabels.contains("Fields")) {
+			res.append("?fields=...");
+			if(filtering) res.append("&");
+		} else if(filtering) {
+			res.append("?");
+		}
+		if(filtering) res.append("{filtering}");
+		
 		return res.toString();
 	}
-
-
 
 	
 }

@@ -479,6 +479,13 @@
 	
 	"iprMode": "RAND",
 	
-    "specialProperties": [ "value" ]
+    "specialProperties": [ "value" ],
+    
+    "deleteResponseHandling": true,
+    
+    "xx_deleteResponses": {
+        "/customer/{id}": "204"
+    }
+    
 	
 }
