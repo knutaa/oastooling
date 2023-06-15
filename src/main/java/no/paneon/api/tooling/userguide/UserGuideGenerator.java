@@ -82,6 +82,8 @@ public class UserGuideGenerator {
 			
 			Timestamp.timeStamp("start user guide data");
 			
+			Out.debug("generateDocument"); 
+
 			generateUserGuideData();
 				
 			Timestamp.timeStamp("finished user guide data");

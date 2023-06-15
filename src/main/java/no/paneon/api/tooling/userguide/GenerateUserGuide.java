@@ -5,6 +5,7 @@ import no.paneon.api.logging.AspectLogger.LogLevel;
 import no.paneon.api.logging.LogMethod;
 
 import no.paneon.api.conformance.ConformanceModel;
+import no.paneon.api.utils.Out;
 import no.paneon.api.utils.Timestamp;
 
 import no.paneon.api.tooling.Args;
@@ -24,7 +25,7 @@ public class GenerateUserGuide extends GenerateCommon {
 		super(args);
 		this.args = args;
 		this.model  = new ConformanceModel();
-
+		
 	}
 	
 	@Override
@@ -33,14 +34,22 @@ public class GenerateUserGuide extends GenerateCommon {
 		
 		super.execute();
 
+		Out.debug("execute"); 
+
 		Timestamp.timeStamp("start conformance guide generation");
 		
 		this.model.extractFromSwagger();
+		
+		Out.debug("execute"); 
+
 		this.model.extractFromRules();
 		boolean forced=true;
-		this.model.generateConformance(forced);
 		
+		this.model.generateConformance(forced);
+
 		UserGuideGenerator userGuide = new UserGuideGenerator(this);        	     
+
+		Out.debug("execute"); 
 
 		userGuide.generateDocument();			
 			  

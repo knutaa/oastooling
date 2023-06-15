@@ -218,7 +218,7 @@
 
 	"removeSectionsForOptionalOperations": true,
 
-	"includeMetaProperties": false,
+	"xx_includeMetaProperties": false,
 
 	"default_conformance": {
 		"layout": {
@@ -375,7 +375,7 @@
 		"Addressable"
 	],
 	"includeInherited": true,
-	"expandInherited": false,
+	"xx_expandInherited": false,
 	"expandPropertiesFromAllOfs": false,
 	
 	"userguide.partials":                  true,
@@ -479,6 +479,20 @@
 	
 	"iprMode": "RAND",
 	
-    "specialProperties": [ "value" ]
-	
+    "specialProperties": [ "value" ],
+    
+    "checkForResourceExamples": false,
+    
+    "includeMetaProperties": false,
+    "expandInherited": true,
+    
+    "mergeAllOfs": true,
+    
+    "deleteResponseHandling": true,
+    
+    "xx_deleteResponses": {
+        "/customer/{id}": "204"
+    }
+    
+
 }

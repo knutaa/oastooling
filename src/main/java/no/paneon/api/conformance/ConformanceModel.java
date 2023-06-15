@@ -106,20 +106,28 @@ public class ConformanceModel extends CoreModel {
 
 		for(String resource : allResources) {
 			
+			Out.debug("extractFromSwagger resource={}", resource); 
+
 			JSONObject confItem = new JSONObject();
 			confItem.put(CONDITION, "");
 			confItem.put(COMMENT, "");
 						
 			TreeNode<Conformance> node = getResourceDetails(resource);
 						
+			Out.debug("extractFromSwagger resource={} treenode={}", resource, node); 
+
 			confItem.put(ATTRIBUTES, getConformanceItems(node));
 			conf.put(resource, confItem);
+
+			Out.debug("extractFromSwagger resource={} confItem={}", resource, confItem); 
 
 			node = getOperationsOverview(resource);
 			confItem.put(OPERATIONS, getConformanceItems(node));
 						
 			JSONObject postDetails = getMandatoryForPostFromSwagger(resource);
 			
+			Out.debug("extractFromSwagger resource={} postDetails={}", resource, postDetails); 
+
 			if(true || !postDetails.isEmpty()) {
 				JSONObject mandItem = new JSONObject();
 				mandItem.put(MANDATORY, postDetails);
@@ -148,6 +156,8 @@ public class ConformanceModel extends CoreModel {
 			
 			confItem.getJSONObject(OPERATIONS_DETAILS).getJSONObject(PATCH).put(NON_PATCHABLE,nonPatchDetails);
 	
+			Out.debug("extractFromSwagger resource={} done", resource); 
+
 			
 		}	
 		
@@ -278,6 +288,9 @@ public class ConformanceModel extends CoreModel {
 		
 		Set<String> seenResources = new HashSet<>();
 		for(String prop : APIModel.getPropertiesForResource(resource)) {
+			
+			Out.debug("getResourceDetails resource={} prop={}", resource, prop); 
+
 			seenResources.clear();
 			node.addChild(getResourceDetailsByProperty(resource, prop, seenResources));
 		}
@@ -301,7 +314,13 @@ public class ConformanceModel extends CoreModel {
 	@LogMethod(level=LogLevel.DEBUG)
 	private static TreeNode<Conformance> getResourceDetailsByProperty(String resource, String property, Set<String> seenResources) {
 		JSONObject propObj = APIModel.getPropertyObjectForResource(resource);
+		
+		Out.debug("getResourceDetailsByProperty resource={} property={} propObj={}", resource, property, propObj.keySet()); 
+
 		Map<String,String> propertyCondition = APIModel.getMandatoryOptional(resource);
+		
+		Out.debug("getResourceDetailsByProperty resource={} property={} propertyCondition={}", resource, property, propertyCondition.keySet()); 
+
 		seenResources.clear();
 		return getResourceDetailsByPropertyHelper(propObj, propertyCondition, resource, property, "", seenResources);
 	}
@@ -334,11 +353,17 @@ public class ConformanceModel extends CoreModel {
 		
 		seenResources.add(referencedType);
 
+		Out.debug("getResourceDetailsByPropertyHelper resource={} property={} referencedType={}", resource, property, referencedType); 
+
 		JSONObject properties = APIModel.getPropertyObjectForResource(referencedType);
 		propertyCondition = APIModel.getMandatoryOptional(referencedType);
 
 		String subPath = path + "." + property;
+		
+		Out.debug("getResourceDetailsByPropertyHelper resource={} property={} referencedType={} subPath={}", resource, property, referencedType, subPath); 
+
 		for(String prop : properties.keySet()) {
+			Out.debug("getResourceDetailsByPropertyHelper resource={} property={} referencedType={} addChild={}", resource, property, referencedType, prop); 
 			node.addChild(getResourceDetailsByPropertyHelper(properties, propertyCondition, referencedType, prop, subPath, seenResources));
 		}
 

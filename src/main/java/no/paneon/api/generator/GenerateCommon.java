@@ -45,7 +45,7 @@ public class GenerateCommon {
 		this.common = common;
 		
 		List<String> dirs = getDirectories(common.workingDirectory);
-				
+			
 		try {
 			APIModel.loadAPI(common.openAPIFile, Utils.getFile(common.openAPIFile, dirs));
 		
@@ -375,7 +375,7 @@ public class GenerateCommon {
 				}
 			} catch(Exception e) {
 				
-				Out.debug("processMainDocument: exception {}",  e.getLocalizedMessage());
+				LOG.debug("processMainDocument: exception {}",  e.getLocalizedMessage());
 
 				res.append(content);
 			}
