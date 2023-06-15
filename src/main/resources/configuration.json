@@ -218,7 +218,7 @@
 
 	"removeSectionsForOptionalOperations": true,
 
-	"includeMetaProperties": false,
+	"includeMetaProperties": true,
 
 	"default_conformance": {
 		"layout": {
@@ -376,7 +376,8 @@
 	],
 	"includeInherited": true,
 	"expandInherited": false,
-	"expandPropertiesFromAllOfs": false,
+    
+	"expandPropertiesFromAllOfs": true,
 	
 	"userguide.partials":                  true,
 	"userguide.mustache":                  "userguide/userguide.mustache",
@@ -485,7 +486,9 @@
     
     "xx_deleteResponses": {
         "/customer/{id}": "204"
-    }
+    },
+    
+    "mergeAllOfs": true
     
 	
 }

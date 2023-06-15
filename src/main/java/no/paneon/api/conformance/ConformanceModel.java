@@ -277,7 +277,7 @@ public class ConformanceModel extends CoreModel {
 		TreeNode<Conformance> node = new TreeNode<>(resurceConf);
 		
 		Set<String> seenResources = new HashSet<>();
-		for(String prop : APIModel.getPropertiesForResource(resource)) {
+		for(String prop : APIModel.getPropertiesExpanded(resource)) {
 			seenResources.clear();
 			node.addChild(getResourceDetailsByProperty(resource, prop, seenResources));
 		}
@@ -291,7 +291,7 @@ public class ConformanceModel extends CoreModel {
 		TreeNode<Conformance> node = new TreeNode<>(resurceConf);
 		
 		Set<String> seenResoures = new HashSet<>();
-		for(String prop : APIModel.getProperties(resourceObject)) {
+		for(String prop : APIModel.getPropertiesExpanded(resource)) {
 			node.addChild(getResourceDetailsByProperty(resource, prop, seenResoures));
 		}
 		return node;
@@ -471,8 +471,8 @@ public class ConformanceModel extends CoreModel {
 	@LogMethod(level=LogLevel.DEBUG)
 	public JSONObject getPatchableFromSwagger(String resource) {
 		JSONObject res = new JSONObject();
-		Set<String> properties = APIModel.getProperties(resource + "_Update");	
-		properties.addAll( APIModel.getProperties(resource + "_MVO"));
+		Set<String> properties = APIModel.getPropertiesExpanded(resource + "_Update");	
+		properties.addAll( APIModel.getPropertiesExpanded(resource + "_MVO"));
 		
 		properties.forEach(property -> {
 			
@@ -493,7 +493,7 @@ public class ConformanceModel extends CoreModel {
 			
 		JSONObject patchable = getPatchableFromSwagger(resource);
 		
-		Set<String> properties =  APIModel.getProperties(resource);
+		Set<String> properties =  APIModel.getPropertiesExpanded(resource);
 		properties.removeAll( patchable.keySet());
 		
 		properties.forEach(property -> {
@@ -512,10 +512,12 @@ public class ConformanceModel extends CoreModel {
 	@LogMethod(level=LogLevel.DEBUG)
 	public List<String[]> getPatchable(String resource) {
 		List<String[]> res = new LinkedList<>();
-		Set<String> properties = APIModel.getProperties(resource + "_Update");
+		Set<String> properties = APIModel.getPropertiesExpanded(resource + "_Update");
 	
-		properties.addAll( APIModel.getProperties(resource + "_MVO") );
-		
+		properties.addAll( APIModel.getPropertiesExpanded(resource + "_MVO") );
+				
+		LOG.debug("getPatchable: resource={} properties={}", resource, properties);
+
 		JSONObject attributesConf = getAttributeConformanceForResource(resource);
 		
 		properties.forEach(property -> {
@@ -524,7 +526,7 @@ public class ConformanceModel extends CoreModel {
 			
 			//if(attrCond!=null && !attrCond.contentEquals("M")) return;
 			
-			// Out.debug("getPatchable: resource={} attrCond={}", resource, attrCond);
+			// LOG.debug("getPatchable: resource={} attrCond={}", resource, attrCond);
 			
 			// String rule = getSpecialProperty(resource, property, "patchRules", RULE);
 			JSONObject conf = getConformance(resource, OPERATIONS_DETAILS, PATCH, PATCHABLE);
@@ -560,33 +562,36 @@ public class ConformanceModel extends CoreModel {
 	@LogMethod(level=LogLevel.DEBUG)
 	public List<String[]> getMandatoryInPost(String resource) { 
 		
-		Map<String,String> propertyConditions = APIModel.getMandatoryOptional(APIModel.getResourceForPost(resource));
+		Map<String,String> propertyConditions = APIModel.getMandatoryOptional(resource,APIModel.getResourceForPost(resource));
 				
 		LOG.debug("getMandatoryInPost: resource={} propCond={}", resource, propertyConditions);
 		
 		JSONObject conformance = getConformance(resource, OPERATIONS_DETAILS, POST, MANDATORY);
 		
-		if(conformance==null) {
-			List<String[]> res = new LinkedList<>();
-			return res;
-		}
-		
-		if(Config.getBoolean("removeConditionalMandatoryInPost")) {
-			Set<String> propsToRemove = new HashSet<>();
-			boolean tryRemove=true;
-			while(tryRemove) {
-				for(String prop : conformance.keySet()) {
-					String parent = getParent(prop);
-					if(!conformance.has(parent)) propsToRemove.add(prop);
-				}
-							
-				for(String prop : propsToRemove) conformance.remove(prop);
-				
-				tryRemove=!propsToRemove.isEmpty();
-				
-				propsToRemove.clear();
-			}
-		}
+		LOG.debug("getMandatoryInPost: resource={} conformance={}", resource, conformance);
+
+//		
+//		if(conformance==null) {
+//			List<String[]> res = new LinkedList<>();
+//			return res;
+//		}
+//		
+//		if(Config.getBoolean("removeConditionalMandatoryInPost")) {
+//			Set<String> propsToRemove = new HashSet<>();
+//			boolean tryRemove=true;
+//			while(tryRemove) {
+//				for(String prop : conformance.keySet()) {
+//					String parent = getParent(prop);
+//					if(!conformance.has(parent)) propsToRemove.add(prop);
+//				}
+//							
+//				for(String prop : propsToRemove) conformance.remove(prop);
+//				
+//				tryRemove=!propsToRemove.isEmpty();
+//				
+//				propsToRemove.clear();
+//			}
+//		}
 		
 		return getMandatoryInOperationHelper(conformance, propertyConditions, ValueSource.USE_FOUND);
 		
@@ -620,7 +625,7 @@ public class ConformanceModel extends CoreModel {
 	@LogMethod(level=LogLevel.DEBUG)
 	public List<String[]> getMandatoryInPatch(String resource) {
 		
-		Map<String,String> propertyConditions = APIModel.getMandatoryOptional(APIModel.getResourceForPatch(resource));	
+		Map<String,String> propertyConditions = APIModel.getMandatoryOptional(resource,APIModel.getResourceForPatch(resource));	
 		
 		LOG.debug("getMandatoryInPatch: resource={} propertyCondition={}",  resource, propertyConditions);
 		
@@ -646,7 +651,9 @@ public class ConformanceModel extends CoreModel {
 			}
 		}
 		
-		if(conformance!=null) {
+		LOG.debug("getMandatoryInOperationHelper: res={}", res);
+
+		if(false && conformance!=null) {
 			for(String property : conformance.keySet()) {
 				JSONObject conf = conformance.optJSONObject(property);
 //				if(conf!=null) {
@@ -674,6 +681,8 @@ public class ConformanceModel extends CoreModel {
 	public JSONObject getConformance(String ... args) {
 		JSONObject conformance = getConformance();
 				
+		LOG.debug("getConformance: args={}", Arrays.asList(args));
+
 		int idx=0;
 		while(conformance!=null && idx<args.length && !args[idx].isEmpty()) {
 			if(conformance.has(args[idx])) {
@@ -684,6 +693,8 @@ public class ConformanceModel extends CoreModel {
 			idx++;
 		}
 		
+		LOG.debug("getConformance: conformance={}", conformance);
+
 		return conformance;
 	}
 

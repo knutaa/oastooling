@@ -202,7 +202,7 @@ public class CoreModel {
 	public List<String[]> getSortedPropertiesArray(Collection<String[]> properties) {
 		List<String[]> sorted = new LinkedList<>();
 
-		LOG.debug("getSortedPropertiesArray: includeMetaProperties={}", Config.getBoolean("includeMetaProperties"));
+		LOG.debug("getSortedPropertiesArray: includeMetaProperties={} properties={}", Config.getBoolean("includeMetaProperties"), properties);
 
 		if(Config.getBoolean("includeMetaProperties")) {
 			List<String[]> props1 = properties.stream()

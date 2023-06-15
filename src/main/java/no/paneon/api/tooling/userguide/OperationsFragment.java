@@ -229,7 +229,7 @@ public class OperationsFragment {
 						
 						List<String[]> propertyRules = generator.conformance.getPatchable(resource);
 
-						LOG.debug("getOperationsDetailsForResource: resource={} propertyRules={}", resource, propertyRules);
+						LOG.debug("getOperationsDetailsForResource: PATCH sresource={} propertyRules={}", resource, propertyRules);
 						
 						if(propertyRules!=null) {
 							data.patchable = propertyRules.stream().map(this::createPropertyRuleData).collect(toList());
@@ -249,6 +249,8 @@ public class OperationsFragment {
 						data.isCreate = true;
 
 						propertyRules = generator.conformance.getMandatoryInPost(resource);
+
+						LOG.debug("getOperationsDetailsForResource: CREATE resource={} propertyRules={}", resource, propertyRules);
 
 						if(propertyRules!=null) {
 							data.mandatory = propertyRules.stream().map(this::createPropertyRuleData).collect(toList());
