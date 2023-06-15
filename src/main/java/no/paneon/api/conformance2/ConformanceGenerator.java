@@ -110,12 +110,15 @@ public class ConformanceGenerator {
 			generatePartials(conformanceData);
 
 			boolean keepExisting=true;
+			
+			Map<String,String> filesToCopy = Config.getMap("conformance.filesToCopy");
+
+			LOG.debug("generateDocument: filesToCopy={}",  filesToCopy.keySet());
+			
+			generator.copyFiles(filesToCopy, keepExisting); // generator.copyFiles(filesToCopy, args.generatedOnly);
+			
 			generator.processTemplates(this.args, conformanceData, "conformance.generated.templates", "conformance.templates", keepExisting);
 					
-			Map<String,String> filesToCopy = Config.getMap("conformance.filesToCopy");
-			generator.copyFiles(filesToCopy, args.generatedOnly);
-
-
 		} catch(Exception ex) {
 			Out.printAlways("... error generating userguide: exception=" + ex.getLocalizedMessage());
 			// ex.printStackTrace();
