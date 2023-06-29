@@ -70,7 +70,7 @@ public class App {
 			
 		} catch(Exception ex) {
 			Out.println("error: " + ex.getLocalizedMessage());	
-			// ex.printStackTrace();
+			ex.printStackTrace();
 			System.exit(1);			
 		}
 		
@@ -95,7 +95,9 @@ public class App {
 			String version = properties.getProperty("version");
 			String artifactId = properties.getProperty("artifactId");
 			
-			Out.printAlways("{} {}", artifactId, version);
+			String command = commandLine.getParsedCommand()!=null ? commandLine.getParsedCommand() : "";
+
+			Out.printAlways("{} {} {}", artifactId, version, command);
 			
 		} catch(Exception e) {
 			Out.printAlways("... version information not available: {}", e.getLocalizedMessage());

@@ -227,9 +227,9 @@ public class OperationsFragment {
 					case OP_PARTIAL_UPDATE: 
 						data.isPartialUpdate = true;
 						
-						List<String[]> propertyRules = generator.conformance.getPatchable(resource);
+						List<String[]> propertyRules = generator.conformance.getPatchable(opDetail,resource);
 
-						LOG.debug("getOperationsDetailsForResource: PATCH sresource={} propertyRules={}", resource, propertyRules);
+						LOG.debug("getOperationsDetailsForResource: PATCH resource={} propertyRules={}", resource, propertyRules);
 						
 						if(propertyRules!=null) {
 							data.patchable = propertyRules.stream().map(this::createPropertyRuleData).collect(toList());
@@ -243,12 +243,14 @@ public class OperationsFragment {
 						}
 						data.hasNonPatchable = !data.nonPatchable.isEmpty();
 
+						LOG.debug("getOperationsDetailsForResource: PATCH resource={} propertyRules={}", resource, propertyRules);
+
 						break;
 						
 					case OP_CREATE:
 						data.isCreate = true;
 
-						propertyRules = generator.conformance.getMandatoryInPost(resource);
+						propertyRules = generator.conformance.getMandatoryInPost(opDetail,resource);
 
 						LOG.debug("getOperationsDetailsForResource: CREATE resource={} propertyRules={}", resource, propertyRules);
 

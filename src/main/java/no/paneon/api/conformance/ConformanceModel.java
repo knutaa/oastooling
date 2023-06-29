@@ -76,6 +76,11 @@ public class ConformanceModel extends CoreModel {
 	
 	private static final String CONFORMANCE_SOURCE_ONLY = "conformanceSourceOnly";
 	
+	private static final String REF = "$ref";
+	private static final String PROPERTIES = "properties";
+	
+	private static final boolean INCLUDE_SET_BY_SERVER = true;
+
 	public ConformanceModel() {
 		super();
 	}
@@ -117,37 +122,46 @@ public class ConformanceModel extends CoreModel {
 
 			node = getOperationsOverview(resource);
 			confItem.put(OPERATIONS, getConformanceItems(node));
-						
-			JSONObject postDetails = getMandatoryForPostFromSwagger(resource);
 			
-			if(true || !postDetails.isEmpty()) {
+			JSONObject opDetail = APIModel.getOperationsDetailsByPath("path", "post");
+
+			List<String> ops = APIModel.getOperationsByResource(resource);
+			
+			LOG.debug("extractFromSwagger:: resource={} ops={}", resource, ops);
+
+			if(ops.contains(POST)) {
+				JSONObject postDetails = getMandatoryForPostFromSwagger(opDetail, resource);
+						
 				JSONObject mandItem = new JSONObject();
 				mandItem.put(MANDATORY, postDetails);
 				JSONObject postItem = new JSONObject();
 				postItem.put(POST, mandItem);
 				confItem.put(OPERATIONS_DETAILS, postItem);
 			}
-									
-			if(!confItem.has(OPERATIONS_DETAILS)) {
-				confItem.put(OPERATIONS_DETAILS,new JSONObject());
-			}
-			
-			if(!confItem.getJSONObject(OPERATIONS_DETAILS).has(PATCH)) {
-				confItem.getJSONObject(OPERATIONS_DETAILS).put(PATCH, new JSONObject());
-			}
-			
-			JSONObject patchDetails = getPatchableFromSwagger(resource);
-			
-			if(Config.getBoolean("onlyMandatoryAsPatchable")) {
-				patchDetails = retainMandatoryInPatch(resource, confItem, patchDetails);
-			}
+				
+			if(ops.contains(PATCH)) {
+				
+				if(!confItem.has(OPERATIONS_DETAILS)) {
+					confItem.put(OPERATIONS_DETAILS,new JSONObject());
+				}
+				
+				if(!confItem.getJSONObject(OPERATIONS_DETAILS).has(PATCH)) {
+					confItem.getJSONObject(OPERATIONS_DETAILS).put(PATCH, new JSONObject());
+				}
+				
+				JSONObject patchDetails = getPatchableFromSwagger(resource);
+				
+				if(Config.getBoolean("onlyMandatoryAsPatchable")) {
+					patchDetails = retainMandatoryInPatch(resource, confItem, patchDetails);
+				}
+		
+				confItem.getJSONObject(OPERATIONS_DETAILS).getJSONObject(PATCH).put(PATCHABLE,patchDetails);
 	
-			confItem.getJSONObject(OPERATIONS_DETAILS).getJSONObject(PATCH).put(PATCHABLE,patchDetails);
-
-			JSONObject nonPatchDetails = getNonPatchableFromSwagger(resource);
+				JSONObject nonPatchDetails = getNonPatchableFromSwagger(resource);
+				
+				confItem.getJSONObject(OPERATIONS_DETAILS).getJSONObject(PATCH).put(NON_PATCHABLE,nonPatchDetails);
+			}
 			
-			confItem.getJSONObject(OPERATIONS_DETAILS).getJSONObject(PATCH).put(NON_PATCHABLE,nonPatchDetails);
-	
 			
 		}	
 		
@@ -279,36 +293,36 @@ public class ConformanceModel extends CoreModel {
 		Set<String> seenResources = new HashSet<>();
 		for(String prop : APIModel.getPropertiesExpanded(resource)) {
 			seenResources.clear();
-			node.addChild(getResourceDetailsByProperty(resource, prop, seenResources));
+			node.addChild(getResourceDetailsByProperty(resource, prop, seenResources, INCLUDE_SET_BY_SERVER));
 		}
 		return node;
 	}
 
 
 	@LogMethod(level=LogLevel.DEBUG)
-	private static TreeNode<Conformance> getResourceDetails(String resource, JSONObject resourceObject) {
+	private static TreeNode<Conformance> getResourceDetails(String resource, JSONObject resourceObject, boolean includeSetByServer) {
 		Conformance resurceConf = new Conformance(resource);
 		TreeNode<Conformance> node = new TreeNode<>(resurceConf);
 		
 		Set<String> seenResoures = new HashSet<>();
 		for(String prop : APIModel.getPropertiesExpanded(resource)) {
-			node.addChild(getResourceDetailsByProperty(resource, prop, seenResoures));
+			node.addChild(getResourceDetailsByProperty(resource, prop, seenResoures, includeSetByServer));
 		}
 		return node;
 	}
 	
 	
 	@LogMethod(level=LogLevel.DEBUG)
-	private static TreeNode<Conformance> getResourceDetailsByProperty(String resource, String property, Set<String> seenResources) {
-		JSONObject propObj = APIModel.getPropertyObjectForResource(resource);
-		Map<String,String> propertyCondition = APIModel.getMandatoryOptional(resource);
+	private static TreeNode<Conformance> getResourceDetailsByProperty(String resource, String property, Set<String> seenResources, boolean includeSetByServer) {
+		JSONObject propObj = APIModel.getPropertyObjectForResourceExpanded(resource);
+		Map<String,String> propertyCondition = APIModel.getMandatoryOptional(resource,includeSetByServer);
 		seenResources.clear();
-		return getResourceDetailsByPropertyHelper(propObj, propertyCondition, resource, property, "", seenResources);
+		return getResourceDetailsByPropertyHelper(propObj, propertyCondition, resource, property, "", seenResources, includeSetByServer);
 	}
 	
 	@LogMethod(level=LogLevel.DEBUG)
 	private static TreeNode<Conformance> getResourceDetailsByPropertyHelper(JSONObject propObj, Map<String,String> propertyCondition, 
-			String resource, String property, String path, Set<String> seenResources) {
+			String resource, String property, String path, Set<String> seenResources, boolean includeSetByServer) {
 
 		String comment = "";
 		String mandOpt = ""; 
@@ -334,12 +348,12 @@ public class ConformanceModel extends CoreModel {
 		
 		seenResources.add(referencedType);
 
-		JSONObject properties = APIModel.getPropertyObjectForResource(referencedType);
-		propertyCondition = APIModel.getMandatoryOptional(referencedType);
+		JSONObject properties = APIModel.getPropertyObjectForResourceExpanded(referencedType);
+		propertyCondition = APIModel.getMandatoryOptional(referencedType, includeSetByServer);
 
 		String subPath = path + "." + property;
 		for(String prop : properties.keySet()) {
-			node.addChild(getResourceDetailsByPropertyHelper(properties, propertyCondition, referencedType, prop, subPath, seenResources));
+			node.addChild(getResourceDetailsByPropertyHelper(properties, propertyCondition, referencedType, prop, subPath, seenResources, includeSetByServer));
 		}
 
 		seenResources.remove(referencedType);
@@ -441,7 +455,7 @@ public class ConformanceModel extends CoreModel {
 	public List<String[]> getOptionalInPost(String resource) {
 		Map<String, String[]> res = new HashMap<>();
 		
-		Map<String,String> propertyConditions = APIModel.getMandatoryOptional(resource);
+		Map<String,String> propertyConditions = APIModel.getMandatoryOptional(resource, !INCLUDE_SET_BY_SERVER);
 		
 		for( Entry<String,String> entry : propertyConditions.entrySet() ) {
 			if(entry.getValue().contains("M")) {
@@ -510,14 +524,53 @@ public class ConformanceModel extends CoreModel {
 	}
 	
 	@LogMethod(level=LogLevel.DEBUG)
-	public List<String[]> getPatchable(String resource) {
+	public List<String[]> getPatchable(JSONObject opDetail, String resource) {
 		List<String[]> res = new LinkedList<>();
-		Set<String> properties = APIModel.getPropertiesExpanded(resource + "_Update");
-	
-		properties.addAll( APIModel.getPropertiesExpanded(resource + "_MVO") );
-				
-		LOG.debug("getPatchable: resource={} properties={}", resource, properties);
+		
+		Set<String> properties = new HashSet<>();
+		
+		LOG.debug("### #00 getPatchable: resource={} opDetail={}", resource, opDetail);
 
+		if(opDetail!=null && opDetail.has("requestBody")) {
+			JSONObject request = opDetail.optJSONObject("requestBody");
+			if(request!=null && request.has(REF)) {
+				
+				LOG.debug("### #00 getPatchable: resource={} request={}", resource, request);
+
+				JSONObject def = APIModel.getDefinitionByReference(request.optString(REF));
+				
+				LOG.debug("### #0 getPatchable: resource={} def={}", resource, def);
+
+				if(def!=null && def.has(PROPERTIES)) {
+					JSONObject props = def.optJSONObject(PROPERTIES);
+					properties.addAll( props.keySet() );
+				}
+			}
+			
+		}
+		
+		LOG.debug("### #0 getPatchable: resource={} properties={}", resource, properties);
+
+		if(properties.isEmpty()) {
+			properties.addAll( APIModel.getPropertiesExpanded(resource + "_Update") );
+	
+			properties.addAll( APIModel.getPropertiesExpanded(resource + "_MVO") );
+				
+		}
+		
+		LOG.debug("### getPatchable: resource={} properties={}", resource, properties);
+
+		if(Config.getBoolean("conformance.specialNonPatchable")) {
+			JSONObject specialNonPatchable = Config.getConfig("conformance.nonPatchable");
+			if(specialNonPatchable!=null) {
+				Set<String> nonPatch = specialNonPatchable.keySet();
+				properties.removeAll(nonPatch);
+			}
+			
+			LOG.debug("getPatchable: resource={} properties={}", resource, properties);
+
+		}
+		
 		JSONObject attributesConf = getAttributeConformanceForResource(resource);
 		
 		properties.forEach(property -> {
@@ -533,73 +586,79 @@ public class ConformanceModel extends CoreModel {
 			String rule = "";
 			if(conf!=null) rule = conf.optString(RULE);
 			res.add(new String[] { property, rule });
+			
 		});
 		
+		LOG.debug("getPatchable: resource={} properties={}", resource, res);
+
 		return getSortedPropertiesArray(res);
 		
 	}
 	
 	@LogMethod(level=LogLevel.DEBUG)
 	public List<String[]> getNonPatchable(String resource) {
-		Set<String> properties = APIModel.getProperties(resource);
+		Set<String> properties = APIModel.getPropertiesExpanded(resource);
+
+		LOG.debug("getNonPatchable: resource={} properties={}", resource, properties);
 
 		List<String[]> res = new LinkedList<>();
-		Collection<String> patchable = getPatchable(resource).stream().map(x->x[0]).collect(Collectors.toList());
+		Collection<String> patchable = getPatchable(null,resource).stream().map(x->x[0]).collect(Collectors.toList());
 	
 		properties.removeAll(patchable);
 		
-		properties.forEach(property -> {
-			// String rule = getSpecialProperty(resource, property, "patchRules", RULE);
-			// TBD
-			String rule = "";
-			res.add(new String[] { property, rule });
-		});
+		LOG.debug("getNonPatchable: resource={} properties={}", resource, properties);
+
+		final JSONObject specialNonPatchable = Config.getConfig("conformance.nonPatchable");
+		if(Config.getBoolean("conformance.specialNonPatchable")) {
+			if(specialNonPatchable!=null) {
+				Set<String> nonPatch = specialNonPatchable.keySet();
+				properties.addAll(nonPatch);
+			}
+			
+			LOG.debug("getNonPatchable: resource={} properties={}", resource, properties);
+
+		}
+		
+		JSONObject conf = getConformance(resource, OPERATIONS_DETAILS, PATCH, NON_PATCHABLE);
+
+		if(conf!=null) {
+			LOG.debug("getNonPatchable: resource={} non patchable conf={}", resource, conf);
+	
+			properties.forEach(property -> {
+				// String rule = getSpecialProperty(resource, property, "patchRules", RULE);
+				// TBD
+				JSONObject propConf = conf.optJSONObject(property);
+				String rule = propConf!=null ? propConf.optString("rule") : "";
+				if(rule.isEmpty() && specialNonPatchable.has(property)) {
+					String specialRule = specialNonPatchable.optString(property);
+					rule = specialRule.isEmpty() ? rule : specialRule;
+				}
+				res.add(new String[] { property, rule });
+			});
+		}
 		
 		return getSortedPropertiesArray(res);
 		
 	}
 
 	@LogMethod(level=LogLevel.DEBUG)
-	public List<String[]> getMandatoryInPost(String resource) { 
+	public List<String[]> getMandatoryInPost(JSONObject opDetail, String resource) { 
 		
-		Map<String,String> propertyConditions = APIModel.getMandatoryOptional(resource,APIModel.getResourceForPost(resource));
+		Map<String,String> propertyConditions = APIModel.getMandatoryOptional(resource,APIModel.getResourceForPost(opDetail,resource));
 				
 		LOG.debug("getMandatoryInPost: resource={} propCond={}", resource, propertyConditions);
 		
 		JSONObject conformance = getConformance(resource, OPERATIONS_DETAILS, POST, MANDATORY);
 		
 		LOG.debug("getMandatoryInPost: resource={} conformance={}", resource, conformance);
-
-//		
-//		if(conformance==null) {
-//			List<String[]> res = new LinkedList<>();
-//			return res;
-//		}
-//		
-//		if(Config.getBoolean("removeConditionalMandatoryInPost")) {
-//			Set<String> propsToRemove = new HashSet<>();
-//			boolean tryRemove=true;
-//			while(tryRemove) {
-//				for(String prop : conformance.keySet()) {
-//					String parent = getParent(prop);
-//					if(!conformance.has(parent)) propsToRemove.add(prop);
-//				}
-//							
-//				for(String prop : propsToRemove) conformance.remove(prop);
-//				
-//				tryRemove=!propsToRemove.isEmpty();
-//				
-//				propsToRemove.clear();
-//			}
-//		}
 		
-		return getMandatoryInOperationHelper(conformance, propertyConditions, ValueSource.USE_FOUND);
+		return getMandatoryInOperationHelper(resource, conformance, propertyConditions, ValueSource.USE_FOUND);
 		
 	}
 	
 	@LogMethod(level=LogLevel.DEBUG)
-	public List<ConformanceItem> getMandatoryConformanceInPost(String resource) { 
-		List<String[]> tmp =  getMandatoryInPost(resource);
+	public List<ConformanceItem> getMandatoryConformanceInPost(JSONObject opDetail, String resource) { 
+		List<String[]> tmp =  getMandatoryInPost(opDetail, resource);
 		
 		return tmp.stream().map(ConformanceItem::new).collect(Collectors.toList());
 		
@@ -626,12 +685,12 @@ public class ConformanceModel extends CoreModel {
 	public List<String[]> getMandatoryInPatch(String resource) {
 		
 		Map<String,String> propertyConditions = APIModel.getMandatoryOptional(resource,APIModel.getResourceForPatch(resource));	
-		
-		LOG.debug("getMandatoryInPatch: resource={} propertyCondition={}",  resource, propertyConditions);
-		
+				
 		JSONObject conformance = getConformance(resource, OPERATIONS_DETAILS, PATCH, PATCHABLE);
 		
-		return getMandatoryInOperationHelper(conformance, propertyConditions, ValueSource.SET_EMPTY);
+		LOG.debug("getMandatoryInPatch: resource={} conformance={}",  resource, conformance);
+
+		return getMandatoryInOperationHelper(resource, conformance, propertyConditions, ValueSource.SET_EMPTY);
 		
 	}
 	
@@ -641,35 +700,38 @@ public class ConformanceModel extends CoreModel {
 	}
 	
 	@LogMethod(level=LogLevel.DEBUG)
-	public List<String[]> getMandatoryInOperationHelper(JSONObject conformance, Map<String,String>  propertyConditions, ValueSource valueSource) {
+	public List<String[]> getMandatoryInOperationHelper(String resource, JSONObject conformance, Map<String,String>  propertyConditions, ValueSource valueSource) {
 		Map<String,String[]> res = new HashMap<>();
-				
+						
 		for( Entry<String,String> entry : propertyConditions.entrySet() ) {
-			if(entry.getValue().contains("M")) {
-				String value = valueSource==ValueSource.SET_EMPTY ? "" :  entry.getValue();
-				res.put(entry.getKey(), new String[] { entry.getKey(), value, "" });	
+			String property = entry.getKey();
+			if(propertyInResource(resource,property)) {
+				if(entry.getValue().contains("M")) {
+					String value = valueSource==ValueSource.SET_EMPTY ? "" :  entry.getValue();
+					res.put(entry.getKey(), new String[] { entry.getKey(), value, "" });	
+				}
+			} else {
+				Out.debug("... property {} not seen in in resource {}", entry.getKey(), resource);
+
 			}
 		}
 		
 		LOG.debug("getMandatoryInOperationHelper: res={}", res);
 
-		if(false && conformance!=null) {
-			for(String property : conformance.keySet()) {
-				JSONObject conf = conformance.optJSONObject(property);
-//				if(conf!=null) {
-//					String condition = conf.optString(CONDITION);
-//					if(condition!=null && condition.startsWith("M")) {
-//						String rule = conf.optString(RULE);
-//						if("null".contentEquals(rule)) rule = "";
-//						res.put(property, new String[] { property, rule });
-//					}
-//				}
-				
-				if(conf!=null) {
-					String rule = conf.optString(RULE);
-					if("null".contentEquals(rule)) rule = "";
-					res.put(property, new String[] { property, rule });
-					
+		if(conformance!=null) {
+			if(Config.getBoolean("includeAllPatchableFromRules")) {
+				for(String property : conformance.keySet()) {
+					if(propertyInResource(resource,property)) {
+						JSONObject conf = conformance.optJSONObject(property);				
+						if(conf!=null) {
+							String rule = conf.optString(RULE);
+							if("null".contentEquals(rule)) rule = "";
+							res.put(property, new String[] { property, rule });
+							
+						}
+					} else {
+						Out.debug("... issue: property {} not seen in in resource {}", property, resource);
+					}
 				}
 			}
 		}
@@ -677,6 +739,32 @@ public class ConformanceModel extends CoreModel {
 		return getSortedPropertiesArray(res.values());
 	}
 	
+	private boolean propertyInResource(String resource, String property) {
+		boolean res = false;
+
+		LOG.debug("propertyInResource: resource={} property={} contains={}", resource, property, property.contains("\\."));
+
+		if(property.contains(".")) {
+			String parts[] = property.split("\\.");
+			String prop = parts[0];
+			String subResource = APIModel.getReferencedType(resource,  prop);
+			
+			property = property.replaceAll("^[^\\.]+\\.", ""); 
+			
+			LOG.debug("propertyInResource: subResource={} property={}", subResource, property);
+
+			return propertyInResource(subResource, property);
+			
+		} else {
+			Set<String> allProperties = APIModel.getPropertiesExpanded(resource);
+
+			res = allProperties.contains(property);
+			
+		};
+		
+		return res;
+	}
+
 	@LogMethod(level=LogLevel.DEBUG)
 	public JSONObject getConformance(String ... args) {
 		JSONObject conformance = getConformance();
@@ -1067,8 +1155,11 @@ public class ConformanceModel extends CoreModel {
 		if(!attributePath.isEmpty()) attributePath = attributePath + ".";
 		attributePath = attributePath + property;
 		
-		return getValueAsString(conformance,attributePath,CONDITION);
-				
+		String res = getValueAsString(conformance,attributePath,CONDITION);
+		
+		LOG.debug("getResourceCondition:: resource={} property={} path={} res={}", resource, property, path, res);
+
+		return res;		
 	}
 
 	@LogMethod(level=LogLevel.DEBUG)
@@ -1201,6 +1292,9 @@ public class ConformanceModel extends CoreModel {
 
 		JSONObject res = createSkeleton(api); 
 				
+		
+		LOG.debug("generateConformance: after skeleton res={}", res.toString(2));
+
 		// addVariablesSection(res);
 		
 		//
@@ -1706,7 +1800,7 @@ public class ConformanceModel extends CoreModel {
 		JSONObject obj = model.optJSONObject(DEFAULT_CONFORMANCE);
 		
 		if(obj==null) {
-			Out.println("... not using conformance defaults (not found, not required, not an error)");
+			LOG.debug("... not using conformance defaults (not found, not required, not an error)");
 			return;
 		}
 		
@@ -2075,9 +2169,11 @@ public class ConformanceModel extends CoreModel {
 						
 			JSONObject rulesForResource = Config.getRulesForResource(resource);
 
+			LOG.debug("extractFromRules: resource={} rulesForResource={}", resource, rulesForResource);
+
 			if(rulesForResource==null) continue;
 			
-			Collection<String> operations = getOperationsForResource(resource).stream().map(String::toUpperCase).collect(Collectors.toList());
+			Collection<String> operations = getOperationsForResource(resource);
 			conf.put(resource, new JSONObject());
 			conf.getJSONObject(resource).put(OPERATIONS_DETAILS, new JSONObject());
 			JSONObject operationDetails = conf.getJSONObject(resource).getJSONObject(OPERATIONS_DETAILS);
@@ -2085,7 +2181,10 @@ public class ConformanceModel extends CoreModel {
 			TreeNode<Conformance> node = getOperationsOverview(resource);
 			conf.getJSONObject(resource).put(OPERATIONS, getConformanceItems(node));
 			for(String op : operations) {
-				Object o = rulesForResource.optQuery("#/supportedHttpMethods/" + GET + "/required");
+				Object o = rulesForResource.optQuery("#/supportedHttpMethods/" + op + "/required");
+				
+				LOG.debug("extractFromRules: resource={} op={} conf={}", resource, op, o);
+
 				if(o!=null && o.equals(Boolean.TRUE)) {
 					JSONObject opConf = conf.getJSONObject(resource).getJSONObject(OPERATIONS).optJSONObject(op);
 					opConf.put(CONDITION, "M");
@@ -2095,21 +2194,25 @@ public class ConformanceModel extends CoreModel {
 		
 			JSONObject mandConf = new JSONObject();
 			JSONObject condConf = new JSONObject();
-
-			addedDetails = addMandatoryForPostFromRules(rulesForResource, mandConf, condConf, operationDetails); 
-			seenDetails = seenDetails || addedDetails;
 			
-			addedDetails = addSubMandatoryForPost(rulesForResource, mandConf, condConf, operationDetails, operations); 
-			seenDetails = seenDetails || addedDetails;
+			if(operations.contains(POST)) {
+				addedDetails = addMandatoryForPostFromRules(rulesForResource, mandConf, condConf, operationDetails); 
+				seenDetails = seenDetails || addedDetails;
+				
+				addedDetails = addSubMandatoryForPost(rulesForResource, mandConf, condConf, operationDetails, operations); 
+				seenDetails = seenDetails || addedDetails;
+				
+				addedDetails = addConditionForPost(resource, condConf, operationDetails); 
+				seenDetails = seenDetails || addedDetails;
+			}
 			
-			addedDetails = addConditionForPost(resource, condConf, operationDetails); 
-			seenDetails = seenDetails || addedDetails;
-			
-			addedDetails = addPatchable(resource, operationDetails); 
-			seenDetails = seenDetails || addedDetails;
-			
-			addedDetails = addNonPatchable(resource, operationDetails); 
-			seenDetails = seenDetails || addedDetails;			
+			if(operations.contains(PATCH)) {
+				addedDetails = addPatchable(resource, operationDetails); 
+				seenDetails = seenDetails || addedDetails;
+				
+				addedDetails = addNonPatchable(resource, operationDetails); 
+				seenDetails = seenDetails || addedDetails;		
+			}
 						
 		}
 				
@@ -2130,7 +2233,10 @@ public class ConformanceModel extends CoreModel {
 
 		boolean seenDetails = false;
 
-		List<String[]> operationRules = getPatchable(resource);
+		List<String[]> operationRules = getPatchable(null, resource); // TBD - argument should be operationDetail from oas
+		
+		LOG.debug("addPatchable: resource={} operationRules={}",  resource, operationRules);
+
 		if(!operationRules.isEmpty()) {
 			JSONObject condConf = new JSONObject();
 			for(String[] opRule : operationRules) {
@@ -2284,11 +2390,11 @@ public class ConformanceModel extends CoreModel {
 	}
 
 	
-	private JSONObject getMandatoryForPostFromSwagger(String resource) {
+	private JSONObject getMandatoryForPostFromSwagger(JSONObject opDetail, String resource) {
 
 		JSONObject res = new JSONObject();
 		
-		TreeNode<Conformance> node = getResourceDetails(resource, APIModel.getResourceForPost(resource));
+		TreeNode<Conformance> node = getResourceDetails(resource, APIModel.getResourceForPost(opDetail, resource), !INCLUDE_SET_BY_SERVER);
 
 		Map<String,Conformance> conformanceItems = getConformanceItems(node);
 		
@@ -2360,9 +2466,25 @@ public class ConformanceModel extends CoreModel {
 	}
 
 	@LogMethod(level=LogLevel.DEBUG)
-	public Set<String> getPropertiesForResource(String resource) {
+	public Set<String> getPropertiesForResource_old(String resource) {
 		Set<String>  res = new HashSet<>();	
 		res.addAll( APIModel.getPropertiesForResource(resource) );
+		
+		if(res.isEmpty()) {
+			// JSONObject conf = getConformanceForResource(resource);
+			// if(conf!=null) conf = conf.optJSONObject(ATTRIBUTES);
+			JSONObject conf = getConformance(resource, ATTRIBUTES);
+			if(conf!=null) res.addAll(conf.keySet());
+		}
+		
+		return res;
+	
+	}
+	
+	@LogMethod(level=LogLevel.DEBUG)
+	public List<String> getPropertiesForResource(String resource) {
+		List<String>  res = new LinkedList<>();	
+		res.addAll( APIModel.getPropertiesExpanded(resource)); // 2023-06-18 // getPropertiesForResource(resource) );
 		
 		if(res.isEmpty()) {
 			// JSONObject conf = getConformanceForResource(resource);
@@ -2492,7 +2614,7 @@ public class ConformanceModel extends CoreModel {
 				propertyPath = "";
 			}
 			
-			JSONObject properties = APIModel.getPropertyObjectForResource(resource);
+			JSONObject properties = APIModel.getPropertyObjectForResourceExpanded(resource);
 			
 			resource = getTypeByProperty(properties,property);
 			
@@ -2507,11 +2629,19 @@ public class ConformanceModel extends CoreModel {
 		String res="";
 		properties = properties.optJSONObject(property);
 		
-		String ref = properties.optString("$ref");
-		
-		if(ref.isEmpty() && properties.has("items")) ref = properties.optJSONObject("items").optString("$ref");
-		
-		if(!ref.isEmpty()) res = APIModel.getTypeByReference(ref);
+		LOG.debug("## getTypeByProperty: property={} keys_properties={} ",  property, properties!=null ? properties.keySet() : null);
+
+		LOG.debug("## getTypeByProperty: property={} properties={} ",  property, properties);
+
+		if(properties!=null) {
+			String ref = properties.optString("$ref");
+			
+			if(ref!=null) {
+				if(ref.isEmpty() && properties.has("items")) ref = properties.optJSONObject("items").optString("$ref");
+			
+				if(!ref.isEmpty()) res = APIModel.getTypeByReference(ref);
+			}
+		}
 		
 		return res;
 	}

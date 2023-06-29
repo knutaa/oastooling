@@ -1,0 +1,2364 @@
+openapi: 3.0.1
+info:
+  title: Customer Management
+  description: '**TMF API Reference : TMF - 629 Customer Management**'
+  version: 5.0.0
+servers:
+  - url: 'https://serverRoot'
+tags:
+  - name: customer
+    description: Operations for Customer Resource
+  - name: notification listener
+    description: Notifications for Resource Lifecycle and event notifications
+  - name: events subscription
+    description: Endpoints to register and terminate an Event Listener
+paths:
+  /customer:
+    get:
+      tags:
+        - customer
+      summary: List or find Customer objects
+      description: List or find Customer objects
+      operationId: listCustomer
+      parameters:
+        - $ref: '#/components/parameters/Fields'
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          $ref: '#/components/responses/200CustomerArray'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '405':
+          $ref: '#/components/responses/405'
+        '500':
+          $ref: '#/components/responses/500'
+        '501':
+          $ref: '#/components/responses/501'
+        '503':
+          $ref: '#/components/responses/503'
+    post:
+      tags:
+        - customer
+      summary: Creates a Customer
+      description: This operation creates a Customer entity.
+      operationId: createCustomer
+      parameters:
+        - $ref: '#/components/parameters/Fields'
+      requestBody:
+        $ref: '#/components/requestBodies/Customer_FVO'
+      responses:
+        '201':
+          $ref: '#/components/responses/201Customer'
+        '202':
+          description: Accepted
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '405':
+          $ref: '#/components/responses/405'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+        '501':
+          $ref: '#/components/responses/501'
+        '503':
+          $ref: '#/components/responses/503'
+  '/customer/{id}':
+    get:
+      tags:
+        - customer
+      summary: Retrieves a Customer by ID
+      description: >-
+        This operation retrieves a Customer entity. Attribute selection enabled for all first level
+        attributes.
+      operationId: retrieveCustomer
+      parameters:
+        - $ref: '#/components/parameters/Id'
+        - $ref: '#/components/parameters/Fields'
+      responses:
+        '200':
+          $ref: '#/components/responses/200Customer_Get'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '405':
+          $ref: '#/components/responses/405'
+        '500':
+          $ref: '#/components/responses/500'
+        '501':
+          $ref: '#/components/responses/501'
+        '503':
+          $ref: '#/components/responses/503'
+    patch:
+      tags:
+        - customer
+      summary: Updates partially a Customer
+      description: This operation updates partially a Customer entity.
+      operationId: patchCustomer
+      parameters:
+        - $ref: '#/components/parameters/Id'
+        - $ref: '#/components/parameters/Fields'
+      requestBody:
+        $ref: '#/components/requestBodies/Customer_MVO'
+      responses:
+        '200':
+          $ref: '#/components/responses/200Customer_Patch'
+        '202':
+          description: Accepted
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '405':
+          $ref: '#/components/responses/405'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+        '501':
+          $ref: '#/components/responses/501'
+        '503':
+          $ref: '#/components/responses/503'
+    delete:
+      tags:
+        - customer
+      summary: Deletes a Customer
+      description: This operation deletes a Customer entity.
+      operationId: deleteCustomer
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '202':
+          $ref: '#/components/responses/202'
+        '204':
+          $ref: '#/components/responses/204'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '405':
+          $ref: '#/components/responses/405'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+        '501':
+          $ref: '#/components/responses/501'
+        '503':
+          $ref: '#/components/responses/503'
+  /listener/customerCreateEvent:
+    post:
+      tags:
+        - notification listener
+      summary: Client listener for entity CustomerCreateEvent
+      description: Example of a client listener for receiving the notification CustomerCreateEvent
+      operationId: customerCreateEvent
+      requestBody:
+        $ref: '#/components/requestBodies/CustomerCreateEvent'
+      responses:
+        '204':
+          description: Notified
+        default:
+          $ref: '#/components/responses/Error'
+  /listener/customerDeleteEvent:
+    post:
+      tags:
+        - notification listener
+      summary: Client listener for entity CustomerDeleteEvent
+      description: Example of a client listener for receiving the notification CustomerDeleteEvent
+      operationId: customerDeleteEvent
+      requestBody:
+        $ref: '#/components/requestBodies/CustomerDeleteEvent'
+      responses:
+        '204':
+          description: Notified
+        default:
+          $ref: '#/components/responses/Error'
+  /listener/customerAttributeValueChangeEvent:
+    post:
+      tags:
+        - notification listener
+      summary: Client listener for entity CustomerAttributeValueChangeEvent
+      description: >-
+        Example of a client listener for receiving the notification
+        CustomerAttributeValueChangeEvent
+      operationId: customerAttributeValueChangeEvent
+      requestBody:
+        $ref: '#/components/requestBodies/CustomerAttributeValueChangeEvent'
+      responses:
+        '204':
+          description: Notified
+        default:
+          $ref: '#/components/responses/Error'
+  /listener/customerStateChangeEvent:
+    post:
+      tags:
+        - notification listener
+      summary: Client listener for entity CustomerStateChangeEvent
+      description: Example of a client listener for receiving the notification CustomerStateChangeEvent
+      operationId: customerStateChangeEvent
+      requestBody:
+        $ref: '#/components/requestBodies/CustomerStateChangeEvent'
+      responses:
+        '204':
+          description: Notified
+        default:
+          $ref: '#/components/responses/Error'
+  /hub:
+    post:
+      operationId: createHub
+      summary: Create a subscription (hub) to receive Events
+      description: Sets the communication endpoint to receive Events.
+      tags:
+        - events subscription
+      requestBody:
+        $ref: '#/components/requestBodies/Hub_FVO'
+      responses:
+        '201':
+          $ref: '#/components/responses/Hub'
+        default:
+          $ref: '#/components/responses/Error'
+  '/hub/{id}':
+    delete:
+      operationId: hubDelete
+      summary: Remove a subscription (hub) to receive Events
+      description: ''
+      tags:
+        - events subscription
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '204':
+          description: Deleted
+        default:
+          $ref: '#/components/responses/Error'
+components:
+  schemas:
+    AccountRef:
+      allOf:
+        - $ref: '#/components/schemas/EntityRef'
+        - type: object
+          description: Account reference. A account may be a party account or a financial account.
+          properties:
+            description:
+              type: string
+              description: Detailed description of the account
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          AccountRef: '#/components/schemas/AccountRef'
+    AccountRef_FVO:
+      allOf:
+        - $ref: '#/components/schemas/EntityRef_FVO'
+        - type: object
+          description: Account reference. A account may be a party account or a financial account.
+          properties:
+            description:
+              type: string
+              description: Detailed description of the account
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          AccountRef: '#/components/schemas/AccountRef_FVO'
+    AccountRef_MVO:
+      allOf:
+        - $ref: '#/components/schemas/EntityRef'
+        - type: object
+          description: Account reference. A account may be a party account or a financial account.
+          properties:
+            description:
+              type: string
+              description: Detailed description of the account
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          AccountRef: '#/components/schemas/AccountRef_MVO'
+    Addressable:
+      type: object
+      description: Base schema for adressable entities
+      properties:
+        href:
+          type: string
+          description: Hyperlink reference
+        id:
+          type: string
+          description: unique identifier
+    Addressable_FVO:
+      type: object
+      description: Base schema for adressable entities
+      properties:
+        id:
+          type: string
+          description: unique identifier
+    AgreementRef:
+      type: object
+      description: >-
+        Agreement reference. An agreement represents a contract or arrangement, either written or
+        verbal and sometimes enforceable by law, such as a service level agreement or a customer
+        price agreement. An agreement involves a number of other business entities, such as
+        products, services, and resources and/or their specifications.
+      allOf:
+        - $ref: '#/components/schemas/Extensible'
+        - $ref: '#/components/schemas/EntityRef'
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          AgreementRef: '#/components/schemas/AgreementRef'
+    AgreementRef_FVO:
+      type: object
+      description: >-
+        Agreement reference. An agreement represents a contract or arrangement, either written or
+        verbal and sometimes enforceable by law, such as a service level agreement or a customer
+        price agreement. An agreement involves a number of other business entities, such as
+        products, services, and resources and/or their specifications.
+      allOf:
+        - $ref: '#/components/schemas/Extensible_FVO'
+        - $ref: '#/components/schemas/EntityRef_FVO'
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          AgreementRef: '#/components/schemas/AgreementRef_FVO'
+    AgreementRef_MVO:
+      type: object
+      description: >-
+        Agreement reference. An agreement represents a contract or arrangement, either written or
+        verbal and sometimes enforceable by law, such as a service level agreement or a customer
+        price agreement. An agreement involves a number of other business entities, such as
+        products, services, and resources and/or their specifications.
+      allOf:
+        - $ref: '#/components/schemas/Extensible'
+        - $ref: '#/components/schemas/EntityRef'
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          AgreementRef: '#/components/schemas/AgreementRef_MVO'
+    BaseEvent:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - type: object
+          description: Base event with common attributes.
+          properties:
+            event:
+              type: object
+            eventId:
+              type: string
+              description: The identifier of the notification.
+            eventTime:
+              type: string
+              format: date-time
+              description: Time of the event occurrence.
+            eventType:
+              type: string
+              description: The type of the notification.
+            correlationId:
+              type: string
+              description: The correlation id for this event.
+            domain:
+              type: string
+              description: The domain of the event.
+            title:
+              type: string
+              description: The title of the event.
+            description:
+              type: string
+              description: An explanatory of the event.
+            priority:
+              type: string
+              description: A priority.
+            timeOcurred:
+              type: string
+              format: date-time
+              description: The time the event occured.
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          BaseEvent: '#/components/schemas/BaseEvent'
+    BaseEvent_FVO:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - type: object
+          description: Base event with common attributes.
+          properties:
+            event:
+              type: object
+            eventId:
+              type: string
+              description: The identifier of the notification.
+            eventTime:
+              type: string
+              format: date-time
+              description: Time of the event occurrence.
+            eventType:
+              type: string
+              description: The type of the notification.
+            correlationId:
+              type: string
+              description: The correlation id for this event.
+            domain:
+              type: string
+              description: The domain of the event.
+            title:
+              type: string
+              description: The title of the event.
+            description:
+              type: string
+              description: An explanatory of the event.
+            priority:
+              type: string
+              description: A priority.
+            timeOcurred:
+              type: string
+              format: date-time
+              description: The time the event occured.
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          BaseEvent: '#/components/schemas/BaseEvent_FVO'
+    BaseEvent_MVO:
+      allOf:
+        - $ref: '#/components/schemas/Entity_MVO'
+        - type: object
+          description: Base event with common attributes.
+          properties:
+            event:
+              type: object
+            eventId:
+              type: string
+              description: The identifier of the notification.
+            eventTime:
+              type: string
+              format: date-time
+              description: Time of the event occurrence.
+            eventType:
+              type: string
+              description: The type of the notification.
+            correlationId:
+              type: string
+              description: The correlation id for this event.
+            domain:
+              type: string
+              description: The domain of the event.
+            title:
+              type: string
+              description: The title of the event.
+            description:
+              type: string
+              description: An explanatory of the event.
+            priority:
+              type: string
+              description: A priority.
+            timeOcurred:
+              type: string
+              format: date-time
+              description: The time the event occured.
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          BaseEvent: '#/components/schemas/BaseEvent_MVO'
+    Characteristic:
+      allOf:
+        - $ref: '#/components/schemas/Extensible'
+        - type: object
+          description: Describes a given characteristic of an object or entity through a name/value pair.
+          properties:
+            id:
+              type: string
+              description: Unique identifier of the characteristic
+            name:
+              type: string
+              description: Name of the characteristic
+            valueType:
+              type: string
+              description: Data type of the value of the characteristic
+            characteristicRelationship:
+              type: array
+              items:
+                $ref: '#/components/schemas/CharacteristicRelationship'
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          Characteristic: '#/components/schemas/Characteristic'
+    CharacteristicRelationship:
+      allOf:
+        - $ref: '#/components/schemas/Extensible'
+        - type: object
+          description: Another Characteristic that is related to the current Characteristic;
+          properties:
+            id:
+              type: string
+              description: Unique identifier of the characteristic
+            relationshipType:
+              type: string
+              description: The type of relationship
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          CharacteristicRelationship: '#/components/schemas/CharacteristicRelationship'
+    CharacteristicRelationship_FVO:
+      allOf:
+        - $ref: '#/components/schemas/Extensible'
+        - type: object
+          description: Another Characteristic that is related to the current Characteristic;
+          properties:
+            id:
+              type: string
+              description: Unique identifier of the characteristic
+            relationshipType:
+              type: string
+              description: The type of relationship
+          required:
+            - id
+            - relationshipType
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          CharacteristicRelationship: '#/components/schemas/CharacteristicRelationship_FVO'
+    CharacteristicRelationship_MVO:
+      allOf:
+        - $ref: '#/components/schemas/Extensible'
+        - type: object
+          description: Another Characteristic that is related to the current Characteristic;
+          properties:
+            id:
+              type: string
+              description: Unique identifier of the characteristic
+            relationshipType:
+              type: string
+              description: The type of relationship
+          required:
+            - id
+            - relationshipType
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          CharacteristicRelationship: '#/components/schemas/CharacteristicRelationship_MVO'
+    Characteristic_FVO:
+      allOf:
+        - $ref: '#/components/schemas/Extensible'
+        - type: object
+          description: Describes a given characteristic of an object or entity through a name/value pair.
+          properties:
+            id:
+              type: string
+              description: Unique identifier of the characteristic
+            name:
+              type: string
+              description: Name of the characteristic
+            valueType:
+              type: string
+              description: Data type of the value of the characteristic
+            characteristicRelationship:
+              type: array
+              items:
+                $ref: '#/components/schemas/CharacteristicRelationship'
+          required:
+            - name
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          Characteristic: '#/components/schemas/Characteristic_FVO'
+    Characteristic_MVO:
+      allOf:
+        - $ref: '#/components/schemas/Extensible'
+        - type: object
+          description: Describes a given characteristic of an object or entity through a name/value pair.
+          properties:
+            id:
+              type: string
+              description: Unique identifier of the characteristic
+            name:
+              type: string
+              description: Name of the characteristic
+            valueType:
+              type: string
+              description: Data type of the value of the characteristic
+            characteristicRelationship:
+              type: array
+              items:
+                $ref: '#/components/schemas/CharacteristicRelationship'
+          required:
+            - name
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          Characteristic: '#/components/schemas/Characteristic_MVO'
+    ContactMedium:
+      allOf:
+        - $ref: '#/components/schemas/Extensible'
+        - type: object
+          description: Indicates the contact medium that could be used to contact the party.
+          properties:
+            id:
+              type: string
+              description: Identifier for this contact medium.
+            preferred:
+              type: boolean
+              description: 'If true, indicates that is the preferred contact medium'
+            contactType:
+              type: string
+              description: >-
+                Type of the contact medium to qualifiy it like pro email / personal email. This is
+                not used to define the contact medium used.
+            validFor:
+              $ref: '#/components/schemas/TimePeriod'
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          ContactMedium: '#/components/schemas/ContactMedium'
+          SocialContactMedium: '#/components/schemas/SocialContactMedium'
+          PhoneContactMedium: '#/components/schemas/PhoneContactMedium'
+          GeographicAddressContactMedium: '#/components/schemas/GeographicAddressContactMedium'
+          FaxContactMedium: '#/components/schemas/FaxContactMedium'
+          EmailContactMedium: '#/components/schemas/EmailContactMedium'
+    ContactMedium_FVO:
+      allOf:
+        - $ref: '#/components/schemas/Extensible_FVO'
+        - type: object
+          description: Indicates the contact medium that could be used to contact the party.
+          properties:
+            id:
+              type: string
+              description: Identifier for this contact medium.
+            preferred:
+              type: boolean
+              description: 'If true, indicates that is the preferred contact medium'
+            contactType:
+              type: string
+              description: >-
+                Type of the contact medium to qualifiy it like pro email / personal email. This is
+                not used to define the contact medium used.
+            validFor:
+              $ref: '#/components/schemas/TimePeriod'
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          ContactMedium: '#/components/schemas/ContactMedium_FVO'
+          SocialContactMedium: '#/components/schemas/SocialContactMedium_FVO'
+          PhoneContactMedium: '#/components/schemas/PhoneContactMedium_FVO'
+          GeographicAddressContactMedium: '#/components/schemas/GeographicAddressContactMedium_FVO'
+          FaxContactMedium: '#/components/schemas/FaxContactMedium_FVO'
+          EmailContactMedium: '#/components/schemas/EmailContactMedium_FVO'
+    ContactMedium_MVO:
+      allOf:
+        - $ref: '#/components/schemas/Extensible'
+        - type: object
+          description: Indicates the contact medium that could be used to contact the party.
+          properties:
+            id:
+              type: string
+              description: Identifier for this contact medium.
+            preferred:
+              type: boolean
+              description: 'If true, indicates that is the preferred contact medium'
+            contactType:
+              type: string
+              description: >-
+                Type of the contact medium to qualifiy it like pro email / personal email. This is
+                not used to define the contact medium used.
+            validFor:
+              $ref: '#/components/schemas/TimePeriod'
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          ContactMedium: '#/components/schemas/ContactMedium_MVO'
+          SocialContactMedium: '#/components/schemas/SocialContactMedium_MVO'
+          PhoneContactMedium: '#/components/schemas/PhoneContactMedium_MVO'
+          GeographicAddressContactMedium: '#/components/schemas/GeographicAddressContactMedium_MVO'
+          FaxContactMedium: '#/components/schemas/FaxContactMedium_MVO'
+          EmailContactMedium: '#/components/schemas/EmailContactMedium_MVO'
+    CreditProfile:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - type: object
+          description: >-
+            Credit profile for the party (containing credit scoring, ...). By default only the
+            current credit profile  is retrieved. It can be used as a list to give the party credit
+            profiles history, the first one in the list will be the current one.
+          properties:
+            creditProfileDate:
+              type: string
+              format: date-time
+              description: The date the profile was established
+            creditRiskRating:
+              type: integer
+              description: This is an integer whose value is used to rate the risk
+            creditScore:
+              type: integer
+              description: >-
+                A measure of a person or organizations creditworthiness calculated on the basis of a
+                combination of factors such as their income and credit history
+            validFor:
+              $ref: '#/components/schemas/TimePeriod'
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          CreditProfile: '#/components/schemas/CreditProfile'
+    CreditProfile_FVO:
+      allOf:
+        - $ref: '#/components/schemas/Entity_FVO'
+        - type: object
+          description: >-
+            Credit profile for the party (containing credit scoring, ...). By default only the
+            current credit profile  is retrieved. It can be used as a list to give the party credit
+            profiles history, the first one in the list will be the current one.
+          properties:
+            creditProfileDate:
+              type: string
+              format: date-time
+              description: The date the profile was established
+            creditRiskRating:
+              type: integer
+              description: This is an integer whose value is used to rate the risk
+            creditScore:
+              type: integer
+              description: >-
+                A measure of a person or organizations creditworthiness calculated on the basis of a
+                combination of factors such as their income and credit history
+            validFor:
+              $ref: '#/components/schemas/TimePeriod'
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          CreditProfile: '#/components/schemas/CreditProfile_FVO'
+    CreditProfile_MVO:
+      allOf:
+        - $ref: '#/components/schemas/Entity_MVO'
+        - type: object
+          description: >-
+            Credit profile for the party (containing credit scoring, ...). By default only the
+            current credit profile  is retrieved. It can be used as a list to give the party credit
+            profiles history, the first one in the list will be the current one.
+          properties:
+            creditProfileDate:
+              type: string
+              format: date-time
+              description: The date the profile was established
+            creditRiskRating:
+              type: integer
+              description: This is an integer whose value is used to rate the risk
+            creditScore:
+              type: integer
+              description: >-
+                A measure of a person or organizations creditworthiness calculated on the basis of a
+                combination of factors such as their income and credit history
+            validFor:
+              $ref: '#/components/schemas/TimePeriod'
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          CreditProfile: '#/components/schemas/CreditProfile_MVO'
+    Customer:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - type: object
+          properties:
+            href:
+              type: string
+              description: Url used to reference the customer.
+            id:
+              type: string
+              description: Unique identifier for Customers
+            name:
+              type: string
+              description: >-
+                A word, term, or phrase by which the Customer is known and distinguished from other
+                Customers.
+            status:
+              type: string
+              description: Used to track the lifecycle status of the customer.
+            statusReason:
+              type: string
+              description: >-
+                A string providing an explanation on the value of the status lifecycle. For instance
+                if the status is Rejected, statusReason will provide the reason for rejection.
+            validFor:
+              $ref: '#/components/schemas/TimePeriod'
+            engagedParty:
+              $ref: '#/components/schemas/PartyRefOrPartyRoleRef'
+            account:
+              type: array
+              items:
+                $ref: '#/components/schemas/AccountRef'
+            paymentMethod:
+              type: array
+              items:
+                $ref: '#/components/schemas/PaymentMethodRef'
+            contactMedium:
+              type: array
+              items:
+                $ref: '#/components/schemas/ContactMedium'
+            creditProfile:
+              type: array
+              items:
+                $ref: '#/components/schemas/CreditProfile'
+            agreement:
+              type: array
+              items:
+                $ref: '#/components/schemas/AgreementRef'
+            relatedParty:
+              type: array
+              items:
+                $ref: '#/components/schemas/RelatedPartyRefOrPartyRoleRef'
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          Customer: '#/components/schemas/Customer'
+    CustomerAttributeValueChangeEvent:
+      allOf:
+        - $ref: '#/components/schemas/Event'
+        - type: object
+          description: CustomerAttributeValueChangeEvent generic structure
+          properties:
+            event:
+              $ref: '#/components/schemas/CustomerAttributeValueChangeEventPayload'
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          CustomerAttributeValueChangeEvent: '#/components/schemas/CustomerAttributeValueChangeEvent'
+    CustomerAttributeValueChangeEventPayload:
+      type: object
+      description: The event data structure
+      properties:
+        customer:
+          $ref: '#/components/schemas/Customer'
+    CustomerCreateEvent:
+      allOf:
+        - $ref: '#/components/schemas/Event'
+        - type: object
+          description: CustomerCreateEvent generic structure
+          properties:
+            event:
+              $ref: '#/components/schemas/CustomerCreateEventPayload'
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          CustomerCreateEvent: '#/components/schemas/CustomerCreateEvent'
+    CustomerCreateEventPayload:
+      type: object
+      description: The event data structure
+      properties:
+        customer:
+          $ref: '#/components/schemas/Customer'
+    CustomerDeleteEvent:
+      allOf:
+        - $ref: '#/components/schemas/Event'
+        - type: object
+          description: CustomerDeleteEvent generic structure
+          properties:
+            event:
+              $ref: '#/components/schemas/CustomerDeleteEventPayload'
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          CustomerDeleteEvent: '#/components/schemas/CustomerDeleteEvent'
+    CustomerDeleteEventPayload:
+      type: object
+      description: The event data structure
+      properties:
+        customer:
+          $ref: '#/components/schemas/Customer'
+    CustomerStateChangeEvent:
+      allOf:
+        - $ref: '#/components/schemas/Event'
+        - type: object
+          description: CustomerStateChangeEvent generic structure
+          properties:
+            event:
+              $ref: '#/components/schemas/CustomerStateChangeEventPayload'
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          CustomerStateChangeEvent: '#/components/schemas/CustomerStateChangeEvent'
+    CustomerStateChangeEventPayload:
+      type: object
+      description: The event data structure
+      properties:
+        customer:
+          $ref: '#/components/schemas/Customer'
+    Customer_FVO:
+      allOf:
+        - $ref: '#/components/schemas/Entity_FVO'
+        - type: object
+          properties:
+            name:
+              type: string
+              description: >-
+                A word, term, or phrase by which the Customer is known and distinguished from other
+                Customers.
+            status:
+              type: string
+              description: Used to track the lifecycle status of the customer.
+            statusReason:
+              type: string
+              description: >-
+                A string providing an explanation on the value of the status lifecycle. For instance
+                if the status is Rejected, statusReason will provide the reason for rejection.
+            validFor:
+              $ref: '#/components/schemas/TimePeriod'
+            engagedParty:
+              $ref: '#/components/schemas/PartyRefOrPartyRoleRef'
+            account:
+              type: array
+              items:
+                $ref: '#/components/schemas/AccountRef_FVO'
+            paymentMethod:
+              type: array
+              items:
+                $ref: '#/components/schemas/PaymentMethodRef_FVO'
+            contactMedium:
+              type: array
+              items:
+                $ref: '#/components/schemas/ContactMedium_FVO'
+            creditProfile:
+              type: array
+              items:
+                $ref: '#/components/schemas/CreditProfile_FVO'
+            agreement:
+              type: array
+              items:
+                $ref: '#/components/schemas/AgreementRef_FVO'
+            relatedParty:
+              type: array
+              items:
+                $ref: '#/components/schemas/RelatedPartyRefOrPartyRoleRef_FVO'
+          required:
+            - engagedParty
+            - name
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          Customer: '#/components/schemas/Customer_FVO'
+    Customer_MVO:
+      allOf:
+        - $ref: '#/components/schemas/Entity_MVO'
+        - type: object
+          properties:
+            name:
+              type: string
+              description: >-
+                A word, term, or phrase by which the Customer is known and distinguished from other
+                Customers.
+            status:
+              type: string
+              description: Used to track the lifecycle status of the customer.
+            statusReason:
+              type: string
+              description: >-
+                A string providing an explanation on the value of the status lifecycle. For instance
+                if the status is Rejected, statusReason will provide the reason for rejection.
+            validFor:
+              $ref: '#/components/schemas/TimePeriod'
+            engagedParty:
+              $ref: '#/components/schemas/PartyRefOrPartyRoleRef'
+            account:
+              type: array
+              items:
+                $ref: '#/components/schemas/AccountRef_MVO'
+            paymentMethod:
+              type: array
+              items:
+                $ref: '#/components/schemas/PaymentMethodRef_MVO'
+            contactMedium:
+              type: array
+              items:
+                $ref: '#/components/schemas/ContactMedium_MVO'
+            creditProfile:
+              type: array
+              items:
+                $ref: '#/components/schemas/CreditProfile_MVO'
+            agreement:
+              type: array
+              items:
+                $ref: '#/components/schemas/AgreementRef_MVO'
+            relatedParty:
+              type: array
+              items:
+                $ref: '#/components/schemas/RelatedPartyRefOrPartyRoleRef_MVO'
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          Customer: '#/components/schemas/Customer_MVO'
+    EmailContactMedium:
+      allOf:
+        - $ref: '#/components/schemas/ContactMedium'
+        - type: object
+          description: >-
+            Describes an email that could be used to contact a party (an individual or an
+            organization)
+          properties:
+            emailAddress:
+              type: string
+              description: Full email address in standard format
+    EmailContactMedium_FVO:
+      allOf:
+        - $ref: '#/components/schemas/ContactMedium_FVO'
+        - type: object
+          description: >-
+            Describes an email that could be used to contact a party (an individual or an
+            organization)
+          properties:
+            emailAddress:
+              type: string
+              description: Full email address in standard format
+    EmailContactMedium_MVO:
+      allOf:
+        - $ref: '#/components/schemas/ContactMedium_MVO'
+        - type: object
+          description: >-
+            Describes an email that could be used to contact a party (an individual or an
+            organization)
+          properties:
+            emailAddress:
+              type: string
+              description: Full email address in standard format
+    Entity:
+      type: object
+      description: Base entity schema for use in TMForum Open-APIs. Property.
+      allOf:
+        - $ref: '#/components/schemas/Extensible'
+        - $ref: '#/components/schemas/Addressable'
+    EntityRef:
+      allOf:
+        - $ref: '#/components/schemas/Extensible'
+        - $ref: '#/components/schemas/Addressable'
+        - type: object
+          description: Entity reference schema to be use for all entityRef class.
+          properties:
+            id:
+              type: string
+              description: The identifier of the referred entity.
+            href:
+              type: string
+              description: The URI of the referred entity.
+            name:
+              type: string
+              description: Name of the referred entity.
+            '@referredType':
+              type: string
+              description: The actual type of the target instance when needed for disambiguation.
+          required:
+            - id
+    EntityRef_FVO:
+      allOf:
+        - $ref: '#/components/schemas/Extensible_FVO'
+        - $ref: '#/components/schemas/Addressable_FVO'
+        - type: object
+          description: Entity reference schema to be use for all entityRef class.
+          properties:
+            id:
+              type: string
+              description: The identifier of the referred entity.
+            href:
+              type: string
+              description: The URI of the referred entity.
+            name:
+              type: string
+              description: Name of the referred entity.
+            '@referredType':
+              type: string
+              description: The actual type of the target instance when needed for disambiguation.
+          required:
+            - id
+    Entity_FVO:
+      type: object
+      description: Base entity schema for use in TMForum Open-APIs. Property.
+      allOf:
+        - $ref: '#/components/schemas/Extensible_FVO'
+        - $ref: '#/components/schemas/Addressable_FVO'
+    Entity_MVO:
+      type: object
+      description: Base entity schema for use in TMForum Open-APIs. Property.
+      allOf:
+        - $ref: '#/components/schemas/Extensible'
+    Event:
+      allOf:
+        - $ref: '#/components/schemas/Extensible'
+        - type: object
+          description: event with common attributes.
+          properties:
+            href:
+              type: string
+              description: Hyperlink reference
+            id:
+              type: string
+              description: unique identifier
+            correlationId:
+              type: string
+              description: The correlation id for this event.
+            domain:
+              type: string
+              description: The domain of the event.
+            title:
+              type: string
+              description: The title of the event.
+            description:
+              type: string
+              description: An explnatory of the event.
+            priority:
+              type: string
+              description: A priority.
+            timeOccurred:
+              type: string
+              format: date-time
+              description: The time the event occurred.
+            source:
+              $ref: '#/components/schemas/EntityRef'
+            reportingSystem:
+              $ref: '#/components/schemas/EntityRef'
+            relatedParty:
+              type: array
+              items:
+                $ref: '#/components/schemas/RelatedPartyRefOrPartyRoleRef'
+            analyticCharacteristic:
+              type: array
+              items:
+                $ref: '#/components/schemas/Characteristic'
+            eventId:
+              type: string
+              description: The identifier of the notification.
+            eventTime:
+              type: string
+              format: date-time
+              description: Time of the event occurrence.
+            eventType:
+              type: string
+              description: The type of the notification.
+            event:
+              description: The event linked to the involved resource object
+              type: object
+    Event_FVO:
+      allOf:
+        - $ref: '#/components/schemas/Extensible'
+        - type: object
+          description: event with common attributes.
+          properties:
+            href:
+              type: string
+              description: Hyperlink reference
+            id:
+              type: string
+              description: unique identifier
+            correlationId:
+              type: string
+              description: The correlation id for this event.
+            domain:
+              type: string
+              description: The domain of the event.
+            title:
+              type: string
+              description: The title of the event.
+            description:
+              type: string
+              description: An explnatory of the event.
+            priority:
+              type: string
+              description: A priority.
+            timeOccurred:
+              type: string
+              format: date-time
+              description: The time the event occurred.
+            source:
+              $ref: '#/components/schemas/EntityRef_FVO'
+            reportingSystem:
+              $ref: '#/components/schemas/EntityRef_FVO'
+            relatedParty:
+              type: array
+              items:
+                $ref: '#/components/schemas/RelatedPartyRefOrPartyRoleRef_FVO'
+            analyticCharacteristic:
+              type: array
+              items:
+                $ref: '#/components/schemas/Characteristic'
+            eventId:
+              type: string
+              description: The identifier of the notification.
+            eventTime:
+              type: string
+              format: date-time
+              description: Time of the event occurrence.
+            eventType:
+              type: string
+              description: The type of the notification.
+            event:
+              description: The event linked to the involved resource object
+              type: object
+          required:
+            - eventId
+            - eventTime
+            - eventType
+            - event
+    Event_MVO:
+      allOf:
+        - $ref: '#/components/schemas/Extensible'
+        - type: object
+          description: event with common attributes.
+          properties:
+            href:
+              type: string
+              description: Hyperlink reference
+            id:
+              type: string
+              description: unique identifier
+            correlationId:
+              type: string
+              description: The correlation id for this event.
+            domain:
+              type: string
+              description: The domain of the event.
+            title:
+              type: string
+              description: The title of the event.
+            description:
+              type: string
+              description: An explnatory of the event.
+            priority:
+              type: string
+              description: A priority.
+            timeOccurred:
+              type: string
+              format: date-time
+              description: The time the event occurred.
+            source:
+              $ref: '#/components/schemas/EntityRef'
+            reportingSystem:
+              $ref: '#/components/schemas/EntityRef'
+            relatedParty:
+              type: array
+              items:
+                $ref: '#/components/schemas/RelatedPartyRefOrPartyRoleRef_MVO'
+            analyticCharacteristic:
+              type: array
+              items:
+                $ref: '#/components/schemas/Characteristic'
+            eventId:
+              type: string
+              description: The identifier of the notification.
+            eventTime:
+              type: string
+              format: date-time
+              description: Time of the event occurrence.
+            eventType:
+              type: string
+              description: The type of the notification.
+            event:
+              description: The event linked to the involved resource object
+              type: object
+          required:
+            - eventId
+            - eventTime
+            - eventType
+            - event
+    Extensible:
+      type: object
+      description: >-
+        Base Extensible schema for use in TMForum Open-APIs - When used for in a schema it means
+        that the Entity described by the schema  MUST be extended with the @type
+      properties:
+        '@type':
+          type: string
+          description: 'When sub-classing, this defines the sub-class Extensible name'
+        '@baseType':
+          type: string
+          description: 'When sub-classing, this defines the super-class'
+        '@schemaLocation':
+          type: string
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      required:
+        - '@type'
+    Extensible_FVO:
+      type: object
+      description: >-
+        Base Extensible schema for use in TMForum Open-APIs - When used for in a schema it means
+        that the Entity described by the schema  MUST be extended with the @type
+      properties:
+        '@type':
+          type: string
+          description: 'When sub-classing, this defines the sub-class Extensible name'
+        '@baseType':
+          type: string
+          description: 'When sub-classing, this defines the super-class'
+        '@schemaLocation':
+          type: string
+          description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      required:
+        - '@type'
+    FaxContactMedium:
+      allOf:
+        - $ref: '#/components/schemas/ContactMedium'
+        - type: object
+          description: Describes a fax that could be used to contact a party (an individual or an organization)
+          properties:
+            faxNumber:
+              type: string
+              description: The fax number of the contact
+    FaxContactMedium_FVO:
+      allOf:
+        - $ref: '#/components/schemas/ContactMedium_FVO'
+        - type: object
+          description: Describes a fax that could be used to contact a party (an individual or an organization)
+          properties:
+            faxNumber:
+              type: string
+              description: The fax number of the contact
+    FaxContactMedium_MVO:
+      allOf:
+        - $ref: '#/components/schemas/ContactMedium_MVO'
+        - type: object
+          description: Describes a fax that could be used to contact a party (an individual or an organization)
+          properties:
+            faxNumber:
+              type: string
+              description: The fax number of the contact
+    GeographicAddressContactMedium:
+      allOf:
+        - $ref: '#/components/schemas/ContactMedium'
+        - type: object
+          description: >-
+            Describes a geographical address that could be used to contact a party (an individual or
+            an organization)
+          properties:
+            city:
+              type: string
+              description: The city
+            country:
+              type: string
+              description: The country
+            postCode:
+              type: string
+              description: Postcode
+            stateOrProvince:
+              type: string
+              description: State or province
+            street1:
+              type: string
+              description: Describes the street
+            street2:
+              type: string
+              description: Complementary street description
+            geographicAddress:
+              $ref: '#/components/schemas/GeographicAddressRef'
+    GeographicAddressContactMedium_FVO:
+      allOf:
+        - $ref: '#/components/schemas/ContactMedium_FVO'
+        - type: object
+          description: >-
+            Describes a geographical address that could be used to contact a party (an individual or
+            an organization)
+          properties:
+            city:
+              type: string
+              description: The city
+            country:
+              type: string
+              description: The country
+            postCode:
+              type: string
+              description: Postcode
+            stateOrProvince:
+              type: string
+              description: State or province
+            street1:
+              type: string
+              description: Describes the street
+            street2:
+              type: string
+              description: Complementary street description
+            geographicAddress:
+              $ref: '#/components/schemas/GeographicAddressRef'
+    GeographicAddressContactMedium_MVO:
+      allOf:
+        - $ref: '#/components/schemas/ContactMedium_MVO'
+        - type: object
+          description: >-
+            Describes a geographical address that could be used to contact a party (an individual or
+            an organization)
+          properties:
+            city:
+              type: string
+              description: The city
+            country:
+              type: string
+              description: The country
+            postCode:
+              type: string
+              description: Postcode
+            stateOrProvince:
+              type: string
+              description: State or province
+            street1:
+              type: string
+              description: Describes the street
+            street2:
+              type: string
+              description: Complementary street description
+            geographicAddress:
+              $ref: '#/components/schemas/GeographicAddressRef'
+    GeographicAddressRef:
+      type: object
+      description: Reference to a Geographic Address.
+      allOf:
+        - $ref: '#/components/schemas/EntityRef'
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          GeographicAddressRef: '#/components/schemas/GeographicAddressRef'
+    GeographicAddressRef_FVO:
+      type: object
+      description: Reference to a Geographic Address.
+      allOf:
+        - $ref: '#/components/schemas/EntityRef_FVO'
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          GeographicAddressRef: '#/components/schemas/GeographicAddressRef_FVO'
+    GeographicAddressRef_MVO:
+      type: object
+      description: Reference to a Geographic Address.
+      allOf:
+        - $ref: '#/components/schemas/EntityRef'
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          GeographicAddressRef: '#/components/schemas/GeographicAddressRef_MVO'
+    PartyRef:
+      type: object
+      description: A Party reference
+      allOf:
+        - $ref: '#/components/schemas/EntityRef'
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          PartyRef: '#/components/schemas/PartyRef'
+    PartyRefOrPartyRoleRef:
+      type: object
+      description: ''
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          PartyRef: '#/components/schemas/PartyRef'
+          PartyRoleRef: '#/components/schemas/PartyRoleRef'
+    PartyRef_FVO:
+      type: object
+      description: A Party reference
+      allOf:
+        - $ref: '#/components/schemas/EntityRef_FVO'
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          PartyRef: '#/components/schemas/PartyRef_FVO'
+    PartyRef_MVO:
+      type: object
+      description: A Party reference
+      allOf:
+        - $ref: '#/components/schemas/EntityRef'
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          PartyRef: '#/components/schemas/PartyRef_MVO'
+    PartyRoleRef:
+      allOf:
+        - $ref: '#/components/schemas/EntityRef'
+        - type: object
+          description: >-
+            Party role reference. A party role represents the part played by a party in a given
+            context.
+          properties:
+            partyId:
+              type: string
+              description: The identifier of the engaged party that is linked to the PartyRole object.
+            partyName:
+              type: string
+              description: The name of the engaged party that is linked to the PartyRole object.
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          PartyRoleRef: '#/components/schemas/PartyRoleRef'
+    PartyRoleRef_FVO:
+      allOf:
+        - $ref: '#/components/schemas/EntityRef_FVO'
+        - type: object
+          description: >-
+            Party role reference. A party role represents the part played by a party in a given
+            context.
+          properties:
+            partyId:
+              type: string
+              description: The identifier of the engaged party that is linked to the PartyRole object.
+            partyName:
+              type: string
+              description: The name of the engaged party that is linked to the PartyRole object.
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          PartyRoleRef: '#/components/schemas/PartyRoleRef_FVO'
+    PartyRoleRef_MVO:
+      allOf:
+        - $ref: '#/components/schemas/EntityRef'
+        - type: object
+          description: >-
+            Party role reference. A party role represents the part played by a party in a given
+            context.
+          properties:
+            partyId:
+              type: string
+              description: The identifier of the engaged party that is linked to the PartyRole object.
+            partyName:
+              type: string
+              description: The name of the engaged party that is linked to the PartyRole object.
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          PartyRoleRef: '#/components/schemas/PartyRoleRef_MVO'
+    PaymentMethodRef:
+      type: object
+      description: >-
+        PaymentMethod reference. A payment method defines a specific mean of payment (e.g direct
+        debit).
+      allOf:
+        - $ref: '#/components/schemas/EntityRef'
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          PaymentMethodRef: '#/components/schemas/PaymentMethodRef'
+    PaymentMethodRef_FVO:
+      type: object
+      description: >-
+        PaymentMethod reference. A payment method defines a specific mean of payment (e.g direct
+        debit).
+      allOf:
+        - $ref: '#/components/schemas/EntityRef_FVO'
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          PaymentMethodRef: '#/components/schemas/PaymentMethodRef_FVO'
+    PaymentMethodRef_MVO:
+      type: object
+      description: >-
+        PaymentMethod reference. A payment method defines a specific mean of payment (e.g direct
+        debit).
+      allOf:
+        - $ref: '#/components/schemas/EntityRef'
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          PaymentMethodRef: '#/components/schemas/PaymentMethodRef_MVO'
+    PhoneContactMedium:
+      allOf:
+        - $ref: '#/components/schemas/ContactMedium'
+        - type: object
+          description: >-
+            Describes a phone number that could be used to contact a party (an individual or an
+            organization)
+          properties:
+            phoneNumber:
+              type: string
+              description: The phone number of the contact
+    PhoneContactMedium_FVO:
+      allOf:
+        - $ref: '#/components/schemas/ContactMedium_FVO'
+        - type: object
+          description: >-
+            Describes a phone number that could be used to contact a party (an individual or an
+            organization)
+          properties:
+            phoneNumber:
+              type: string
+              description: The phone number of the contact
+    PhoneContactMedium_MVO:
+      allOf:
+        - $ref: '#/components/schemas/ContactMedium_MVO'
+        - type: object
+          description: >-
+            Describes a phone number that could be used to contact a party (an individual or an
+            organization)
+          properties:
+            phoneNumber:
+              type: string
+              description: The phone number of the contact
+    RelatedPartyRefOrPartyRoleRef:
+      allOf:
+        - $ref: '#/components/schemas/Extensible'
+        - type: object
+          description: >-
+            RelatedParty reference. A related party defines party or party role or its reference,
+            linked to a specific entity
+          properties:
+            role:
+              description: >-
+                Role played by the related party or party role in the context of the specific entity
+                it is linked to. Such as 'initiator', 'customer',  'salesAgent', 'user'
+              type: string
+            partyOrPartyRole:
+              $ref: '#/components/schemas/PartyRefOrPartyRoleRef'
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          RelatedPartyRefOrPartyRoleRef: '#/components/schemas/RelatedPartyRefOrPartyRoleRef'
+    RelatedPartyRefOrPartyRoleRef_FVO:
+      allOf:
+        - $ref: '#/components/schemas/Extensible_FVO'
+        - type: object
+          description: >-
+            RelatedParty reference. A related party defines party or party role or its reference,
+            linked to a specific entity
+          properties:
+            role:
+              description: >-
+                Role played by the related party or party role in the context of the specific entity
+                it is linked to. Such as 'initiator', 'customer',  'salesAgent', 'user'
+              type: string
+            partyOrPartyRole:
+              $ref: '#/components/schemas/PartyRefOrPartyRoleRef'
+          required:
+            - role
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          RelatedPartyRefOrPartyRoleRef: '#/components/schemas/RelatedPartyRefOrPartyRoleRef_FVO'
+    RelatedPartyRefOrPartyRoleRef_MVO:
+      allOf:
+        - $ref: '#/components/schemas/Extensible'
+        - type: object
+          description: >-
+            RelatedParty reference. A related party defines party or party role or its reference,
+            linked to a specific entity
+          properties:
+            role:
+              description: >-
+                Role played by the related party or party role in the context of the specific entity
+                it is linked to. Such as 'initiator', 'customer',  'salesAgent', 'user'
+              type: string
+            partyOrPartyRole:
+              $ref: '#/components/schemas/PartyRefOrPartyRoleRef'
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          RelatedPartyRefOrPartyRoleRef: '#/components/schemas/RelatedPartyRefOrPartyRoleRef_MVO'
+    SocialContactMedium:
+      allOf:
+        - $ref: '#/components/schemas/ContactMedium'
+        - type: object
+          description: >-
+            Describes a social media identifier that could be used to contact a party (an individual
+            or an organization)
+          properties:
+            socialNetworkId:
+              type: string
+              description: Identifier as a member of a social network
+    SocialContactMedium_FVO:
+      allOf:
+        - $ref: '#/components/schemas/ContactMedium_FVO'
+        - type: object
+          description: >-
+            Describes a social media identifier that could be used to contact a party (an individual
+            or an organization)
+          properties:
+            socialNetworkId:
+              type: string
+              description: Identifier as a member of a social network
+    SocialContactMedium_MVO:
+      allOf:
+        - $ref: '#/components/schemas/ContactMedium_MVO'
+        - type: object
+          description: >-
+            Describes a social media identifier that could be used to contact a party (an individual
+            or an organization)
+          properties:
+            socialNetworkId:
+              type: string
+              description: Identifier as a member of a social network
+    TimePeriod:
+      type: object
+      description: 'A period of time, either as a deadline (endDateTime only) a startDateTime only, or both'
+      properties:
+        startDateTime:
+          description: 'Start of the time period, using IETC-RFC-3339 format'
+          type: string
+          format: date-time
+          example: '1985-04-12T23:20:50.52Z'
+        endDateTime:
+          description: 'End of the time period, using IETC-RFC-3339 format'
+          type: string
+          format: date-time
+          example: '1985-04-12T23:20:50.52Z'
+    Error:
+      discriminator:
+        propertyName: '@type'
+        mapping:
+          Error: '#/components/schemas/Error'
+      allOf:
+        - $ref: '#/components/schemas/Extensible'
+        - type: object
+          required:
+            - code
+            - reason
+          properties:
+            code:
+              type: string
+              description: 'Application relevant detail, defined in the API or a common list.'
+            reason:
+              type: string
+              description: Explanation of the reason for the error which can be shown to a client user.
+            message:
+              type: string
+              description: >-
+                More details and corrective actions related to the error which can be shown to a
+                client user.
+            status:
+              type: string
+              description: HTTP Error code extension
+            referenceError:
+              type: string
+              description: URI of documentation describing the error.
+      description: 'Used when an API throws an Error, typically with a HTTP error response-code (3xx, 4xx, 5xx)'
+    Hub_FVO:
+      type: object
+      description: >-
+        Sets the communication endpoint address the service instance must use to deliver
+        notification information
+      required:
+        - callback
+      allOf:
+        - $ref: '#/components/schemas/Extensible'
+        - properties:
+            callback:
+              type: string
+              description: The callback being registered.
+            query:
+              type: string
+              description: additional data to be passed
+    Hub:
+      type: object
+      description: >-
+        Sets the communication endpoint address the service instance must use to deliver
+        notification information
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - properties:
+            id:
+              type: string
+              description: Id of the listener
+            callback:
+              type: string
+              description: The callback being registered.
+            query:
+              type: string
+              description: additional data to be passed
+          required:
+            - callback
+    JsonPatch:
+      type: object
+      description: A JSONPatch document as defined by RFC 6902
+      required:
+        - op
+        - path
+      properties:
+        op:
+          type: string
+          description: The operation to be performed
+          enum:
+            - add
+            - remove
+            - replace
+            - move
+            - copy
+            - test
+        path:
+          type: string
+          description: A JSON-Pointer
+        value:
+          description: The value to be used within the operations.
+        from:
+          type: string
+          description: A string containing a JSON Pointer value.
+    JsonPatchOperations:
+      description: JSONPatch Operations document as defined by RFC 6902
+      type: array
+      items:
+        $ref: '#/components/schemas/JsonPatch'
+  parameters:
+    Id:
+      name: id
+      required: true
+      schema:
+        type: string
+      in: path
+      description: Identifier of the Resource
+    Fields:
+      name: fields
+      in: query
+      description: Comma-separated properties to be provided in response
+      schema:
+        type: string
+    Offset:
+      name: offset
+      in: query
+      description: Requested index for start of resources to be provided in response
+      schema:
+        type: integer
+    Limit:
+      name: limit
+      in: query
+      description: Requested number of resources to be provided in response
+      schema:
+        type: integer
+  requestBodies:
+    Customer_FVO:
+      description: The Customer to be created
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Customer_FVO'
+          examples:
+            Customer_Create_example:
+              $ref: '#/components/examples/Customer_Create_example_request'
+      required: true
+    Customer_MVO:
+      description: The Customer to be patched
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Customer_MVO'
+          examples:
+            Customer_Update_example:
+              $ref: '#/components/examples/Customer_Update_example_request'
+        application/merge-patch+json:
+          schema:
+            $ref: '#/components/schemas/Customer_MVO'
+        application/json-patch+json:
+          schema:
+            $ref: '#/components/schemas/JsonPatchOperations'
+        application/json-patch-query+json:
+          schema:
+            $ref: '#/components/schemas/JsonPatchOperations'
+      required: true
+    CustomerCreateEvent:
+      description: Customer create Event payload
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CustomerCreateEvent'
+          examples:
+            Create_Cusomter_Notification_Event:
+              $ref: '#/components/examples/Create_Cusomter_Notification_Event_request'
+      required: true
+    CustomerDeleteEvent:
+      description: Customer delete Event payload
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CustomerDeleteEvent'
+          examples:
+            Delete_Cusomter_Notification_Event:
+              $ref: '#/components/examples/Delete_Cusomter_Notification_Event_request'
+      required: true
+    CustomerAttributeValueChangeEvent:
+      description: Customer attributeValueChange Event payload
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CustomerAttributeValueChangeEvent'
+          examples:
+            Customer_Attribute_Value_Change_Notification_Event:
+              $ref: '#/components/examples/Customer_Attribute_Value_Change_Notification_Event_request'
+      required: true
+    CustomerStateChangeEvent:
+      description: Customer stateChange Event payload
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CustomerStateChangeEvent'
+          examples:
+            Customer_State_Change_Notification_Event:
+              $ref: '#/components/examples/Customer_State_Change_Notification_Event_request'
+      required: true
+    Hub_FVO:
+      description: Data containing the callback endpoint to deliver the information
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Hub_FVO'
+      required: true
+  responses:
+    '200':
+      description: OK
+    '202':
+      description: Accepted
+    '204':
+      description: Deleted
+    '400':
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '403':
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '404':
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '405':
+      description: Method Not allowed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '409':
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '500':
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '501':
+      description: Not Implemented
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '503':
+      description: Service Unavailable
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    200CustomerArray:
+      description: Success
+      headers:
+        X-Total-Count:
+          $ref: '#/components/headers/X-Total-Count'
+        X-Result-Count:
+          $ref: '#/components/headers/X-Result-Count'
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Customer'
+          examples:
+            Customer_list_example:
+              $ref: '#/components/examples/Customer_list_example_response'
+    200Customer_Get:
+      description: Success
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Customer'
+          examples:
+            Customer_retrieve_example:
+              $ref: '#/components/examples/Customer_retrieve_example_response'
+    200Customer_Patch:
+      description: Success
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Customer'
+          examples:
+            Customer_Update_example:
+              $ref: '#/components/examples/Customer_Update_example_response'
+        application/merge-patch+json:
+          schema:
+            $ref: '#/components/schemas/Customer'
+        application/json-patch+json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/Customer'
+              - type: array
+                items:
+                  $ref: '#/components/schemas/Customer'
+              - type: string
+                nullable: true
+        application/json-patch-query+json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/Customer'
+              - type: array
+                items:
+                  $ref: '#/components/schemas/Customer'
+              - type: string
+                nullable: true
+    200Customer_Put:
+      description: Success
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Customer'
+    201Customer:
+      description: Created
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Customer'
+          examples:
+            Customer_Create_example:
+              $ref: '#/components/examples/Customer_Create_example_response'
+    Error:
+      description: Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Hub:
+      description: Notified
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Hub'
+  headers:
+    X-Total-Count:
+      description: Total number of items matching criteria
+      schema:
+        type: integer
+    X-Result-Count:
+      description: Actual number of items returned in the response body
+      schema:
+        type: integer
+  securitySchemes: {}
+  examples:
+    Customer_list_example_response:
+      value:
+        - '@type': Customer
+          href: 'https://host:port/tmf-api/customerManagement/v5/customer/1140'
+          id: '1140'
+          name: Moon Football Club
+          status: Created
+          engagedParty:
+            '@type': PartyRef
+            href: 'https://host:port/tmf-api/partyManagement/v5/organization/500'
+            id: '500'
+            name: Happy Travellers
+            '@referredType': Organization
+          contactMedium:
+            - '@type': PhoneContactMedium
+              preferred: true
+              contactType: homePhone
+              validFor:
+                startDateTime: '2018-06-12T00:00:00Z'
+                endDateTime: '2019-01-01T00:00:00Z'
+              phoneNumber: 01 09 75 83 51
+            - '@type': GeographicAddressContactMedium
+              preferred: false
+              contactType: homeAddress
+              validFor:
+                startDateTime: '2018-06-12T00:00:00Z'
+                endDateTime: '2019-01-01T00:00:00Z'
+              city: Paris
+              country: France
+              postCode: '75014'
+              street1: 15 Rue des Canards
+          relatedParty:
+            - '@type': RelatedPartyRefOrPartyRoleRef
+              role: bill receiver
+              partyOrPartyRole:
+                '@type': PartyRef
+                href: 'https://host:port/tmf-api/partyManagement/v5/organization/2777'
+                id: '2777'
+                name: John Doe (Accounting) Ltd
+                '@referredType': Organization
+      description: Here is an example of a response for retrieving multiple Customers.
+    Customer_retrieve_example_response:
+      value:
+        '@type': Customer
+        href: 'https://host:port/tmf-api/customerManagement/v5/customer/1140'
+        id: '1140'
+        name: Moon Football Club
+        status: Created
+        engagedParty:
+          '@type': PartyRef
+          href: 'https://host:port/tmf-api/partyManagement/v5/organization/500'
+          id: '500'
+          name: Happy Travellers
+          '@referredType': Organization
+        contactMedium:
+          - '@type': PhoneContactMedium
+            preferred: true
+            contactType: homePhone
+            validFor:
+              startDateTime: '2018-06-12T00:00:00Z'
+              endDateTime: '2019-01-01T00:00:00Z'
+            phoneNumber: 01 09 75 83 51
+          - '@type': GeographicAddressContactMedium
+            preferred: false
+            contactType: homeAddress
+            validFor:
+              startDateTime: '2018-06-12T00:00:00Z'
+              endDateTime: '2019-01-01T00:00:00Z'
+            city: Paris
+            country: France
+            postCode: '75014'
+            street1: 15 Rue des Canards
+        relatedParty:
+          - '@type': RelatedPartyRefOrPartyRoleRef
+            role: bill receiver
+            partyOrPartyRole:
+              '@type': PartyRef
+              href: 'https://host:port/tmf-api/partyManagement/v5/organization/2777'
+              id: '2777'
+              name: John Doe (Accounting) Ltd
+              '@referredType': Organization
+      description: Here is an example of a response for retrieving a specific customer.
+    Customer_Create_example_request:
+      value:
+        '@type': Customer
+        name: Moon Football Club
+        engagedParty:
+          '@type': PartyRef
+          href: 'https://host:port/tmf-api/partyManagement/v5/organization/500'
+          id: '500'
+          name: Happy Travellers
+          '@referredType': Organization
+        contactMedium:
+          - '@type': PhoneContactMedium
+            preferred: true
+            contactType: homePhone
+            validFor:
+              startDateTime: '2018-06-12T00:00:00Z'
+              endDateTime: '2019-01-01T00:00:00Z'
+            phoneNumber: 01 09 75 83 51
+          - '@type': GeographicAddressContactMedium
+            preferred: false
+            contactType: homeAddress
+            validFor:
+              startDateTime: '2018-06-12T00:00:00Z'
+              endDateTime: '2019-01-01T00:00:00Z'
+            city: Paris
+            country: France
+            postCode: '75014'
+            street1: 15 Rue des Canards
+        relatedParty:
+          - '@type': RelatedPartyRefOrPartyRoleRef
+            role: bill receiver
+            partyOrPartyRole:
+              '@type': PartyRef
+              href: 'https://host:port/tmf-api/partyManagement/v5/organization/2777'
+              id: '2777'
+              name: John Doe (Accounting) Ltd
+              '@referredType': Organization
+      description: Here is an example of a request for creating a customer.
+    Customer_Create_example_response:
+      value:
+        '@type': Customer
+        href: 'https://host:port/tmf-api/customerManagement/v5/customer/1140'
+        id: '1140'
+        name: Moon Football Club
+        status: Created
+        engagedParty:
+          '@type': PartyRef
+          href: 'https://host:port/tmf-api/partyManagement/v5/organization/500'
+          id: '500'
+          name: Happy Travellers
+          '@referredType': Organization
+        contactMedium:
+          - '@type': PhoneContactMedium
+            preferred: true
+            contactType: homePhone
+            validFor:
+              startDateTime: '2018-06-12T00:00:00Z'
+              endDateTime: '2019-01-01T00:00:00Z'
+            phoneNumber: 01 09 75 83 51
+          - '@type': GeographicAddressContactMedium
+            preferred: false
+            contactType: homeAddress
+            validFor:
+              startDateTime: '2018-06-12T00:00:00Z'
+              endDateTime: '2019-01-01T00:00:00Z'
+            city: Paris
+            country: France
+            postCode: '75014'
+            street1: 15 Rue des Canards
+        relatedParty:
+          - '@type': RelatedPartyRefOrPartyRoleRef
+            role: bill receiver
+            partyOrPartyRole:
+              '@type': PartyRef
+              href: 'https://host:port/tmf-api/partyManagement/v5/organization/2777'
+              id: '2777'
+              name: John Doe (Accounting) Ltd
+              '@referredType': Organization
+      description: Here is an example of a response for creating a customer.
+    Customer_Update_example_request:
+      value:
+        '@type': Customer_MVO
+        name: Sun Football Club
+        engagedParty:
+          '@type': PartyRef
+          href: 'https://host:port/tmf-api/partyManagement/v5/organization/236'
+          id: '236'
+          name: Long Distance Travellers
+          '@referredType': Organization
+      description: Here is an example of a request for creating a customer.
+    Customer_Update_example_response:
+      value:
+        '@type': Customer
+        href: 'https://host:port/tmf-api/customerManagement/v5/customer/1140'
+        id: '1140'
+        name: Moon Football Club
+        status: Created
+        engagedParty:
+          '@type': PartyRef
+          href: 'https://host:port/tmf-api/partyManagement/v5/organization/236'
+          id: '236'
+          name: Long Distance Travellers
+          '@referredType': Organization
+        contactMedium:
+          - '@type': PhoneContactMedium
+            preferred: true
+            contactType: homePhone
+            validFor:
+              startDateTime: '2018-06-12T00:00:00Z'
+              endDateTime: '2019-01-01T00:00:00Z'
+            phoneNumber: 01 09 75 83 51
+          - '@type': GeographicAddressContactMedium
+            preferred: false
+            contactType: homeAddress
+            validFor:
+              startDateTime: '2018-06-12T00:00:00Z'
+              endDateTime: '2019-01-01T00:00:00Z'
+            city: Paris
+            country: France
+            postCode: '75014'
+            street1: 15 Rue des Canards
+        relatedParty:
+          - '@type': RelatedPartyRefOrPartyRoleRef
+            role: bill receiver
+            partyOrPartyRole:
+              '@type': PartyRef
+              href: 'https://host:port/tmf-api/partyManagement/v5/organization/2777'
+              id: '2777'
+              name: John Doe (Accounting) Ltd
+              '@referredType': Organization
+      description: Here is an example of a response for creating a customer.
+    Create_Cusomter_Notification_Event_request:
+      value:
+        '@type': CustomerCreateEvent
+        eventId: 3cc17ff9-d674-4b0a-ab50-06841b1fd574
+        eventTime: '2023-06-14T12:15:59.96747+02:00'
+        eventType: Created
+        event:
+          customer:
+            '@type': Customer
+            href: 'https://host:port/tmf-api/customerManagement/v5/customer/1140'
+            id: '1140'
+            name: Moon Football Club
+            status: Created
+            engagedParty:
+              '@type': PartyRef
+              href: 'https://host:port/tmf-api/partyManagement/v5/organization/500'
+              id: '500'
+              name: Happy Travellers
+              '@referredType': Organization
+            contactMedium:
+              - '@type': PhoneContactMedium
+                preferred: true
+                contactType: homePhone
+                validFor:
+                  startDateTime: '2018-06-12T00:00:00Z'
+                  endDateTime: '2019-01-01T00:00:00Z'
+                phoneNumber: 01 09 75 83 51
+              - '@type': GeographicAddressContactMedium
+                preferred: false
+                contactType: homeAddress
+                validFor:
+                  startDateTime: '2018-06-12T00:00:00Z'
+                  endDateTime: '2019-01-01T00:00:00Z'
+                city: Paris
+                country: France
+                postCode: '75014'
+                street1: 15 Rue des Canards
+            relatedParty:
+              - '@type': RelatedPartyRefOrPartyRoleRef
+                role: bill receiver
+                partyOrPartyRole:
+                  '@type': PartyRef
+                  href: 'https://host:port/tmf-api/partyManagement/v5/organization/2777'
+                  id: '2777'
+                  name: John Doe (Accounting) Ltd
+                  '@referredType': Organization
+      description: Message example for CatalogCreateEvent Notification
+    Delete_Cusomter_Notification_Event_request:
+      value:
+        '@type': CustomerDeleteEvent
+        eventId: 63749ead-f133-4c64-b2ed-3a93a2a56999
+        eventTime: '2023-06-14T12:15:59.969117+02:00'
+        eventType: Deleted
+        event:
+          customer:
+            '@type': Customer
+            id: '1140'
+      description: Message example for CustomerDeleteEvent Notification
+    Customer_Attribute_Value_Change_Notification_Event_request:
+      value:
+        '@type': CustomerAttributeValueChangeEvent
+        eventId: e3dac91d-a035-465f-afc5-d3b603b53ad2
+        eventTime: '2018-06-12T00:00:00Z'
+        eventType: Update
+        event:
+          customer:
+            '@type': Customer
+            href: 'https://host:port/tmf-api/customerManagement/v5/customer/1140'
+            id: '1140'
+            engagedParty:
+              '@type': PartyRef
+              href: 'https://host:port/tmf-api/partyManagement/v5/organization/236'
+              id: '236'
+              name: Long Distance Travellers
+              '@referredType': Organization
+      description: Message example for CustomerAttributeValueChangeEvent Notification
+    Customer_State_Change_Notification_Event_request:
+      value:
+        '@type': CustomerStateChangeEvent
+        priority: high
+        eventId: b14f7023-e982-4c02-a0c1-9790ee991659
+        eventTime: '2023-06-14T12:15:59.969746+02:00'
+        eventType: Status Update
+        event:
+          customer:
+            '@type': Customer
+            href: 'https://host:port/tmf-api/customerManagement/v5/customer/1140'
+            id: '1140'
+            status: CreditCheckDone
+      description: Message example for CustomerStateChangeEvent Notification

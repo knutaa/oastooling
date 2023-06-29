@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.json.JSONArray;
@@ -177,14 +178,17 @@ public class CoreModel {
 		
 	@LogMethod(level=LogLevel.DEBUG)
 	public List<String> getSortedProperties(Collection<String> properties) {
+		
+		Predicate<String> isMetaProperty = x -> x.startsWith("@");
+
 		List<String> sorted = new LinkedList<>();
 
 		List<String> props1 = properties.stream()
-				.filter(x->x.startsWith("@"))
+				.filter(isMetaProperty)
 				.sorted().collect(Collectors.toList());
 
 		List<String> props2 = properties.stream()
-				.filter(x->!x.startsWith("@"))
+				.filter(isMetaProperty.negate())
 				.sorted().collect(Collectors.toList());	        	
 
 		sorted.addAll(props1);
@@ -203,22 +207,29 @@ public class CoreModel {
 		List<String[]> sorted = new LinkedList<>();
 
 		LOG.debug("getSortedPropertiesArray: includeMetaProperties={} properties={}", Config.getBoolean("includeMetaProperties"), properties);
+		
+		Predicate<String[]> isMetaProperty = x -> x[0].startsWith("@");
 
-		if(Config.getBoolean("includeMetaProperties")) {
-			List<String[]> props1 = properties.stream()
-					.filter(x->x[0].startsWith("@"))
-					.sorted(CoreModel::sortByFirstElement).collect(Collectors.toList());
+		List<String[]> props1 = properties.stream()
+				.filter(isMetaProperty)
+				.sorted(CoreModel::sortByFirstElement).collect(Collectors.toList());
+		
+		List<String[]> props2 = properties.stream()
+				.filter(isMetaProperty.negate())
+				.sorted(CoreModel::sortByFirstElement).collect(Collectors.toList());	
+		
+		if(!Config.getBoolean("includeMetaProperties")) props1.clear();
+		
+		if(Config.getBoolean("sortMetaPropertiesFirst")) {			
+			sorted.addAll(props1);					
+			sorted.addAll(props2);
+		} else {
+			sorted.addAll(props2);					
 			sorted.addAll(props1);
 		}
-		
-		LOG.debug("getStrings: sorted={}", sorted);
+			
+		LOG.debug("getSortedPropertiesArray: sorted={}", sorted);
 
-		List<String[]> props2 = properties.stream()
-				.filter(x->!x[0].startsWith("@"))
-				.sorted(CoreModel::sortByFirstElement).collect(Collectors.toList());	        	
-
-		sorted.addAll(props2);
-		
 		return sorted;
 	}
 			

@@ -478,6 +478,14 @@
 	"conformance.iprMode": "RAND",
 	"conformance.docId.postfix": "B",
 	
+    "conformance.specialNonPatchable": true,
+    
+    "conformance.nonPatchable": {
+        "@type":               "@type is immutable",
+        "@baseType":           "@baseType is immutable",
+        "@schemaLocation":     "@schemaLocation is immutable"
+    },
+    
 	"iprMode": "RAND",
 	
     "specialProperties": [ "value" ],
@@ -488,7 +496,12 @@
         "/customer/{id}": "204"
     },
     
-    "mergeAllOfs": true
+    "mergeAllOfs": true,
     
-	
+	"userguide::includeMetaProperties": true,
+    
+    "mandatoryOperationsWithComments": true,
+    
+    "includeAllPatchableFromRules": true
+    
 }
