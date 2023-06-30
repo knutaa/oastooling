@@ -218,7 +218,7 @@
 
 	"removeSectionsForOptionalOperations": true,
 
-	"includeMetaProperties": false,
+	"includeMetaProperties": true,
 
 	"default_conformance": {
 		"layout": {
@@ -376,7 +376,8 @@
 	],
 	"includeInherited": true,
 	"expandInherited": false,
-	"expandPropertiesFromAllOfs": false,
+    
+	"expandPropertiesFromAllOfs": true,
 	
 	"userguide.partials":                  true,
 	"userguide.mustache":                  "userguide/userguide.mustache",
@@ -477,8 +478,30 @@
 	"conformance.iprMode": "RAND",
 	"conformance.docId.postfix": "B",
 	
+    "conformance.specialNonPatchable": true,
+    
+    "conformance.nonPatchable": {
+        "@type":               "@type is immutable",
+        "@baseType":           "@baseType is immutable",
+        "@schemaLocation":     "@schemaLocation is immutable"
+    },
+    
 	"iprMode": "RAND",
 	
-    "specialProperties": [ "value" ]
-	
+    "specialProperties": [ "value" ],
+    
+    "deleteResponseHandling": true,
+    
+    "xx_deleteResponses": {
+        "/customer/{id}": "204"
+    },
+    
+    "mergeAllOfs": true,
+    
+	"userguide::includeMetaProperties": true,
+    
+    "mandatoryOperationsWithComments": true,
+    
+    "includeAllPatchableFromRules": true
+    
 }

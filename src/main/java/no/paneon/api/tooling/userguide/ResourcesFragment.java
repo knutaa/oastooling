@@ -80,7 +80,8 @@ public class ResourcesFragment {
 	private static final String BLANK_LINE = "";
 	
 	private static final String META_PROPERTIES = "userguide::metaProperties";
-				
+	private static final String INCLUDE_META_PROPERTIES = "userguide::includeMetaProperties";
+
 	private static final String EXAMPLE  = "example";
 	private static final String EXAMPLES = "examples";
 
@@ -187,6 +188,8 @@ public class ResourcesFragment {
 		res.fields = getFieldDescriptions(apiGraph, resource, config);
 		res.samples = getResourceSamples(apiGraph, resource, config);
 		res.hasSamples = !res.samples.isEmpty();
+
+		LOG.debug("createResourceDetailsForResource: resource={} res={}" , resource, res);
 
 		return res;
 		
@@ -346,7 +349,9 @@ public class ResourcesFragment {
 			if(!description.endsWith(".")) description = description + ".";
 			res.description = description;
 		}
-					
+				
+		LOG.debug("getFieldsForResource resource={} res='{}'", resource, res.description);
+
 		res.resource = resource.getName();
 		
 		res.fields = getResourceDetailsTable(apiGraph, config, resource);
@@ -365,9 +370,11 @@ public class ResourcesFragment {
 				
 		List<String> metaProperties = Config.get(META_PROPERTIES);
 		
+		boolean includeMetaProperties = Config.getBoolean(INCLUDE_META_PROPERTIES);
+		
 		boolean includeAllProperties = Utils.difference(properties.stream().map(Property::getName).collect(toList()), metaProperties).isEmpty();
 		
-		Predicate<Property> isEligibleProperty = p -> includeAllProperties || !metaProperties.contains(p.getName());
+		Predicate<Property> isEligibleProperty = p -> includeAllProperties || !metaProperties.contains(p.getName()) || includeMetaProperties;
 		
 		properties.stream()
 			.filter(isEligibleProperty)
@@ -377,26 +384,40 @@ public class ResourcesFragment {
 			.stream()
 			.flatMap(List::stream)
 			.forEach(property -> {
-								
-//				String[] description = { generator.constructDescriptionForType(property.getType()), 
-//									     property.getDescription(), 
-//									     generator.getDescriptionForType(apiGraph, property.getType()) };
-				
-				String[] description = { generator.constructDescriptionForType(property.getType()),
-										 property.getDescription()
-					                   };
+												
+				List<String> description = generateDescription(generator, property, apiGraph); 
 				
 				UserGuideData.FieldData data = userGuideData.new FieldData();
 				data.name = property.getName();
 				data.description = generator.constructStatement(description);
 				
+				LOG.debug("##### getResourceDetailsTable resource={} add data={}'", resource, data.name);
+
 				res.add(data);
 				
 			});
 			
+		LOG.debug("##### getResourceDetailsTable resource={} res={}'", resource, res);
+
+		
 		return res;
 	}
 	
+	private List<String> generateDescription(UserGuideGenerator generator, Property property, APIGraph apiGraph) {
+		List<String> description = new LinkedList<>();
+		description.add(generator.constructDescriptionForType(property.getType()) );
+		
+		if(!property.getDescription().isEmpty()) {
+			description.add(property.getDescription() );
+		} else {
+			description.add(generator.getDescriptionForType(apiGraph, property.getType()) );
+		}
+		
+		LOG.debug("generateDescription property={} description={}'", property, description);
+
+		return description;
+	}
+
 	@LogMethod(level=LogLevel.DEBUG)
 	private List<UserGuideData.Sample> getResourceSamples(APIGraph apiGraph, String resource, JSONObject config) {
 		
@@ -452,7 +473,7 @@ public class ResourcesFragment {
 				}		
 				
 			} else if(definition.has(EXAMPLES)) {
-				Out.debug("samples: api");
+				LOG.debug("samples: api");
 				JSONArray array = definition.optJSONArray(EXAMPLES);
 				if(array != null) {
 					for(int i=0; i<array.length(); i++) {

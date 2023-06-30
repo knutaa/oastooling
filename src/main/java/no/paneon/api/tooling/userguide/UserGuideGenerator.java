@@ -49,6 +49,8 @@ public class UserGuideGenerator {
 	private static final String EXCLUDED_RESOURCES = "userguide::excludedResources";
 	private static final String RESOURCE_LAYOUT = "userguide::resourceLayout";
 
+	private static final boolean KEEP_EXISTING = true;
+
 	Args.UserGuide args;
 	
 	APIGraph apiGraph;
@@ -93,11 +95,11 @@ public class UserGuideGenerator {
 			generator.processTemplates(args, userGuideData, "userguide.generated.templates", "userguide.templates", args.generatedOnly);
 
 			Map<String,String> filesToCopy = Config.getMap("userguide.generated.filesToCopy");
-					
-			generator.copyFiles(filesToCopy, args.generatedTargetDirectory, args.generatedOnly);
+								
+			generator.copyFiles(filesToCopy, args.generatedTargetDirectory, KEEP_EXISTING);
 			
 			filesToCopy = Config.getMap("userguide.filesToCopy");
-			generator.copyFiles(filesToCopy, args.generatedOnly);
+			generator.copyFiles(filesToCopy, KEEP_EXISTING);
 
 
 		} catch(Exception ex) {
@@ -265,7 +267,7 @@ public class UserGuideGenerator {
 
 
 	@LogMethod(level=LogLevel.DEBUG)
-	protected String constructStatement(String ... statements) {
+	protected String constructStatement(List<String> statements) {
 		StringBuilder res = new StringBuilder();
 		for(String s : statements) {
 			String cleaned =  s.trim();
@@ -277,7 +279,15 @@ public class UserGuideGenerator {
 			if(res.length()>0) res.append(" ");
 			res.append(cleaned);
 		}
+		
+		LOG.debug("constructStatement: statements={} res={}", statements, res);
+
 		return res.toString();
+	}
+	
+	@LogMethod(level=LogLevel.DEBUG)
+	protected String constructStatement(String ... statements) {
+		return constructStatement(Arrays.asList(statements));
 	}
 
 

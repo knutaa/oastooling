@@ -141,6 +141,8 @@ public class GenerateCommon {
 				
 				String target = generatedTargetFileName(generatedTargetDir, destination);
 	
+				LOG.debug("processTemplates: template={}", template); 
+
 				processTemplate(template, data, target);
 
 			});

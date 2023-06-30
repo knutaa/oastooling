@@ -6,13 +6,27 @@ include::Environment.adoc[]
 {{#hasMandatoryOperations}}
 The following table indicates which ones are mandatory for the {{{resource}}} resource:
 
+{{^mandatoryOperationsWithComments}}
 [cols="100%", options="header"]
 |===
 |Uniform API Operation
 {{#mandatoryOperations}}
-|{{.}}
+|{{op}}
 {{/mandatoryOperations}}
 |===
+{{/mandatoryOperationsWithComments}}
+{{#mandatoryOperationsWithComments}}
+[cols="30%,70%", options="header"]
+|===
+|Uniform API Operation
+|Comment
+{{#mandatoryOperations}}
+|{{op}} 
+|{{comment}}
+{{/mandatoryOperations}}
+|===
+{{/mandatoryOperationsWithComments}}
+
 {{/hasMandatoryOperations}}
 {{^hasMandatoryOperations}}
 There are no mandatory operations for the {{{resource}}} resource.

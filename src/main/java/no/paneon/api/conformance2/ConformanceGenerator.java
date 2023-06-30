@@ -107,21 +107,21 @@ public class ConformanceGenerator {
 				
 			Timestamp.timeStamp("finished conformance data");
 
-			generatePartials(conformanceData);
-
 			boolean keepExisting=true;
-			
+
 			Map<String,String> filesToCopy = Config.getMap("conformance.filesToCopy");
 
 			LOG.debug("generateDocument: filesToCopy={}",  filesToCopy.keySet());
 			
 			generator.copyFiles(filesToCopy, keepExisting); // generator.copyFiles(filesToCopy, args.generatedOnly);
+
+			generatePartials(conformanceData);
 			
 			generator.processTemplates(this.args, conformanceData, "conformance.generated.templates", "conformance.templates", keepExisting);
 					
 		} catch(Exception ex) {
 			Out.printAlways("... error generating userguide: exception=" + ex.getLocalizedMessage());
-			// ex.printStackTrace();
+			ex.printStackTrace();
 			System.exit(0);
 		}
 				
@@ -191,6 +191,7 @@ public class ConformanceGenerator {
 			filesToCopy.put(source,  destination + "/" + target);
 			number++;
 			numberAndCopy.remove(operation);
+			
 		}
 		
 		
@@ -208,6 +209,8 @@ public class ConformanceGenerator {
 			number++;
 		}
 		
+		LOG.debug("generatePartials:: filesToCopy={}", filesToCopy);
+
 		data.parts = generator.copyFilesWithDestination(filesToCopy).stream().map(file -> new ConformanceData.FileData(file)).collect(toList());
 				
 		return data;
@@ -389,6 +392,8 @@ public class ConformanceGenerator {
 				
 				addConformanceItem(res, resource, condition, comment);
 
+				Out.debug("getTableValues:: resource={} condition={} comment={}", resource, condition, comment);
+
 			}
 			break;
 
@@ -452,6 +457,9 @@ public class ConformanceGenerator {
 		
 		for(String resource : conformance.getOrderedResources()) {
 			res.put(resource, getResourceDetailsForResource(resource, config) );
+			
+			Out.debug("getResourceDetails:: resource={}", resource);
+
 		}
 
 		return res;
