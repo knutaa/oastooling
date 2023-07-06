@@ -155,6 +155,8 @@ public class ConformanceModel extends CoreModel {
 					patchDetails = retainMandatoryInPatch(resource, confItem, patchDetails);
 				}
 		
+				LOG.debug("extractFromSwagger:: resource={} patchDetails={}", resource, patchDetails);
+
 				confItem.getJSONObject(OPERATIONS_DETAILS).getJSONObject(PATCH).put(PATCHABLE,patchDetails);
 	
 				JSONObject nonPatchDetails = getNonPatchableFromSwagger(resource);
@@ -351,6 +353,8 @@ public class ConformanceModel extends CoreModel {
 		JSONObject properties = APIModel.getPropertyObjectForResourceExpanded(referencedType);
 		propertyCondition = APIModel.getMandatoryOptional(referencedType, includeSetByServer);
 
+		LOG.debug("getResourceDetailsByPropertyHelper:: referencedType={} properties={}", referencedType, properties.toString());
+
 		String subPath = path + "." + property;
 		for(String prop : properties.keySet()) {
 			node.addChild(getResourceDetailsByPropertyHelper(properties, propertyCondition, referencedType, prop, subPath, seenResources, includeSetByServer));
@@ -485,8 +489,15 @@ public class ConformanceModel extends CoreModel {
 	@LogMethod(level=LogLevel.DEBUG)
 	public JSONObject getPatchableFromSwagger(String resource) {
 		JSONObject res = new JSONObject();
+		
 		Set<String> properties = APIModel.getPropertiesExpanded(resource + "_Update");	
 		properties.addAll( APIModel.getPropertiesExpanded(resource + "_MVO"));
+			
+		LOG.debug("getPatchableFromSwagger: resource={} properties={}", resource, properties);
+
+		Map<String,String> specialNonPatchable = getSpecialNonPatchable();
+		
+		properties.removeAll( specialNonPatchable.keySet());
 		
 		properties.forEach(property -> {
 			
@@ -495,6 +506,7 @@ public class ConformanceModel extends CoreModel {
 			JSONObject item = new JSONObject();
 			item.put("rule",  rule);
 			res.put(property, item);
+			
 		});
 		
 		return res;
@@ -553,35 +565,21 @@ public class ConformanceModel extends CoreModel {
 
 		if(properties.isEmpty()) {
 			properties.addAll( APIModel.getPropertiesExpanded(resource + "_Update") );
-	
 			properties.addAll( APIModel.getPropertiesExpanded(resource + "_MVO") );
-				
 		}
 		
 		LOG.debug("### getPatchable: resource={} properties={}", resource, properties);
 
-		if(Config.getBoolean("conformance.specialNonPatchable")) {
-			JSONObject specialNonPatchable = Config.getConfig("conformance.nonPatchable");
-			if(specialNonPatchable!=null) {
-				Set<String> nonPatch = specialNonPatchable.keySet();
-				properties.removeAll(nonPatch);
-			}
-			
-			LOG.debug("getPatchable: resource={} properties={}", resource, properties);
-
-		}
-		
+		Map<String,String> specialNonPatchable = getSpecialNonPatchable();
+		properties.removeAll(specialNonPatchable.keySet());
+		LOG.debug("getPatchable: resource={} specialNonPatchable={}", resource, specialNonPatchable.keySet());
+	
 		JSONObject attributesConf = getAttributeConformanceForResource(resource);
 		
 		properties.forEach(property -> {
-			String attributeConf = attributesConf!=null ? attributesConf.optString(property) : null;
-			String attrCond = attributeConf!=null ? attributesConf.optString(CONDITION) : null;
+			// String attributeConf = attributesConf!=null ? attributesConf.optString(property) : null;
+			// String attrCond = attributeConf!=null ? attributesConf.optString(CONDITION) : null;
 			
-			//if(attrCond!=null && !attrCond.contentEquals("M")) return;
-			
-			// LOG.debug("getPatchable: resource={} attrCond={}", resource, attrCond);
-			
-			// String rule = getSpecialProperty(resource, property, "patchRules", RULE);
 			JSONObject conf = getConformance(resource, OPERATIONS_DETAILS, PATCH, PATCHABLE);
 			String rule = "";
 			if(conf!=null) rule = conf.optString(RULE);
@@ -595,29 +593,31 @@ public class ConformanceModel extends CoreModel {
 		
 	}
 	
+	private Map<String,String> getSpecialNonPatchable() {
+		return Config.getMap("conformance.nonPatchable");	
+	}
+
 	@LogMethod(level=LogLevel.DEBUG)
 	public List<String[]> getNonPatchable(String resource) {
 		Set<String> properties = APIModel.getPropertiesExpanded(resource);
 
 		LOG.debug("getNonPatchable: resource={} properties={}", resource, properties);
 
+		Map<String,String> specialNonPatchable = getSpecialNonPatchable();
+		specialNonPatchable.keySet().forEach(k -> {
+			if(!properties.contains(k)) specialNonPatchable.remove(k);
+		});
+		
+		
 		List<String[]> res = new LinkedList<>();
 		Collection<String> patchable = getPatchable(null,resource).stream().map(x->x[0]).collect(Collectors.toList());
 	
 		properties.removeAll(patchable);
 		
 		LOG.debug("getNonPatchable: resource={} properties={}", resource, properties);
-
-		final JSONObject specialNonPatchable = Config.getConfig("conformance.nonPatchable");
-		if(Config.getBoolean("conformance.specialNonPatchable")) {
-			if(specialNonPatchable!=null) {
-				Set<String> nonPatch = specialNonPatchable.keySet();
-				properties.addAll(nonPatch);
-			}
 			
-			LOG.debug("getNonPatchable: resource={} properties={}", resource, properties);
-
-		}
+		
+		properties.addAll(specialNonPatchable.keySet());
 		
 		JSONObject conf = getConformance(resource, OPERATIONS_DETAILS, PATCH, NON_PATCHABLE);
 
@@ -629,8 +629,8 @@ public class ConformanceModel extends CoreModel {
 				// TBD
 				JSONObject propConf = conf.optJSONObject(property);
 				String rule = propConf!=null ? propConf.optString("rule") : "";
-				if(rule.isEmpty() && specialNonPatchable.has(property)) {
-					String specialRule = specialNonPatchable.optString(property);
+				if(rule.isEmpty() && specialNonPatchable.containsKey(property)) {
+					String specialRule = specialNonPatchable.get(property);
 					rule = specialRule.isEmpty() ? rule : specialRule;
 				}
 				res.add(new String[] { property, rule });
@@ -1301,6 +1301,8 @@ public class ConformanceModel extends CoreModel {
 		// add conformance from sources other than the API proper
 		// 
 		
+		LOG.debug("generateConformance: skeleton :: {}", res.toString(2));
+
 		boolean useConformanceSourceOnly = Config.getBoolean(CONFORMANCE_SOURCE_ONLY);
 				
 		if(!useConformanceSourceOnly) {
@@ -1315,6 +1317,8 @@ public class ConformanceModel extends CoreModel {
 			
 			combineConformance(res, ruleconf);
 			if(LOG.isTraceEnabled()) LOG.log(Level.TRACE, "generateConformance: with ruleconf :: {}", res.toString(2));
+			LOG.debug("generateConformance: with ruleconf :: {}", res.toString(2));
+
 		}
 		
 		if(!useConformanceSourceOnly) {
@@ -2207,10 +2211,10 @@ public class ConformanceModel extends CoreModel {
 			}
 			
 			if(operations.contains(PATCH)) {
-				addedDetails = addPatchable(resource, operationDetails); 
+				addedDetails = addPatchableFromRules(resource, rulesForResource, operationDetails); 
 				seenDetails = seenDetails || addedDetails;
 				
-				addedDetails = addNonPatchable(resource, operationDetails); 
+				addedDetails = addNonPatchableFromRules(resource, rulesForResource, operationDetails); 
 				seenDetails = seenDetails || addedDetails;		
 			}
 						
@@ -2278,6 +2282,80 @@ public class ConformanceModel extends CoreModel {
 			operationDetails.getJSONObject(PATCH).put(NON_PATCHABLE, condConf);
 		}			
 
+		return seenDetails;
+	}
+	
+	private boolean addPatchableFromRules(String resource, JSONObject rules, JSONObject operationDetails) {
+
+		boolean seenDetails = false;
+
+		Object patchRules = rules.query("/supportedHttpMethods/PATCH/parameterRestrictions");
+				
+		if(patchRules!=null && patchRules instanceof JSONObject) {
+			rules = (JSONObject) patchRules;
+			LOG.debug("addPatchableFromRules: resource={} rules={}",  resource, rules);
+
+			Map<String,String> specialNonPatchable = getSpecialNonPatchable();
+			LOG.debug("getPatchable: resource={} specialNonPatchable={}", resource, specialNonPatchable.keySet());
+
+		}
+			
+
+//		List<String[]> operationRules = getPatchable(null, resource); // TBD - argument should be operationDetail from oas
+//		
+//		LOG.debug("addPatchable: resource={} operationRules={}",  resource, operationRules);
+//
+//		if(!operationRules.isEmpty()) {
+//			JSONObject condConf = new JSONObject();
+//			for(String[] opRule : operationRules) {
+//				JSONObject confItem = new JSONObject();
+//				String property = opRule[0];
+//				String rule = opRule[1];
+//				
+//				confItem.put(RULE, rule);																			
+//				condConf.put(property, confItem);
+//				seenDetails = true;
+//			}
+//			if(!operationDetails.has(PATCH)) operationDetails.put(PATCH, new JSONObject());
+//			operationDetails.getJSONObject(PATCH).put(PATCHABLE, condConf);
+//		}			
+
+		return seenDetails;
+	}
+
+	private boolean addNonPatchableFromRules(String resource, JSONObject rules, JSONObject operationDetails) {
+
+		boolean seenDetails = false;
+
+		Object patchRules = rules.query("/supportedHttpMethods/PATCH/parameterRestrictions/excludedParameters");
+		
+		LOG.debug("addNonPatchableFromRules: resource={} patchRules={}",  resource, patchRules);
+		
+		if(patchRules!=null && patchRules instanceof JSONArray) {
+			LOG.debug("addNonPatchableFromRules: resource={} exclude={}",  resource, patchRules);
+
+			List<String> excludeProps = ((JSONArray) patchRules).toList().stream().map(Object::toString).collect(Collectors.toList());
+			
+			Map<String,String> specialNonPatchable = getSpecialNonPatchable();
+			LOG.debug("getPatchable: resource={} specialNonPatchable={}", resource, specialNonPatchable.keySet());
+
+			JSONObject condConf = new JSONObject();
+			for(String property : excludeProps) {
+				JSONObject confItem = new JSONObject();
+				
+				String rule = "";
+				if(specialNonPatchable.containsKey(property)) rule = specialNonPatchable.get(property);
+				
+				confItem.put(RULE, rule);																			
+				condConf.put(property, confItem);
+				seenDetails = true;
+			}
+			
+			if(!operationDetails.has(PATCH)) operationDetails.put(PATCH, new JSONObject());
+			operationDetails.getJSONObject(PATCH).put(NON_PATCHABLE, condConf);
+	
+		}
+		
 		return seenDetails;
 	}
 	

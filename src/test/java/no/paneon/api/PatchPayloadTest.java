@@ -52,10 +52,14 @@ public class PatchPayloadTest  {
     public void checkResource() {
     	List<String> resources = APIModel.getAllDefinitions();
     	    	
+    	Out.debug("resources={}", resources);
+
     	assert(resources.contains("Customer_MVO"));
     	
     	JSONObject entityMVO = APIModel.getDefinition("Entity_MVO");
     	
+    	Out.debug("Entity_MVO={}", entityMVO);
+
     	LOG.debug("Entity_MVO={}", entityMVO);
     	
     	Set<String> properties = APIModel.getPropertiesExpanded("Entity_MVO");

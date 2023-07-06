@@ -289,8 +289,10 @@
 	"minimizeResourceDetails": true,
 	"includeCommentsInRules": true,
 	"onlyMandatoryForPost": true,
-	"onlyMandatoryAsPatchable": true,
-	"formatToType": {
+    
+	"onlyMandatoryAsPatchable": false,
+	
+    "formatToType": {
 		"date-time": "DateTime",
 		"date": "Date",
 		"float": "Float",
