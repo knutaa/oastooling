@@ -53,13 +53,14 @@ public class NotificationsFragment {
 		List<String> notifications = APIModel.getAllNotifications();
 
 		LOG.debug("notifications:: getAllNotifications={}", notifications);
+		LOG.debug("notifications:: getAllNotifications size={}", notifications.size());
 
 		this.userGuideData.numberOfNotifications = notifications.size();
 
 		for (String resource : resources) {
 			notifications = APIModel.getNotificationsByResource(resource, null);
 
-			LOG.debug("notifications:: getNotificationsByResource={}", notifications);
+			LOG.debug("notifications:: resource={} getNotificationsByResource={}", resource, notifications);
 
 			if (notifications.isEmpty())
 				continue;

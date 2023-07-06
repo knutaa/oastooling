@@ -737,7 +737,7 @@ public class OperationsFragment {
 		return res;
 	}
 
-	final String FIELD_FILTER = "?fields=...&{filtering}";
+	// final String FIELD_FILTER = "?fields=...&{filtering}";
 	
 //	private String generateURL(String path, JSONObject opDetail) {
 //		StringBuilder res = new StringBuilder();
