@@ -3,6 +3,7 @@
 include::Environment.adoc[]
 
 {{#resourcesData}}
+{{#hasOperations}}
 === Operations on {{resource}}
 
 {{#operations}}
@@ -97,4 +98,6 @@ include::{samples}/{{filename}}[]
 {{/samples}}
 {{/hasSamples}}
 {{/operations}}
+{{/hasOperations}}
+
 {{/resourcesData}}

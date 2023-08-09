@@ -5,12 +5,13 @@ include::Environment.adoc[]
 {{numberOfNotifications}} notifications are defined for this API.
 
 {{#resourcesData}}
+{{#hasNotifications}}
 Notifications related to {{resource}}:
 
 {{#notifications}}
 * {{notificationLabel}}
 {{/notifications}}
-
+{{/hasNotifications}}
 {{/resourcesData}}
 
 The notification structure for all notifications in this API follow the pattern depicted by the figure below.
@@ -31,19 +32,18 @@ Figure {counter:figure} - Notification Pattern
 {{#OLD}}
 Notification {{notification}} case for resource {{resource}}.
 {{/OLD}}
-*Json representation sample*
 
-{{#message}}
+{{#samples}}
+*Sample: {{label}}*
+
+{{{description}}}
 {{{message}}}
-{{/message}}
-{{^message}}
-Json representation of an example of '{{notificationLabelShort}}' event object:
-{{/message}}
-
 [code]
 ----
 {{{sample}}}
 ----
+
+{{/samples}}
 
 {{/notifications}}
 

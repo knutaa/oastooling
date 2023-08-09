@@ -42,6 +42,7 @@ public class UserGuideData extends GeneratorData {
 		public FieldsData fields;
 	
 		public List<NotificationData>  notifications;
+		public Boolean hasNotifications;
 
 		public List<OperationData> operations;
 		
@@ -51,7 +52,8 @@ public class UserGuideData extends GeneratorData {
 		
 		public Boolean hasPatchable;
 		public Boolean hasNonPatchable;
-		
+		public Boolean hasOperations;
+
 	}
 	
 	public class DiagramData {
@@ -90,14 +92,18 @@ public class UserGuideData extends GeneratorData {
 		public String description;
 	}
 	
+//	public class NotificationDataSample {
+//		public String sample;
+//		public String message;
+//	}
+	
 	public class NotificationData {
 		public String notification;
 		public String notificationLabel;
 		public String notificationLabelShort;
-		public String sample;
-		
-		public String message;
-		
+		public List<Sample> samples = new LinkedList<>();
+		public boolean hasSamples = false;
+				
 	}
 	
 	public class OperationData {
@@ -163,6 +169,7 @@ public class UserGuideData extends GeneratorData {
 		public String sample;
 		public String sampleSource;
 		public String description;
+		public String label;
 		
 		public boolean hasDescription() { return description!=null && !description.isEmpty(); }
 	}

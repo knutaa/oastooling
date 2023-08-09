@@ -83,6 +83,7 @@ public class OperationsFragment {
 		
 		for(String resource : resources) {
 			userGuideData.resources.get(resource).operations = getOperationsDetailsForResource(config, resource);
+			userGuideData.resources.get(resource).hasOperations = !userGuideData.resources.get(resource).operations.isEmpty();
 		}
 			
 		Timestamp.timeStamp("finished operations fragment");
@@ -788,6 +789,8 @@ public class OperationsFragment {
 		}
 		
 		LOG.debug("generateURL: path={} paramLabels={} filtering={}", path, paramLabels, filtering);
+
+		filtering = filtering && Config.getBoolean("keepDeleteFiltering");
 
 		if(paramLabels.contains("Fields")) {
 			res.append("?fields=...");

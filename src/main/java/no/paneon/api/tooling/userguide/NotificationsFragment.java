@@ -69,10 +69,11 @@ public class NotificationsFragment {
 
 			for (String notification : notifications) {
 				
-				JSONObject notificationConfig = APIModel.getNotificationFromRules(resource, notification);
+				List<JSONObject> notificationConfig = APIModel.getNotificationFromRules(resource, notification);
 				
-				LOG.debug("notifications:: resource={} notification={} notificationConfig={}", resource, notification, notificationConfig.toString(2));
+				LOG.debug("notifications:: resource={} notification={} notificationConfig={}", resource, notification, notificationConfig);
 
+				
 				if(!notificationConfig.isEmpty())
 					notifData.add(getNotificationDetailsForNotification(notificationConfig, resource, notification));
 				else {
@@ -81,7 +82,8 @@ public class NotificationsFragment {
 			}
 
 			userGuideData.resources.get(resource).notifications = notifData;
-
+			userGuideData.resources.get(resource).hasNotifications = !notifData.isEmpty();
+			
 			LOG.debug("notifications:: resource={} notifications.size={}", resource, notifData.size());
 			
 		}
@@ -90,11 +92,11 @@ public class NotificationsFragment {
 
 	}
 
-	private UserGuideData.NotificationData getNotificationDetailsForNotification(JSONObject config, String resource,
+	private UserGuideData.NotificationData getNotificationDetailsForNotification(List<JSONObject> conf, String resource,
 			String notification) {
 
 		LOG.debug("getNotificationDetailsForNotification: resource={} notification={} config={}",  
-				resource, notification, config);
+				resource, notification, conf);
 
 		UserGuideData.NotificationData res = userGuideData.new NotificationData();
 
@@ -105,14 +107,30 @@ public class NotificationsFragment {
 		res.notificationLabel = formattedEvent;
 		res.notificationLabelShort = notification;
 
-		if(config.has("request")) {
-			res.sample = getEventSample(notification, resource, config);
-			res.message = config.optString("description");
-		} else {
-			Out.debug("... using default notificiation template for {}", notification);
-			config = Config.getConfig("userguide::notificationFragments");
-			res.sample = getDefaultEventSample(config, notification, resource);
+		for(JSONObject config : conf) {
+			String name = config.optString("name");
+			
+			LOG.debug("getNotificationDetailsForNotification: resource={} name={}", resource, name);
+			
+			if(config.has("request")) {
+				UserGuideData.Sample sample = userGuideData.new Sample();
+				sample.sample = getEventSample(notification, resource, config);
+				sample.description = config.optString("description");
+				sample.label = name;
+				
+				res.samples.add(sample);
+				
+				LOG.debug("getNotificationDetailsForNotification:: resource={} sample={}", resource, sample.description);
+				
+			} 
+//			else {
+//				Out.debug("... using default notificiation template for {}", notification);
+//				config = Config.getConfig("userguide::notificationFragments");
+//				res.sample = getDefaultEventSample(config, notification, resource);
+//			}
 		}
+		
+		res.hasSamples = !res.samples.isEmpty();
 		
 		return res;
 	}
