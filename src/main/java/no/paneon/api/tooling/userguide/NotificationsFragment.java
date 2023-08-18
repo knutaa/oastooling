@@ -72,7 +72,6 @@ public class NotificationsFragment {
 				List<JSONObject> notificationConfig = APIModel.getNotificationFromRules(resource, notification);
 				
 				LOG.debug("notifications:: resource={} notification={} notificationConfig={}", resource, notification, notificationConfig);
-
 				
 				if(!notificationConfig.isEmpty())
 					notifData.add(getNotificationDetailsForNotification(notificationConfig, resource, notification));
@@ -95,8 +94,8 @@ public class NotificationsFragment {
 	private UserGuideData.NotificationData getNotificationDetailsForNotification(List<JSONObject> conf, String resource,
 			String notification) {
 
-		LOG.debug("getNotificationDetailsForNotification: resource={} notification={} config={}",  
-				resource, notification, conf);
+		LOG.debug("getNotificationDetailsForNotification: resource={} notification={} config=\n{}",  
+				resource, notification, conf.stream().map(o -> o.toString(2)).collect(Collectors.joining("\n")));
 
 		UserGuideData.NotificationData res = userGuideData.new NotificationData();
 
@@ -131,7 +130,10 @@ public class NotificationsFragment {
 		}
 		
 		res.hasSamples = !res.samples.isEmpty();
+		res.multipleSamples = res.samples.size()>1;
 		
+		LOG.debug("getNotificationDetailsForNotification:: resource={} notification={} multipleSamples={}", resource, notification, res.multipleSamples);
+
 		return res;
 	}
 

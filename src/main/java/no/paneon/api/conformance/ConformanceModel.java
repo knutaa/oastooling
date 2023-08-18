@@ -604,10 +604,9 @@ public class ConformanceModel extends CoreModel {
 		LOG.debug("getNonPatchable: resource={} properties={}", resource, properties);
 
 		Map<String,String> specialNonPatchable = getSpecialNonPatchable();
-		specialNonPatchable.keySet().forEach(k -> {
-			if(!properties.contains(k)) specialNonPatchable.remove(k);
-		});
+		Set<String> remove = specialNonPatchable.keySet().stream().filter(k -> !properties.contains(k)).collect(Collectors.toSet());
 		
+		remove.forEach(k -> specialNonPatchable.remove(k));
 		
 		List<String[]> res = new LinkedList<>();
 		Collection<String> patchable = getPatchable(null,resource).stream().map(x->x[0]).collect(Collectors.toList());

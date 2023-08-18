@@ -6,6 +6,7 @@ include::Environment.adoc[]
 
 {{#resourcesData}}
 {{#hasNotifications}}
+
 Notifications related to {{resource}}:
 
 {{#notifications}}
@@ -18,11 +19,7 @@ The notification structure for all notifications in this API follow the pattern 
 A notification event resource (depicted by "SpecificEvent" placeholder) is a sub class of a generic Event structure containing at least an id of the event occurrence (eventId), an event timestamp (eventTime), and the name of the resource (eventType). 
 This notification structure owns an event payload structure ("SpecificEventPayload" placeholder) linked to the resource concerned by the notification using the resource name as access field ("resourceName" placeholder).
 
-[.text-center]
-image::{diagrams}/NotificationsPattern.png[]
-[.text-center]
-Figure {counter:figure} - Notification Pattern
-[.text-left]
+image::{diagrams}/NotificationsPattern.png[title="Notification Pattern" caption="Figure {counter:figure} "]]
 
 {{#resourcesData}}
 
@@ -34,7 +31,9 @@ Notification {{notification}} case for resource {{resource}}.
 {{/OLD}}
 
 {{#samples}}
+{{#multipleSamples}}
 *Sample: {{label}}*
+{{/multipleSamples}}
 
 {{{description}}}
 {{{message}}}

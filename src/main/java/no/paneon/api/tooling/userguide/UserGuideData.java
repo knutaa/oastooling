@@ -103,6 +103,7 @@ public class UserGuideData extends GeneratorData {
 		public String notificationLabelShort;
 		public List<Sample> samples = new LinkedList<>();
 		public boolean hasSamples = false;
+		public boolean multipleSamples = false;
 				
 	}
 	
