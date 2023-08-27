@@ -1,0 +1,1929 @@
+conformance:
+
+  resources:
+   - BillFormat
+   - PartyAccount
+   - BillingCycleSpecification
+   - FinancialAccount
+   - BillingAccount
+   - BillPresentationMedia
+   - Hub
+   - SettlementAccount
+
+  notifications:
+   - SettlementAccountDeleteEvent
+   - FinancialAccountCreateEvent
+   - BillPresentationMediaDeleteEvent
+   - BillFormatAttributeValueChangeEvent
+   - BillingAccountAttributeValueChangeEvent
+   - PartyAccountCreateEvent
+   - BillingAccountCreateEvent
+   - PartyAccountAttributeValueChangeEvent
+   - BillPresentationMediaAttributeValueChangeEvent
+   - BillingCycleSpecificationCreateEvent
+   - BillingCycleSpecificationDeleteEvent
+   - FinancialAccountAttributeValueChangeEvent
+   - PartyAccountStateChangeEvent
+   - BillingCycleSpecificationStateChangeEvent
+   - SettlementAccountAttributeValueChangeEvent
+   - BillingAccountStateChangeEvent
+   - BillingCycleSpecificationAttributeValueChangeEvent
+   - SettlementAccountStateChangeEvent
+   - FinancialAccountDeleteEvent
+   - BillPresentationMediaCreateEvent
+   - BillFormatStateChangeEvent
+   - BillPresentationMediaStateChangeEvent
+   - BillingAccountDeleteEvent
+   - SettlementAccountCreateEvent
+   - PartyAccountDeleteEvent
+   - FinancialAccountStateChangeEvent
+   - BillFormatDeleteEvent
+   - BillFormatCreateEvent
+
+  BillFormat:
+    condition: M
+    comment: ""
+    operations:
+      GET:
+        condition: M
+        comment: ""
+      POST:
+        condition: M
+        comment: ""
+      PATCH:
+        condition: M
+        comment: ""
+      DELETE:
+        condition: M
+        comment: ""
+    attributes:
+      '@type':
+        condition: "M"
+        comment: ""
+      href:
+        condition: M
+        comment: Mandatory in response messages
+      id:
+        condition: M
+        comment: Mandatory in request and response messages, except for POST
+      name:
+        condition: M
+        comment: ""
+    operations-details:
+      POST:
+        mandatory:
+          name:
+            rule: ""
+      PATCH:
+        patchable:
+          description:
+            rule: ""
+          name:
+            rule: ""
+        non-patchable:
+          '@baseType':
+            rule: ""
+          '@schemaLocation':
+            rule: ""
+          '@type':
+            rule: ""
+          href:
+            rule: ""
+          id:
+            rule: ""
+
+  BillFormatAttributeValueChangeEvent:
+    condition: ""
+    comment: ""
+
+  BillFormatCreateEvent:
+    condition: ""
+    comment: ""
+
+  BillFormatDeleteEvent:
+    condition: ""
+    comment: ""
+
+  BillFormatStateChangeEvent:
+    condition: ""
+    comment: ""
+
+  BillPresentationMedia:
+    condition: M
+    comment: ""
+    operations:
+      GET:
+        condition: M
+        comment: ""
+      POST:
+        condition: M
+        comment: ""
+      PATCH:
+        condition: M
+        comment: ""
+      DELETE:
+        condition: M
+        comment: ""
+    attributes:
+      '@type':
+        condition: M
+        comment: ""
+      href:
+        condition: M
+        comment: Mandatory in response messages
+      id:
+        condition: M
+        comment: Mandatory in request and response messages, except for POST
+      name:
+        condition: M
+        comment: ""
+    operations-details:
+      POST:
+        mandatory:
+          name:
+            rule: ""
+      PATCH:
+        patchable:
+          description:
+            rule: ""
+          name:
+            rule: ""
+        non-patchable:
+          '@baseType':
+            rule: ""
+          '@schemaLocation':
+            rule: ""
+          '@type':
+            rule: ""
+          href:
+            rule: ""
+          id:
+            rule: ""
+
+  BillPresentationMediaAttributeValueChangeEvent:
+    condition: ""
+    comment: ""
+
+  BillPresentationMediaCreateEvent:
+    condition: ""
+    comment: ""
+
+  BillPresentationMediaDeleteEvent:
+    condition: ""
+    comment: ""
+
+  BillPresentationMediaStateChangeEvent:
+    condition: ""
+    comment: ""
+
+  BillingAccount:
+    condition: M
+    comment: "One of BillingAccount, FinancialAccount, or SettlementAccount must be implemented"
+    operations:
+      GET:
+        condition: M
+        comment: ""
+      POST:
+        condition: M
+        comment: ""
+      PATCH:
+        condition: M
+        comment: ""
+      DELETE:
+        condition: M
+        comment: ""
+    attributes:
+      accountBalance:
+        condition: ""
+        comment: Array of AccountBalance
+      accountBalance.@type:
+        condition: M
+        comment: if present
+      accountBalance.amount:
+        condition: M
+        comment: if present
+      accountBalance.amount.unit:
+        condition: M
+        comment: if present
+      accountBalance.amount.value:
+        condition: M
+        comment: if present
+      accountBalance.balanceType:
+        condition: M
+        comment: if present
+      accountBalance.id:
+        condition: M
+        comment: if present
+      accountBalance.validFor:
+        condition: M
+        comment: if present
+      accountBalance.validFor.endDateTime:
+        condition: ""
+        comment: One or both of start or end must be present
+      accountBalance.validFor.startDateTime:
+        condition: ""
+        comment: One or both of start or end must be present 
+      accountRelationship:
+        condition: ""
+        comment: Array of AccountRelationship
+      accountRelationship.@type:
+        condition: M
+        comment: if present
+      accountRelationship.account:
+        condition: M
+        comment: if present
+      accountRelationship.account.@referredType:
+        condition: M
+        comment: if present
+      accountRelationship.account.@type:
+        condition: M
+        comment: if present
+      accountRelationship.account.href:
+        condition: M
+        comment: If present, mandatory in response messages
+      accountRelationship.account.id:
+        condition: M
+        comment: if present
+      accountRelationship.account.name:
+        condition: M
+        comment: if present mandatory in response messages
+      accountRelationship.href:
+        condition: M
+        comment: If present, mandatory in response messages
+      accountRelationship.id:
+        condition: M
+        comment: if present
+      accountRelationship.relationshipType:
+        condition: M
+        comment: if present
+      accountRelationship.validFor:
+        condition: O
+        comment: ""
+      accountRelationship.validFor.endDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      accountRelationship.validFor.startDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      accountType:
+        condition: O
+        comment: ""
+      billStructure:
+        condition: M
+        comment: A billing account must have a bill structure
+      billStructure.@type:
+        condition: M
+        comment:
+      billStructure.cycleSpecification:
+        condition: M
+        comment: ""
+      billStructure.format:
+        condition: M
+        comment: ""
+      billStructure.presentationMedia:
+        condition: M
+        comment: Array of BillPresentationMediaRefOrValue
+      contact:
+        condition: ""
+        comment: Array of Contact
+      contact.@type:
+        condition: M
+        comment: if present
+      contact.contactMedium:
+        condition: ""
+        comment: Array of ContactMedium
+      contact.contactMedium.@type:
+        condition: M
+        comment: if present
+      contact.contactMedium.contactType:
+        condition: O
+        comment: ""
+      contact.contactMedium.id:
+        condition: M
+        comment: if present
+      contact.contactMedium.preferred:
+        condition: O
+        comment: ""
+      contact.contactMedium.validFor:
+        condition: ""
+        comment: ""
+      contact.contactMedium.validFor.endDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      contact.contactMedium.validFor.startDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      contact.contactName:
+        condition: ""
+        comment: ""
+      contact.contactType:
+        condition: ""
+        comment: ""
+      contact.id:
+        condition: M
+        comment: if present
+      contact.partyRoleType:
+        condition: ""
+        comment: ""
+      contact.relatedParty:
+        condition: ""
+        comment: ""
+      contact.relatedParty.@type:
+        condition: M
+        comment: if present
+      contact.relatedParty.partyOrPartyRole:
+        condition: M
+        comment: if present
+      contact.relatedParty.role:
+        condition: M
+        comment: if present
+      contact.validFor:
+        condition: ""
+        comment: ""
+      contact.validFor.endDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      contact.validFor.startDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      creditLimit:
+        condition: ""
+        comment: ""
+      creditLimit.unit:
+        condition: M
+        comment: if present
+      creditLimit.value:
+        condition: M
+        comment: if present
+      defaultPaymentMethod.@referredType:
+        condition: M
+        comment: if present
+      defaultPaymentMethod.@type:
+        condition: M
+        comment: if present
+      defaultPaymentMethod.href:
+        condition: M
+        comment: If present, mandatory in response messages
+      defaultPaymentMethod.id:
+        condition: M
+        comment: if present
+      defaultPaymentMethod.name:
+        condition: ""
+        comment: ""
+      financialAccount:
+        condition: O
+        comment: ""
+      financialAccount.@referredType:
+        condition: M
+        comment: if present
+      financialAccount.@type:
+        condition: M
+        comment: if present
+      financialAccount.href:
+        condition: M
+        comment: If present, mandatory in response messages
+      financialAccount.id:
+        condition: M
+        comment: if present
+      financialAccount.name:
+        condition: M
+        comment: If present, mandatory in response messages
+      lastUpdate:
+        condition: ""
+        comment: ""
+      name:
+        condition: M
+        comment: ""
+      paymentPlan:
+        condition: ""
+        comment: Array of PaymentPlan
+      paymentPlan.@type:
+        condition: M
+        comment: if present
+      paymentPlan.id:
+        condition: M
+        comment: if present
+      paymentPlan.numberOfPayments:
+        condition: ""
+        comment: ""
+      paymentPlan.paymentFrequency:
+        condition: ""
+        comment: ""
+      paymentPlan.paymentMethod:
+        condition: ""
+        comment: ""
+      paymentPlan.paymentMethod.@referredType:
+        condition: M
+        comment: if present
+      paymentPlan.paymentMethod.@type:
+        condition: M
+        comment: if present
+      paymentPlan.paymentMethod.href:
+        condition: M
+        comment: If present, mandatory in response messages
+      paymentPlan.paymentMethod.id:
+        condition: M
+        comment: if present
+      paymentPlan.paymentMethod.name:
+        condition: ""
+        comment: ""
+      paymentPlan.planType:
+        condition: ""
+        comment: ""
+      paymentPlan.priority:
+        condition: ""
+        comment: ""
+      paymentPlan.status:
+        condition: ""
+        comment: ""
+      paymentPlan.totalAmount:
+        condition: ""
+        comment: ""
+      paymentPlan.totalAmount.unit:
+        condition: M
+        comment: if present
+      paymentPlan.totalAmount.value:
+        condition: M
+        comment: if present
+      paymentPlan.validFor:
+        condition: ""
+        comment: ""
+      paymentPlan.validFor.endDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      paymentPlan.validFor.startDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      paymentStatus:
+        condition: ""
+        comment: ""
+      ratingType:
+        condition: ""
+        comment: ""
+      relatedParty:
+        condition: M
+        comment: Array of RelatedPartyRefOrPartyRoleRef
+      relatedParty.@type:
+        condition: M
+        comment: ""
+      relatedParty.partyOrPartyRole:
+        condition: M
+        comment: ""
+      relatedParty.role:
+        condition: M
+        comment: ""
+      state:
+        condition: ""
+        comment: ""
+      taxExemption:
+        condition: ""
+        comment: Array of TaxExemptionCertificate
+      taxExemption.@type:
+        condition: M
+        comment: if present
+      taxExemption.attachment:
+        condition: ""
+        comment: ""
+      taxExemption.certificateNumber:
+        condition: ""
+        comment: ""
+      taxExemption.id:
+        condition: M
+        comment: if present
+      taxExemption.issuingJurisdiction:
+        condition: ""
+        comment: ""
+      taxExemption.reason:
+        condition: ""
+        comment: ""
+      taxExemption.taxDefinition:
+        condition: ""
+        comment: Array of TaxDefinition
+      taxExemption.taxDefinition.@type:
+        condition: M
+        comment: if present
+      taxExemption.taxDefinition.id:
+        condition: M
+        comment: if present
+      taxExemption.taxDefinition.jurisdictionLevel:
+        condition: ""
+        comment: ""
+      taxExemption.taxDefinition.jurisdictionName:
+        condition: ""
+        comment: ""
+      taxExemption.taxDefinition.name:
+        condition: ""
+        comment: ""
+      taxExemption.taxDefinition.taxType:
+        condition: ""
+        comment: ""
+      taxExemption.taxDefinition.validFor:
+        condition: ""
+        comment: ""
+      taxExemption.taxDefinition.validFor.endDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      taxExemption.taxDefinition.validFor.startDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      taxExemption.validFor:
+        condition: ""
+        comment: ""
+      taxExemption.validFor.endDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      taxExemption.validFor.startDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+    operations-details:
+      POST:
+        mandatory:
+          name:
+            rule: ""
+          relatedParty:
+            rule: ""
+          relatedParty.role:
+            rule: ""
+      PATCH:
+        patchable:
+          accountBalance:
+            rule: ""
+          accountRelationship:
+            rule: ""
+          accountType:
+            rule: ""
+          billStructure:
+            rule: ""
+          contact:
+            rule: ""
+          creditLimit:
+            rule: ""
+          defaultPaymentMethod:
+            rule: ""
+          description:
+            rule: ""
+          financialAccount:
+            rule: ""
+          name:
+            rule: ""
+          paymentPlan:
+            rule: ""
+          paymentStatus:
+            rule: ""
+          ratingType:
+            rule: ""
+          relatedParty:
+            rule: ""
+          state:
+            rule: ""
+          taxExemption:
+            rule: ""
+        non-patchable:
+          '@baseType':
+            rule: ""
+          '@schemaLocation':
+            rule: ""
+          '@type':
+            rule: ""
+          href:
+            rule: ""
+          id:
+            rule: ""
+          lastUpdate:
+            rule: ""
+
+  BillingAccountAttributeValueChangeEvent:
+    condition: ""
+    comment: ""
+
+  BillingAccountCreateEvent:
+    condition: ""
+    comment: ""
+
+  BillingAccountDeleteEvent:
+    condition: ""
+    comment: ""
+
+  BillingAccountStateChangeEvent:
+    condition: ""
+    comment: ""
+
+  BillingCycleSpecification:
+    condition: M
+    comment: ""
+    operations:
+      GET:
+        condition: M
+        comment: ""
+      POST:
+        condition: M
+        comment: ""
+      PATCH:
+        condition: M
+        comment: ""
+      DELETE:
+        condition: M
+        comment: ""
+    attributes:
+      '@type':
+        condition: M
+        comment: ""
+      billingDateShift:
+        condition: ""
+        comment: ""
+      billingPeriod:
+        condition: ""
+        comment: ""
+      chargeDateOffset:
+        condition: ""
+        comment: ""
+      creditDateOffset:
+        condition: ""
+        comment: ""
+      description:
+        condition: ""
+        comment: ""
+      frequency:
+        condition: ""
+        comment: ""
+      href:
+        condition: M
+        comment: Mandatory in response messages
+      id:
+        condition: M
+        comment: Mandatory in request and response messages, except for POST
+      mailingDateOffset:
+        condition: ""
+        comment: ""
+      name:
+        condition: M
+        comment: ""
+      paymentDueDateOffset:
+        condition: ""
+        comment: ""
+      validFor:
+        condition: ""
+        comment: ""
+      validFor.endDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      validFor.startDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+    operations-details:
+      POST:
+        mandatory:
+          name:
+            rule: ""
+      PATCH:
+        patchable:
+          billingDateShift:
+            rule: ""
+          billingPeriod:
+            rule: ""
+          chargeDateOffset:
+            rule: ""
+          creditDateOffset:
+            rule: ""
+          description:
+            rule: ""
+          frequency:
+            rule: ""
+          mailingDateOffset:
+            rule: ""
+          name:
+            rule: ""
+          paymentDueDateOffset:
+            rule: ""
+          validFor:
+            rule: ""
+        non-patchable:
+          '@baseType':
+            rule: ""
+          '@schemaLocation':
+            rule: ""
+          '@type':
+            rule: ""
+          href:
+            rule: ""
+          id:
+            rule: ""
+
+  BillingCycleSpecificationAttributeValueChangeEvent:
+    condition: ""
+    comment: ""
+
+  BillingCycleSpecificationCreateEvent:
+    condition: ""
+    comment: ""
+
+  BillingCycleSpecificationDeleteEvent:
+    condition: ""
+    comment: ""
+
+  BillingCycleSpecificationStateChangeEvent:
+    condition: ""
+    comment: ""
+
+  FinancialAccount:
+    condition: M
+    comment: "One of BillingAccount, FinancialAccount, or SettlementAccount must be implemented"
+    operations:
+      GET:
+        condition: M
+        comment: ""
+      POST:
+        condition: M
+        comment: ""
+      PATCH:
+        condition: M
+        comment: ""
+      DELETE:
+        condition: M
+        comment: ""
+    attributes:
+      accountBalance:
+        condition: ""
+        comment: Array of AccountBalance
+      accountBalance.@type:
+        condition: M
+        comment: if present
+      accountBalance.amount:
+        condition: M
+        comment: if present
+      accountBalance.amount.unit:
+        condition: M
+        comment: ""
+      accountBalance.amount.value:
+        condition: M
+        comment: ""
+      accountBalance.balanceType:
+        condition: M
+        comment: ""
+      accountBalance.id:
+        condition: M
+        comment: if present
+      accountBalance.validFor:
+        condition: M
+        comment: if present
+      accountBalance.validFor.endDateTime:
+        condition: ""
+        comment: One or both of start or end must be present
+      accountBalance.validFor.startDateTime:
+        condition: ""
+        comment: One or both of start or end must be present
+      accountRelationship:
+        condition: ""
+        comment: Array of AccountRelationship
+      accountRelationship.@type:
+        condition: M
+        comment: if present
+      accountRelationship.account:
+        condition: M
+        comment: if present
+      accountRelationship.account.@referredType:
+        condition: M
+        comment: if present
+      accountRelationship.account.@type:
+        condition: M
+        comment: if present
+      accountRelationship.account.href:
+        condition: M
+        comment: If present, mandatory in response messages
+      accountRelationship.account.id:
+        condition: M
+        comment: if present
+      accountRelationship.account.name:
+        condition: M
+        comment: If present, mandatory in response messages
+      accountRelationship.href:
+        condition: M
+        comment: If present, mandatory in response messages
+      accountRelationship.id:
+        condition: M
+        comment: if present
+      accountRelationship.relationshipType:
+        condition: M
+        comment: if present
+      accountRelationship.validFor:
+        condition: O
+        comment: ""
+      accountRelationship.validFor.endDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      accountRelationship.validFor.startDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      accountType:
+        condition: ""
+        comment: ""
+      contact:
+        condition: ""
+        comment: Array of Contact
+      contact.@type:
+        condition: M
+        comment: if present
+      contact.contactMedium:
+        condition: ""
+        comment: Array of ContactMedium
+      contact.contactMedium.@type:
+        condition: M
+        comment: if present
+      contact.contactMedium.contactType:
+        condition: ""
+        comment: ""
+      contact.contactMedium.id:
+        condition: M
+        comment: if present
+      contact.contactMedium.preferred:
+        condition: ""
+        comment: ""
+      contact.contactMedium.validFor:
+        condition: ""
+        comment: ""
+      contact.contactMedium.validFor.endDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      contact.contactMedium.validFor.startDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      contact.contactName:
+        condition: ""
+        comment: ""
+      contact.contactType:
+        condition: ""
+        comment: ""
+      contact.id:
+        condition: M
+        comment: if present
+      contact.partyRoleType:
+        condition: ""
+        comment: ""
+      contact.relatedParty:
+        condition: ""
+        comment: ""
+      contact.relatedParty.@type:
+        condition: M
+        comment: if present
+      contact.relatedParty.partyOrPartyRole:
+        condition: M
+        comment: if present
+      contact.relatedParty.role:
+        condition: M
+        comment: if present
+      contact.validFor:
+        condition: ""
+        comment: ""
+      contact.validFor.endDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      contact.validFor.startDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      creditLimit:
+        condition: ""
+        comment: ""
+      creditLimit.unit:
+        condition: M
+        comment: If present
+      creditLimit.value:
+        condition: M
+        comment: If present
+      lastUpdate:
+        condition: ""
+        comment: ""
+      name:
+        condition: M
+        comment: ""
+      relatedParty:
+        condition: M
+        comment: Array of RelatedPartyRefOrPartyRoleRef
+      relatedParty.@type:
+        condition: M
+        comment: ""
+      relatedParty.partyOrPartyRole:
+        condition: M
+        comment: ""
+      relatedParty.role:
+        condition: M
+        comment: ""
+      state:
+        condition: ""
+        comment: ""
+      taxExemption:
+        condition: ""
+        comment: Array of TaxExemptionCertificate
+      taxExemption.@type:
+        condition: M
+        comment: if present
+      taxExemption.attachment:
+        condition: ""
+        comment: ""
+      taxExemption.certificateNumber:
+        condition: ""
+        comment: ""
+      taxExemption.id:
+        condition: M
+        comment: if present
+      taxExemption.issuingJurisdiction:
+        condition: ""
+        comment: ""
+      taxExemption.reason:
+        condition: ""
+        comment: ""
+      taxExemption.taxDefinition:
+        condition: ""
+        comment: Array of TaxDefinition
+      taxExemption.taxDefinition.@type:
+        condition: M
+        comment: if present
+      taxExemption.taxDefinition.id:
+        condition: M
+        comment: if present
+      taxExemption.taxDefinition.jurisdictionLevel:
+        condition: ""
+        comment: ""
+      taxExemption.taxDefinition.jurisdictionName:
+        condition: ""
+        comment: ""
+      taxExemption.taxDefinition.name:
+        condition: ""
+        comment: ""
+      taxExemption.taxDefinition.taxType:
+        condition: ""
+        comment: ""
+      taxExemption.taxDefinition.validFor:
+        condition: ""
+        comment: ""
+      taxExemption.taxDefinition.validFor.endDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      taxExemption.taxDefinition.validFor.startDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      taxExemption.validFor:
+        condition: ""
+        comment: ""
+      taxExemption.validFor.endDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      taxExemption.validFor.startDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+    operations-details:
+      POST:
+        mandatory: {}
+      PATCH:
+        patchable:
+          accountBalance:
+            rule: ""
+          accountRelationship:
+            rule: ""
+          accountType:
+            rule: ""
+          contact:
+            rule: ""
+          creditLimit:
+            rule: ""
+          description:
+            rule: ""
+          name:
+            rule: ""
+          relatedParty:
+            rule: ""
+          state:
+            rule: ""
+          taxExemption:
+            rule: ""
+        non-patchable:
+          '@baseType':
+            rule: ""
+          '@schemaLocation':
+            rule: ""
+          '@type':
+            rule: ""
+          href:
+            rule: ""
+          id:
+            rule: ""
+          lastUpdate:
+            rule: ""
+
+  FinancialAccountAttributeValueChangeEvent:
+    condition: ""
+    comment: ""
+
+  FinancialAccountCreateEvent:
+    condition: ""
+    comment: ""
+
+  FinancialAccountDeleteEvent:
+    condition: ""
+    comment: ""
+
+  FinancialAccountStateChangeEvent:
+    condition: ""
+    comment: ""
+
+  Hub:
+    condition: ""
+    comment: ""
+    operations:
+      POST:
+        condition: ""
+        comment: ""
+      DELETE:
+        condition: ""
+        comment: ""
+    attributes:
+      '@type':
+        condition: M
+        comment:
+      callback:
+        condition: M
+        comment: ""
+      href:
+        condition: M
+        comment: Mandatory in response messages
+      id:
+        condition: M
+        comment: Mandatory in request and response messages, except for POST
+      query:
+        condition: ""
+        comment: ""
+    operations-details:
+      POST:
+        mandatory: {}
+      PATCH:
+        patchable: {}
+        non-patchable:
+          '@type':
+            rule: ""
+          callback:
+            rule: ""
+          href:
+            rule: ""
+          id:
+            rule: ""
+          query:
+            rule: ""
+
+  PartyAccount:
+    condition: 
+    comment: "A base class, not expected to be implemented"
+    operations:
+      GET:
+        condition: M
+        comment: ""
+      POST:
+        condition: M
+        comment: ""
+      PATCH:
+        condition: M
+        comment: ""
+      DELETE:
+        condition: M
+        comment: ""
+    attributes:
+      accountBalance:
+        condition: ""
+        comment: Array of AccountBalance
+      accountBalance.@type:
+        condition: M
+        comment: if present
+      accountBalance.amount:
+        condition: M
+        comment: ""
+      accountBalance.amount.unit:
+        condition: M
+        comment: ""
+      accountBalance.amount.value:
+        condition: M
+        comment: ""
+      accountBalance.balanceType:
+        condition: M
+        comment: ""
+      accountBalance.id:
+        condition: M
+        comment: if present
+      accountBalance.validFor:
+        condition: M
+        comment: ""
+      accountBalance.validFor.endDateTime:
+        condition: ""
+        comment: One or both of start or end must be present
+      accountBalance.validFor.startDateTime:
+        condition: ""
+        comment: One or both of start or end must be present
+      accountRelationship:
+        condition: ""
+        comment: Array of AccountRelationship
+      accountRelationship.@type:
+        condition: M
+        comment: if present
+      accountRelationship.account:
+        condition: M
+        comment: if present
+      accountRelationship.account.@referredType:
+        condition: M
+        comment: if present
+      accountRelationship.account.@type:
+        condition: M
+        comment: if present
+      accountRelationship.account.href:
+        condition: M
+        comment: If present, mandatory in response messages
+      accountRelationship.account.id:
+        condition: M
+        comment: if present
+      accountRelationship.account.name:
+        condition: M
+        comment: If present, mandatory in response messages
+      accountRelationship.href:
+        condition: M
+        comment: If present, mandatory in response messages
+      accountRelationship.id:
+        condition: M
+        comment: if present
+      accountRelationship.relationshipType:
+        condition: M
+        comment: if present
+      accountRelationship.validFor:
+        condition: O
+        comment: ""
+      accountRelationship.validFor.endDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      accountRelationship.validFor.startDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      accountType:
+        condition: ""
+        comment: ""
+      billStructure:
+        condition: ""
+        comment: ""
+      billStructure.@type:
+        condition: ""
+        comment: ""
+      billStructure.cycleSpecification:
+        condition: ""
+        comment: ""
+      billStructure.format:
+        condition: ""
+        comment: ""
+      billStructure.presentationMedia:
+        condition: ""
+        comment: Array of BillPresentationMediaRefOrValue
+      contact:
+        condition: ""
+        comment: Array of Contact
+      contact.@type:
+        condition: ""
+        comment: ""
+      contact.contactMedium:
+        condition: ""
+        comment: Array of ContactMedium
+      contact.contactMedium.@type:
+        condition: ""
+        comment: ""
+      contact.contactMedium.contactType:
+        condition: ""
+        comment: ""
+      contact.contactMedium.id:
+        condition: M
+        comment: if present
+      contact.contactMedium.preferred:
+        condition: ""
+        comment: ""
+      contact.contactMedium.validFor:
+        condition: ""
+        comment: ""
+      contact.contactMedium.validFor.endDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      contact.contactMedium.validFor.startDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      contact.contactName:
+        condition: ""
+        comment: ""
+      contact.contactType:
+        condition: ""
+        comment: ""
+      contact.id:
+        condition: M
+        comment: if present
+      contact.partyRoleType:
+        condition: ""
+        comment: ""
+      contact.relatedParty:
+        condition: ""
+        comment: ""
+      contact.relatedParty.@type:
+        condition: M
+        comment: if present
+      contact.relatedParty.partyOrPartyRole:
+        condition: M
+        comment: if present
+      contact.relatedParty.role:
+        condition: M
+        comment: if present
+      contact.validFor:
+        condition: ""
+        comment: ""
+      contact.validFor.endDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      contact.validFor.startDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      creditLimit:
+        condition: ""
+        comment: ""
+      creditLimit.unit:
+        condition: M
+        comment: if present
+      creditLimit.value:
+        condition: M
+        comment: if present
+      defaultPaymentMethod:
+        condition: ""
+        comment: ""
+      defaultPaymentMethod.@referredType:
+        condition: M
+        comment: if present
+      defaultPaymentMethod.@type:
+        condition: M
+        comment: if present
+      defaultPaymentMethod.href:
+        condition: M
+        comment: If present, mandatory in response messages
+      defaultPaymentMethod.id:
+        condition: M
+        comment: if present
+      defaultPaymentMethod.name:
+        condition: ""
+        comment: ""
+      description:
+        condition: ""
+        comment: ""
+      financialAccount:
+        condition: ""
+        comment: ""
+      financialAccount.@referredType:
+        condition: M
+        comment: if present
+      financialAccount.@type:
+        condition: M
+        comment: if present
+      financialAccount.href:
+        condition: M
+        comment: If present, mandatory in response messages
+      financialAccount.id:
+        condition: M
+        comment: if present
+      financialAccount.name:
+        condition: ""
+        comment: ""
+      lastUpdate:
+        condition: ""
+        comment: ""
+      name:
+        condition: M
+        comment: ""
+      paymentPlan:
+        condition: ""
+        comment: Array of PaymentPlan
+      paymentPlan.@type:
+        condition: M
+        comment: if present
+      paymentPlan.id:
+        condition: M
+        comment: if present
+      paymentPlan.numberOfPayments:
+        condition: ""
+        comment: ""
+      paymentPlan.paymentFrequency:
+        condition: ""
+        comment: ""
+      paymentPlan.paymentMethod:
+        condition: ""
+        comment: ""
+      paymentPlan.paymentMethod.@referredType:
+        condition: M
+        comment: if present
+      paymentPlan.paymentMethod.@type:
+        condition: M
+        comment: if present
+      paymentPlan.paymentMethod.href:
+        condition: M
+        comment: If present, mandatory in response messages
+      paymentPlan.paymentMethod.id:
+        condition: M
+        comment: if present
+      paymentPlan.paymentMethod.name:
+        condition: ""
+        comment: ""
+      paymentPlan.planType:
+        condition: ""
+        comment: ""
+      paymentPlan.priority:
+        condition: ""
+        comment: ""
+      paymentPlan.status:
+        condition: ""
+        comment: ""
+      paymentPlan.totalAmount:
+        condition: ""
+        comment: ""
+      paymentPlan.totalAmount.unit:
+        condition: M
+        comment: if present
+      paymentPlan.totalAmount.value:
+        condition: M 
+        comment: if present
+      paymentPlan.validFor:
+        condition: ""
+        comment: ""
+      paymentPlan.validFor.endDateTime:
+        condition: If validFor is present, one or both of start or end must be present
+        comment: ""
+      paymentPlan.validFor.startDateTime:
+        condition: If validFor is present, one or both of start or end must be present
+        comment: ""
+      paymentStatus:
+        condition: ""
+        comment: ""
+      relatedParty:
+        condition: M
+        comment: Array of RelatedPartyRefOrPartyRoleRef
+      relatedParty.@type:
+        condition: M
+        comment: ""
+      relatedParty.partyOrPartyRole:
+        condition: M
+        comment: ""
+      relatedParty.role:
+        condition: M
+        comment: ""
+      state:
+        condition: ""
+        comment: ""
+      taxExemption:
+        condition: ""
+        comment: Array of TaxExemptionCertificate
+      taxExemption.@type:
+        condition: M
+        comment: if present
+      taxExemption.attachment:
+        condition: ""
+        comment: ""
+      taxExemption.certificateNumber:
+        condition: ""
+        comment: ""
+      taxExemption.id:
+        condition: M
+        comment: if present
+      taxExemption.issuingJurisdiction:
+        condition: ""
+        comment: ""
+      taxExemption.reason:
+        condition: ""
+        comment: ""
+      taxExemption.taxDefinition:
+        condition: ""
+        comment: Array of TaxDefinition
+      taxExemption.taxDefinition.@type:
+        condition: M
+        comment: if present
+      taxExemption.taxDefinition.id:
+        condition: M
+        comment: if present
+      taxExemption.taxDefinition.jurisdictionLevel:
+        condition: ""
+        comment: ""
+      taxExemption.taxDefinition.jurisdictionName:
+        condition: ""
+        comment: ""
+      taxExemption.taxDefinition.name:
+        condition: ""
+        comment: ""
+      taxExemption.taxDefinition.taxType:
+        condition: ""
+        comment: ""
+      taxExemption.taxDefinition.validFor:
+        condition: ""
+        comment: ""
+      taxExemption.taxDefinition.validFor.endDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      taxExemption.taxDefinition.validFor.startDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      taxExemption.validFor:
+        condition: ""
+        comment: ""
+      taxExemption.validFor.endDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      taxExemption.validFor.startDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+    operations-details:
+      POST:
+        mandatory:
+          name:
+            rule: ""
+          relatedParty:
+            rule: ""
+          relatedParty.role:
+            rule: ""
+      PATCH:
+        patchable:
+          accountBalance:
+            rule: ""
+          accountRelationship:
+            rule: ""
+          accountType:
+            rule: ""
+          billStructure:
+            rule: ""
+          contact:
+            rule: ""
+          creditLimit:
+            rule: ""
+          defaultPaymentMethod:
+            rule: ""
+          description:
+            rule: ""
+          financialAccount:
+            rule: ""
+          name:
+            rule: ""
+          paymentPlan:
+            rule: ""
+          paymentStatus:
+            rule: ""
+          relatedParty:
+            rule: ""
+          state:
+            rule: ""
+          taxExemption:
+            rule: ""
+        non-patchable:
+          '@baseType':
+            rule: ""
+          '@schemaLocation':
+            rule: ""
+          '@type':
+            rule: ""
+          href:
+            rule: ""
+          id:
+            rule: ""
+          lastUpdate:
+            rule: ""
+
+  PartyAccountAttributeValueChangeEvent:
+    condition: ""
+    comment: ""
+
+  PartyAccountCreateEvent:
+    condition: ""
+    comment: ""
+
+  PartyAccountDeleteEvent:
+    condition: ""
+    comment: ""
+
+  PartyAccountStateChangeEvent:
+    condition: ""
+    comment: ""
+
+  SettlementAccount:
+    condition: M
+    comment: "One of BillingAccount, FinancialAccount, or SettlementAccount must be implemented"
+    operations:
+      GET:
+        condition: M
+        comment: ""
+      POST:
+        condition: M
+        comment: ""
+      PATCH:
+        condition: M
+        comment: ""
+      DELETE:
+        condition: M
+        comment: ""
+    attributes:
+      accountBalance:
+        condition: ""
+        comment: Array of AccountBalance
+      accountBalance.@type:
+        condition: M
+        comment: if present
+      accountBalance.amount:
+        condition: M
+        comment: if present
+      accountBalance.amount.unit:
+        condition: M
+        comment: if present
+      accountBalance.amount.value:
+        condition: M
+        comment: if present
+      accountBalance.balanceType:
+        condition: M
+        comment: if present
+      accountBalance.id:
+        condition: M
+        comment: if present
+      accountBalance.validFor:
+        condition: M
+        comment: if present
+      accountBalance.validFor.endDateTime:
+        condition: ""
+        comment: One or both of start or end must be present
+      accountBalance.validFor.startDateTime:
+        condition: ""
+        comment: One or both of start or end must be present
+      accountRelationship:
+        condition: ""
+        comment: Array of AccountRelationship
+      accountRelationship.@type:
+        condition: M
+        comment: if present
+      accountRelationship.account:
+        condition: M
+        comment: if present
+      accountRelationship.account.@referredType:
+        condition: M
+        comment: if present
+      accountRelationship.account.@type:
+        condition: M
+        comment: if present
+      accountRelationship.account.href:
+        condition: M
+        comment: If present, mandatory in response messages
+      accountRelationship.account.id:
+        condition: M
+        comment: if present
+      accountRelationship.account.name:
+        condition: M
+        comment: If present, mandatory in response messages
+      accountRelationship.href:
+        condition: M
+        comment: If present, mandatory in response messages
+      accountRelationship.id:
+        condition: M
+        comment: if present
+      accountRelationship.relationshipType:
+        condition: M
+        comment: if present
+      accountRelationship.validFor:
+        condition: O
+        comment: ""
+      accountRelationship.validFor.endDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      accountRelationship.validFor.startDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      accountType:
+        condition: ""
+        comment: ""
+      billStructure:
+        condition: ""
+        comment: ""
+      billStructure.@type:
+        condition: M
+        comment: if present
+      billStructure.cycleSpecification:
+        condition: ""
+        comment: ""
+      billStructure.format:
+        condition: ""
+        comment: ""
+      billStructure.presentationMedia:
+        condition: ""
+        comment: Array of BillPresentationMediaRefOrValue
+      contact:
+        condition: ""
+        comment: Array of Contact
+      contact.@type:
+        condition: M
+        comment: if present
+      contact.contactMedium:
+        condition: ""
+        comment: Array of ContactMedium
+      contact.contactMedium.@type:
+        condition: M
+        comment: if present
+      contact.contactMedium.contactType:
+        condition: ""
+        comment: ""
+      contact.contactMedium.id:
+        condition: M
+        comment: if present
+      contact.contactMedium.preferred:
+        condition: ""
+        comment: ""
+      contact.contactMedium.validFor:
+        condition: ""
+        comment: ""
+      contact.contactMedium.validFor.endDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      contact.contactMedium.validFor.startDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      contact.contactName:
+        condition: ""
+        comment: ""
+      contact.contactType:
+        condition: ""
+        comment: ""
+      contact.id:
+        condition: M
+        comment: if present
+      contact.partyRoleType:
+        condition: ""
+        comment: ""
+      contact.relatedParty:
+        condition: ""
+        comment: ""
+      contact.relatedParty.@type:
+        condition: M
+        comment: if present
+      contact.relatedParty.partyOrPartyRole:
+        condition: M
+        comment: if present
+      contact.relatedParty.role:
+        condition: M
+        comment: if present
+      contact.validFor:
+        condition: ""
+        comment: ""
+      contact.validFor.endDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      contact.validFor.startDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      creditLimit:
+        condition: ""
+        comment: ""
+      creditLimit.unit:
+        condition: M
+        comment: if present
+      creditLimit.value:
+        condition: M
+        comment: if present
+      defaultPaymentMethod:
+        condition: ""
+        comment: ""
+      defaultPaymentMethod.@referredType:
+        condition: M
+        comment: if present
+      defaultPaymentMethod.@type:
+        condition: M
+        comment: if present
+      defaultPaymentMethod.href:
+        condition: M
+        comment: If present, mandatory in response messages
+      defaultPaymentMethod.id:
+        condition: M
+        comment: if present
+      defaultPaymentMethod.name:
+        condition: ""
+        comment: ""
+      description:
+        condition: ""
+        comment: ""
+      financialAccount:
+        condition: ""
+        comment: ""
+      financialAccount.@referredType:
+        condition: M
+        comment: if present
+      financialAccount.@type:
+        condition: M
+        comment: if present
+      financialAccount.href:
+        condition: M
+        comment: If present, mandatory in response messages
+      financialAccount.id:
+        condition: M
+        comment: if present
+      financialAccount.name:
+        condition: ""
+        comment: ""
+      lastUpdate:
+        condition: ""
+        comment: ""
+      name:
+        condition: ""
+        comment: ""
+      paymentPlan:
+        condition: ""
+        comment: Array of PaymentPlan
+      paymentPlan.@type:
+        condition: M
+        comment: if present
+      paymentPlan.id:
+        condition: M
+        comment: if present
+      paymentPlan.numberOfPayments:
+        condition: ""
+        comment: ""
+      paymentPlan.paymentFrequency:
+        condition: ""
+        comment: ""
+      paymentPlan.paymentMethod:
+        condition: ""
+        comment: ""
+      paymentPlan.paymentMethod.@referredType:
+        condition: M
+        comment: if present
+      paymentPlan.paymentMethod.@type:
+        condition: M
+        comment: if present
+      paymentPlan.paymentMethod.href:
+        condition: M
+        comment: If present, mandatory in response messages
+      paymentPlan.paymentMethod.id:
+        condition: M
+        comment: if present
+      paymentPlan.paymentMethod.name:
+        condition: ""
+        comment: ""
+      paymentPlan.planType:
+        condition: ""
+        comment: ""
+      paymentPlan.priority:
+        condition: ""
+        comment: ""
+      paymentPlan.status:
+        condition: ""
+        comment: ""
+      paymentPlan.totalAmount:
+        condition: ""
+        comment: ""
+      paymentPlan.totalAmount.unit:
+        condition: M
+        comment: if present
+      paymentPlan.totalAmount.value:
+        condition: M
+        comment: if present
+      paymentPlan.validFor:
+        condition: ""
+        comment: ""
+      paymentPlan.validFor.endDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      paymentPlan.validFor.startDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      paymentStatus:
+        condition: ""
+        comment: ""
+      relatedParty:
+        condition: M
+        comment: Array of RelatedPartyRefOrPartyRoleRef
+      relatedParty.@type:
+        condition: M
+        comment: ""
+      relatedParty.partyOrPartyRole:
+        condition: M
+        comment: ""
+      relatedParty.role:
+        condition: M
+        comment: ""
+      state:
+        condition: ""
+        comment: ""
+      taxExemption:
+        condition: ""
+        comment: Array of TaxExemptionCertificate
+      taxExemption.@type:
+        condition: M
+        comment: if present
+      taxExemption.attachment:
+        condition: ""
+        comment: ""
+      taxExemption.certificateNumber:
+        condition: ""
+        comment: ""
+      taxExemption.id:
+        condition: M
+        comment: if present
+      taxExemption.issuingJurisdiction:
+        condition: ""
+        comment: ""
+      taxExemption.reason:
+        condition: ""
+        comment: ""
+      taxExemption.taxDefinition:
+        condition: ""
+        comment: Array of TaxDefinition
+      taxExemption.taxDefinition.@type:
+        condition: M
+        comment: if present
+      taxExemption.taxDefinition.id:
+        condition: M
+        comment: if present
+      taxExemption.taxDefinition.jurisdictionLevel:
+        condition: ""
+        comment: ""
+      taxExemption.taxDefinition.jurisdictionName:
+        condition: ""
+        comment: ""
+      taxExemption.taxDefinition.name:
+        condition: ""
+        comment: ""
+      taxExemption.taxDefinition.taxType:
+        condition: ""
+        comment: ""
+      taxExemption.taxDefinition.validFor:
+        condition: ""
+        comment: ""
+      taxExemption.taxDefinition.validFor.endDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      taxExemption.taxDefinition.validFor.startDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      taxExemption.validFor:
+        condition: ""
+        comment: ""
+      taxExemption.validFor.endDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+      taxExemption.validFor.startDateTime:
+        condition: ""
+        comment: If validFor is present, one or both of start or end must be present
+    operations-details:
+      POST:
+        mandatory: {}
+      PATCH:
+        patchable:
+          accountBalance:
+            rule: ""
+          accountRelationship:
+            rule: ""
+          accountType:
+            rule: ""
+          billStructure:
+            rule: ""
+          contact:
+            rule: ""
+          creditLimit:
+            rule: ""
+          defaultPaymentMethod:
+            rule: ""
+          description:
+            rule: ""
+          financialAccount:
+            rule: ""
+          name:
+            rule: ""
+          paymentPlan:
+            rule: ""
+          paymentStatus:
+            rule: ""
+          relatedParty:
+            rule: ""
+          state:
+            rule: ""
+          taxExemption:
+            rule: ""
+        non-patchable:
+          '@baseType':
+            rule: ""
+          '@schemaLocation':
+            rule: ""
+          '@type':
+            rule: ""
+          href:
+            rule: ""
+          id:
+            rule: ""
+          lastUpdate:
+            rule: ""
+
+  SettlementAccountAttributeValueChangeEvent:
+    condition: ""
+    comment: ""
+
+  SettlementAccountCreateEvent:
+    condition: ""
+    comment: ""
+
+  SettlementAccountDeleteEvent:
+    condition: ""
+    comment: ""
+
+  SettlementAccountStateChangeEvent:
+    condition: ""
+    comment: ""

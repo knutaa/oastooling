@@ -34,9 +34,8 @@ public class GenerateConformance extends GenerateCommon {
 
 	}
 	
-	@Override
 	@LogMethod(level=LogLevel.DEBUG)
-	public void execute() {
+	public void init() {
 		
 		super.execute();
 		
@@ -51,8 +50,15 @@ public class GenerateConformance extends GenerateCommon {
 		model.extractFromRules();
 
 		model.expandDefaults();
+		
+	}
+		
+	@Override
+	@LogMethod(level=LogLevel.DEBUG)
+	public void execute() {
+		
+		init();
 				
-
 		boolean completeGeneration=true;
 		
 		try {	

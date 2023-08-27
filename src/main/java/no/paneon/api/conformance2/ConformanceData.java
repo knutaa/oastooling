@@ -251,6 +251,9 @@ public class ConformanceData extends GeneratorData {
 					resourceOperation.nonPatchableAttributes = model.getNonPatchableConformance(resource);
 					resourceOperation.hasNonPatchableAttributes = !resourceOperation.nonPatchableAttributes.isEmpty();
 					
+					LOG.debug("generateFragment: resource={} operation={} patchableAttributes={}", resource, operation, resourceOperation.patchableAttributes);
+					LOG.debug("generateFragment: resource={} operation={} nonPatchableAttributes={}", resource, operation, resourceOperation.nonPatchableAttributes);
+
 					break;
 					
 				}

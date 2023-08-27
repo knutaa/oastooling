@@ -21,7 +21,7 @@ public class Samples {
 		LOG.debug("readPayload: requestResponse={} example={}", requestResponse, example.toString(2));
 		
 		try {
-			Object source = example.query("/" + requestResponse + "/file" );
+			Object source = example.optQuery("/" + requestResponse + "/file" );
 			
 			if(source!=null) {
 				String sourceFile = source.toString();

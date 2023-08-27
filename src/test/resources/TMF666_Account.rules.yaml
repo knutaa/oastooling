@@ -1,0 +1,815 @@
+rulesVersion: 1.0.0
+api:
+  name: Account Management
+  shortName: Account Management
+  description: Swagger for TMF666 Account Management API
+  tmfId: TMF666
+  hostUrl: https://serverRoot
+  basePath: /tmf-api/accountManagement/v5/
+  version: 5.0.0
+  resources:
+    - name: PartyAccount
+      schema: schemas/Tmf/EngagedParty/PartyAccount.schema.json#PartyAccount
+      examples:
+        - file: ./documentation/resource-samples/PartyAccount.example.json
+      supportedHttpMethods:
+        GET:
+          required: true
+          examples:
+            - name: PartyAccount list example
+              description: >-
+                Here is an example of a request for retrieving PartyAccount resources. 
+
+                Retrieving all party accounts of type Business with due status. The result items are shrunk to
+                show only the id, name and the credit limit (fields=id,name,creditLimit).
+              queryParameters:
+                - name: filtering
+                  value: status=due
+              content-type: application/json
+              isCollection: true
+              response:
+                file: ./documentation/operation-samples/PartyAccount_list_1_response.sample.json
+                description: Here is an example of a response for retrieving multiple PartyAccounts.
+            - name: PartyAccount retrieve example
+              description: Here is an example of a request for retrieving a PartyAccount resource
+              pathParameters:
+                - name: objectId
+                  value: '4458'
+              content-type: application/json
+              isCollection: false
+              response:
+                file: ./documentation/operation-samples/PartyAccount_retrieve_1_response.sample.json
+                description: Here is an example of a response for retrieving a specific PartyAccount.
+        POST:
+          required: true
+          examples:
+            - name: PartyAccount create example
+              description: Here is a sample of a request for creating an PartyAccount resource. In this example the request only passes mandatory attributes.
+              content-type: application/json
+              request:
+                file: ./documentation/operation-samples/PartyAccount_create_1_request.sample.json
+                description: Here is an example of a request for creating a PartyAccount.
+              response:
+                file: ./documentation/operation-samples/PartyAccount_create_1_response.sample.json
+                description: Here is an example of a response for creating a PartyAccount.
+          requiredParameters:
+            - name
+            - relatedParty
+        PATCH:
+          required: true
+          examples:
+            - name: PartyAccount update example Patch Merge
+              description: Here is an example of a request for patching an PartyAccount resource with change on credit limit attribute using patch merge
+              content-type: application/merge-patch+json
+              request:
+                file: ./documentation/operation-samples/PartyAccount_partialupdate_1_request.sample.json
+                description: Here is an example of a request for updating a PartyAccount with patch merge
+              response:
+                file: ./documentation/operation-samples/PartyAccount_partialupdate_1_response.sample.json
+                description: Here is an example of a response for updating a PartyAccount.
+            - name: PartyAccount update example JSON Patch
+              description: Here is an example of a request for patching a PartyAccount by adding another related party using json-patch
+              content-type: application/json-patch+json
+              request:
+                file: ./documentation/operation-samples/PartyAccount_partialupdate_2_request.sample.json
+                description: Here is an example of a request for updating a PartyAccount with JSON Patch
+              response:
+                file: ./documentation/operation-samples/PartyAccount_partialupdate_2_response.sample.json
+                description: Here is an example of a response for updating a PartyAccount.
+          parameterRestrictions:
+            excludedParameters:
+              - id
+              - href
+              - accountBalance
+              - lastUpdate
+              - '@type'
+              - '@baseType'
+        DELETE:
+          required: true
+      notifications:
+        - name: create
+          schema: schemas/Tmf/EngagedParty/Event/PartyAccountCreateEvent.schema.json#/definitions/PartyAccountCreateEvent
+          examples:
+            - name: CreatePartyAccountEvent
+              content-type: application/json
+              description: Message example for PartyAccountCreateEvent event
+              request:
+                file: ./documentation/notification-samples/PartyAccount_Create.example_request.json
+                description: Message example for PartyAccountCreateEvent event
+        - name: attributeValueChange
+          schema: schemas/Tmf/EngagedParty/Event/PartyAccountAttributeValueChangeEvent.schema.json#/definitions/PartyAccountAttributeValueChangeEvent
+          examples:
+           - name: PartyAccountAttributeValueChangeEvent
+             content-type: application/json
+             description: Message example for PartyAccountAttributeValueChangeEvent event
+             request:
+              file: ./documentation/notification-samples/PartyAccount_AttributeValueChange.example_request.json
+              description: Message example for PartyAccountAttributeValueChangeEvent event
+        - name: stateChange
+          schema: schemas/Tmf/EngagedParty/Event/PartyAccountStateChangeEvent.schema.json#/definitions/PartyAccountStateChangeEvent
+          examples:
+            - name: PartyAccountStateChangeEvent
+              content-type: application/json
+              description: Message example for PartyAccountStateChangeEvent event with ?fields=state property only
+              request:
+                file: ./documentation/notification-samples/PartyAccount_StateChange.example_request.json
+                description: Message example for PartyAccountStateChangeEvent event with ?fields=state property only
+        - name: delete
+          schema: schemas/Tmf/EngagedParty/Event/PartyAccountDeleteEvent.schema.json#/definitions/PartyAccountDeleteEvent
+          examples:
+            - name: PartyAccountDeleteEvent
+              content-type: application/json
+              description: Message example for PartyAccountDeleteEvent event
+              request:
+                file: ./documentation/notification-samples/PartyAccount_Delete.example_request.json
+                description: Message example for PartyAccountDeleteEvent event
+    - name: BillingAccount
+      schema: schemas/Tmf/Customer/BillingAccount.schema.json#BillingAccount
+      examples:
+        - file: ./documentation/resource-samples/BillingAccount.example.json
+      supportedHttpMethods:
+        GET:
+          required: true
+          examples:
+            - name: BillingAccount list example
+              description: >-
+                Here is an example of a request for retrieving BillingAccount resources. 
+
+                List all suspended billing accounts. The result items are shrunk to show only the id and name
+                (fields=id,name).
+              queryParameters:
+                - name: filtering
+                  value: state=Suspended
+              content-type: application/json
+              isCollection: true
+              response:
+                file: ./documentation/operation-samples/BillingAccount_list_1_response.sample.json
+                description: >-
+                  Here is an example of a response for retrieving BillingAccount resources. 
+
+                  List all suspended billing accounts. The result items are shrunk to show only the id and name
+                  (fields=id,name).
+            - name: BillingAccount retrieve example
+              description: Here is an example of a request for retrieving a BillingAccount resource
+              pathParameters:
+                - name: objectId
+                  value: '5430'
+              content-type: application/json
+              isCollection: false
+              response:
+                file: ./documentation/operation-samples/BillingAccount_retrieve_1_response.sample.json
+                description: Here is an example of a response for retrieving a specific BillingAccount.
+        POST:
+          required: true
+          examples:
+            - name: BillingAccount Create example
+              description: Here is an example of a request for creating a specific BillingAccount. In this example the request only passes mandatory attributes.
+              content-type: application/json
+              request:
+                file: ./documentation/operation-samples/BillingAccount_create_1_request.sample.json
+                description: Here is an example of a request for creating a BillingAccount.
+              response:
+                file: ./documentation/operation-samples/BillingAccount_create_1_response.sample.json
+                description: Here is an example of a response for creating a BillingAccount.
+          requiredParameters:
+            - name
+            - relatedParty
+        PATCH:
+          required: true
+          examples:
+            - name: BillingAccount Update example JSON Patch
+              description: Here is an example of a request for patching a BillingAccount. In this example, the name is modified, using JSON Patch
+              content-type: application/json-patch+json
+              request:
+                file: ./documentation/operation-samples/BillingAccount_partialupdate_1_request.sample.json
+                description: Here is an example of a request for updating a BillingAccount.
+              response:
+                file: ./documentation/operation-samples/BillingAccount_partialupdate_1_response.sample.json
+                description: Here is an example of a response for updating a BillingAccount.
+            - name: BillingAccount Update example Patch Merge
+              description: Here is an example of a request for patching a BillingAccount. In this example, the name is modified, using Patch Merge
+              content-type: application/merge-patch+json
+              request:
+                file: ./documentation/operation-samples/BillingAccount_partialupdate_2_request.sample.json
+                description: Here is an example of a request for updating a BillingAccount.
+              response:
+                file: ./documentation/operation-samples/BillingAccount_partialupdate_2_response.sample.json
+                description: Here is an example of a response for updating a BillingAccount.
+          parameterRestrictions:
+            excludedParameters:
+              - id
+              - href
+              - accountBalance
+              - lastUpdate
+              - '@type'
+              - '@baseType'
+        DELETE:
+          required: true
+      notifications:
+        - name: create
+          schema: schemas/Tmf/Customer/Event/BillingAccountCreateEvent.schema.json#/definitions/BillingAccountCreateEvent
+          examples:
+            - name: BillingAccountCreateEvent
+              content-type: application/json
+              description: Message example for BillingAccountCreateEvent event
+              request:
+                file: ./documentation/notification-samples/BillingAccount_Create.example_request.json
+                description: Message example for BillingAccountCreateEvent event
+        - name: attributeValueChange
+          schema: schemas/Tmf/Customer/Event/BillingAccountAttributeValueChangeEvent.schema.json#/definitions/BillingAccountAttributeValueChangeEvent
+          examples:
+            - name: BillingAccountAttributeValueChangeEvent
+              content-type: application/json
+              description: Message example for BillingAccountAttributeValueChangeEvent event
+              request:
+                file: ./documentation/notification-samples/BillingAccount_AttributeValueChange.example_request.json
+                description: Message example for BillingAccountAttributeValueChangeEvent event
+        - name: stateChange
+          schema: schemas/Tmf/Customer/Event/BillingAccountStateChangeEvent.schema.json#/definitions/BillingAccountStateChangeEvent
+          examples:
+            - name: BillingAccountStateChangeEvent
+              content-type: application/json
+              description: Message example for BillingAccountStateChangeEvent event with ?fields=state property only
+              request:
+                file: ./documentation/notification-samples/BillingAccount_StateChange.example_request.json
+                description: Message example for BillingAccountStateChangeEvent event with ?fields=state property only
+        - name: delete
+          schema: schemas/Tmf/Customer/Event/BillingAccountDeleteEvent.schema.json#/definitions/BillingAccountDeleteEvent
+          examples:
+            - name: BillingAccountDeleteEvent
+              content-type: application/json
+              description: Message example for BillingAccountDeleteEvent event
+              request:
+                file: ./documentation/notification-samples/BillingAccount_Delete.example_request.json
+                description: Message example for BillingAccountDeleteEvent event     
+    - name: SettlementAccount
+      schema: schemas/Tmf/EngagedParty/SettlementAccount.schema.json#SettlementAccount
+      examples:
+        - file: ./documentation/resource-samples/SettlementAccount.example.json
+      supportedHttpMethods:
+        GET:
+          required: true
+          examples:
+            - name: SettlementAccount list example
+              description: >-
+                Here is an example of a request for retrieving SettlementAccount resources. 
+
+                List all settlement accounts connected to a given party account. The result items are shrunk to show
+                only the id and name (fields=id,name).
+              queryParameters:
+                - name: filtering
+                  value: partyAccount.id=7876543
+              content-type: application/json
+              isCollection: true
+              response:
+                file: ./documentation/operation-samples/SettlementAccount_list_1_response.sample.json
+                description: >-
+                  Here is an example of a response for retrieving SettlementAccount resources. 
+
+                  List all settlement accounts connected to a given party account. The result items are shrunk to show
+                  only the id and name (fields=id,name).
+            - name: SettlementAccount retrieve example
+              description: Here is an example of a request for retrieving a SettlementAccount resource
+              pathParameters:
+                - name: objectId
+                  value: '8790'
+              content-type: application/json
+              isCollection: false
+              response:
+                file: ./documentation/operation-samples/SettlementAccount_retrieve_1_response.sample.json
+                description: Here is an example of a request for retrieving a specific SettlementAccount.
+        POST:
+          required: true
+          examples:
+            - name: SettlementAccount Create example
+              description: Here is an example of a request for creating a specific SettlementAccount. In this example the request only passes mandatory attributes.
+              content-type: application/json
+              request:
+                file: ./documentation/operation-samples/SettlementAccount_create_1_request.sample.json
+                description: Here is an example of a request for creating a SettlementAccount.
+              response:
+                file: ./documentation/operation-samples/SettlementAccount_create_1_response.sample.json
+                description: Here is an example of a response for creating a SettlementAccount.
+          requiredParameters:
+            - name
+            - relatedParty
+        PATCH:
+          required: true
+          examples:
+            - name: SettlementAccount Update example JSON Patch
+              description: Here is an example of a request for patching a SettlementAccount. In this example, a tax exemption is added, using JSON Patch
+              content-type: application/json-patch+json
+              request:
+                file: ./documentation/operation-samples/SettlementAccount_partialupdate_1_request.sample.json
+                description: Here is an example of a request for updating a SettlementAccount.
+              response:
+                file: ./documentation/operation-samples/SettlementAccount_partialupdate_1_response.sample.json
+                description: Here is an example of a response for updating a SettlementAccount.
+            - name: SettlementAccount Update example Patch Merge
+              description: Here is an example of a request for patching a SettlementAccount. In this example, credit limit and payment status are updated, using Patch Merge
+              content-type: application/merge-patch+json
+              request:
+                file: ./documentation/operation-samples/SettlementAccount_partialupdate_2_request.sample.json
+                description: Here is an example of a request for updating a SettlementAccount.
+              response:
+                file: ./documentation/operation-samples/SettlementAccount_partialupdate_2_response.sample.json
+                description: Here is an example of a response for updating a SettlementAccount.
+          parameterRestrictions:
+            excludedParameters:
+              - accountBalance
+              - lastUpdate
+              - href
+              - id
+              - '@type'
+              - '@baseType'
+        DELETE:
+          required: true
+      notifications:
+        - name: create
+          schema: schemas/Tmf/EngagedParty/Event/SettlementAccountCreateEvent.schema.json#/definitions/SettlementAccountCreateEvent
+          examples:
+            - name: SettlementAccountCreateEvent
+              content-type: application/json
+              description: Message example for SettlementAccountCreateEvent event
+              request:
+                file: ./documentation/notification-samples/SettlementAccount_Create.example_request.json
+                description: Message example for SettlementAccountCreateEvent event
+        - name: attributeValueChange
+          schema: schemas/Tmf/EngagedParty/Event/SettlementAccountAttributeValueChangeEvent.schema.json#/definitions/SettlementAccountAttributeValueChangeEvent
+          examples:
+            - name: SettlementAccountAttributeValueChangeEvent
+              content-type: application/json
+              description: Message example for SettlementAccountAttributeValueChangeEvent event
+              request:
+                file: ./documentation/notification-samples/SettlementAccount_AttributeValueChange.example_request.json
+                description: Message example for SettlementAccountAttributeValueChangeEvent event
+        - name: stateChange
+          schema: schemas/Tmf/EngagedParty/Event/SettlementAccountStateChangeEvent.schema.json#/definitions/SettlementAccountStateChangeEvent
+          examples:
+            - name: SettlementAccountStateChangeEvent
+              content-type: application/json
+              description: Message example for SettlementAccountStateChangeEvent event with ?fields=state property only
+              request:
+                file: ./documentation/notification-samples/SettlementAccount_StateChange.example_request.json
+                description: Message example for SettlementAccountStateChangeEvent event with ?fields=state property only
+        - name: delete
+          schema: schemas/Tmf/EngagedParty/Event/SettlementAccountDeleteEvent.schema.json#/definitions/SettlementAccountDeleteEvent
+          examples:
+            - name: SettlementAccountDeleteEvent
+              content-type: application/json
+              description: Message example for SettlementAccountDeleteEvent event
+              request:
+                file: ./documentation/notification-samples/SettlementAccount_Delete.example_request.json
+                description: Message example for SettlementAccountDeleteEvent event                
+    - name: FinancialAccount
+      schema: schemas/Tmf/EngagedParty/FinancialAccount.schema.json#FinancialAccount
+      examples:
+        - file: ./documentation/resource-samples/FinancialAccount.example.json
+      supportedHttpMethods:
+        GET:
+          required: true
+          examples:
+            - name: FinancialAccount list example
+              description: Here is an example of a request for retrieving multiple FinancialAccounts.
+              content-type: application/json
+              isCollection: true
+              response:
+                file: ./documentation/operation-samples/FinancialAccount_list_1_response.sample.json
+                description: Here is an example of a response for retrieving FinancialAccount resources.
+            - name: FinancialAccount retrieve example
+              description: Here is an example of a request for retrieving a specific FinancialAccount.
+              pathParameters:
+                - name: objectId
+                  value: '1041'
+              content-type: application/json
+              isCollection: false
+              response:
+                file: ./documentation/operation-samples/FinancialAccount_retrieve_1_response.sample.json
+                description: Here is an example of a response for retrieving a specific FinancialAccount.
+        POST:
+          required: true
+          examples:
+            - name: FinancialAccount Create example
+              description: Here is an example of a request for creating a specific FinancialAccount. In this example the request only passes mandatory attributes.
+              content-type: application/json
+              request:
+                file: ./documentation/operation-samples/FinancialAccount_create_1_request.sample.json
+                description: Here is an example of a request for creating a FinancialAccount.
+              response:
+                file: ./documentation/operation-samples/FinancialAccount_create_1_response.sample.json
+                description: Here is an example of a response for creating a FinancialAccount.
+          requiredParameters:
+            - name
+            - relatedParty
+        PATCH:
+          required: true
+          examples:
+            - name: FinancialAccount Update example Patch Merge
+              description: Here is an example of a request for patching a FinancialAccount. In this example, the name attribute is set, using Patch Merge
+              content-type: application/merge-patch+json
+              request:
+                file: ./documentation/operation-samples/FinancialAccount_partialupdate_1_request.sample.json
+                description: Here is an example of a request for updating a FinancialAccount.
+              response:
+                file: ./documentation/operation-samples/FinancialAccount_partialupdate_1_response.sample.json
+                description: Here is an example of a response for updating a FinancialAccount.
+            - name: FinancialAccount Update example JSON Patch
+              description: Here is an example of a request for patching a FinancialAccount, by adding another related party using json-patch
+              content-type: application/json-patch+json
+              request:
+                file: ./documentation/operation-samples/FinancialAccount_partialupdate_2_request.sample.json
+                description: Here is an example of a request for updating a FinancialAccount.
+              response:
+                file: ./documentation/operation-samples/FinancialAccount_partialupdate_2_response.sample.json
+                description: Here is an example of a response for updating a FinancialAccount.
+          parameterRestrictions:
+            excludedParameters:
+              - href
+              - id
+              - accountBalance
+              - lastUpdate
+              - '@type'
+              - '@baseType'
+        DELETE:
+          required: true
+      notifications:
+        - name: create
+          schema: schemas/Tmf/EngagedParty/Event/FinancialAccountCreateEvent.schema.json#/definitions/FinancialAccountCreateEvent
+          examples:
+            - name: FinancialAccountCreateEvent
+              content-type: application/json
+              description: Message example for FinancialAccountCreateEvent event
+              request:
+                file: ./documentation/notification-samples/FinancialAccount_Create.example_request.json
+                description: Message example for FinancialAccountCreateEvent event
+        - name: attributeValueChange
+          schema: schemas/Tmf/EngagedParty/Event/FinancialAccountAttributeValueChangeEvent.schema.json#/definitions/FinancialAccountAttributeValueChangeEvent
+          examples:
+            - name: FinancialAccountAttributeValueChangeEvent
+              content-type: application/json
+              description: Message example for FinancialAccountAttributeValueChangeEvent event
+              request:
+                file: ./documentation/notification-samples/FinancialAccount_AttributeValueChange.example_request.json
+                description: Message example for FinancialAccountAttributeValueChangeEvent event
+        - name: stateChange
+          schema: schemas/Tmf/EngagedParty/Event/FinancialAccountStateChangeEvent.schema.json#/definitions/FinancialAccountStateChangeEvent
+          examples:
+            - name: FinancialAccountStateChangeEvent
+              content-type: application/json
+              description: Message example for FinancialAccountStateChangeEvent event with ?fields=state property only
+              request:
+                file: ./documentation/notification-samples/FinancialAccount_StateChange.example_request.json
+                description: Message example for FinancialAccountStateChangeEvent event with ?fields=state property only
+        - name: delete
+          schema: schemas/Tmf/EngagedParty/Event/FinancialAccountDeleteEvent.schema.json#/definitions/FinancialAccountDeleteEvent
+          examples:
+            - name: FinancialAccountDeleteEvent
+              content-type: application/json
+              description: Message example for FinancialAccountDeleteEvent event
+              request:
+                file: ./documentation/notification-samples/FinancialAccount_Delete.example_request.json
+                description: Message example for FinancialAccountDeleteEvent event
+    - name: BillFormat
+      schema: schemas/Tmf/Customer/BillFormat.schema.json#BillFormat
+      examples:
+        - file: ./documentation/resource-samples/BillFormat.example.json
+      supportedHttpMethods:
+        GET:
+          required: true
+          examples:
+            - name: BillFormat list example
+              description: >-
+                Retrieving all bill formats. The result items are shrunk to show only the id and name
+                (fields=id,name).
+              queryParameters:
+                - name: fields
+                  value: id,name
+              content-type: application/json
+              isCollection: true
+              response:
+                file: ./documentation/operation-samples/BillFormat_list_1_response.sample.json
+                description: >-
+                  Retrieving all bill formats. The result items are shrunk to show only the id and name
+                  (fields=id,name).
+            - name: BillFormat retrieve example
+              description: Here is an example of a request for retrieving a BillFormat resource
+              pathParameters:
+                - name: objectId
+                  value: '8718'
+              content-type: application/json
+              isCollection: false
+              response:
+                file: ./documentation/operation-samples/BillFormat_retrieve_1_response.sample.json
+                description: Here is an example of a request for retrieving a BillFormat resource
+        POST:
+          required: true
+          examples:
+            - name: BillFormat create example
+              description: Here is a sample of a request for creating a BillFormat resource. In this example the request only passes mandatory attributes.
+              content-type: application/json
+              request:
+                file: ./documentation/operation-samples/BillFormat_create_1_request.sample.json
+                description: Here is an example of a request for creating a BillFormat.
+              response:
+                file: ./documentation/operation-samples/BillFormat_create_1_response.sample.json
+                description: Here is an example of a response for creating a BillFormat.
+          requiredParameters:
+            - name
+        PATCH:
+          required: true
+          examples:
+            - name: BillFormat update example Patch Merge
+              description: Here is an example of a request for patching a BillFormat resource with change on description attribute using patch merge
+              content-type: application/merge-patch+json
+              request:
+                file: ./documentation/operation-samples/BillFormat_partialupdate_1_request.sample.json
+                description: Here is an example of a request for updating a BillFormat with patch merge
+              response:
+                file: ./documentation/operation-samples/BillFormat_partialupdate_1_response.sample.json
+                description: Here is an example of a response for updating a BillFormat.
+            - name: BillFormat update example JSON Patch
+              description: Here is an example of a request for patching a BillFormat resource with change on description attribute using JSON Patch
+              content-type: application/json-patch+json
+              request:
+                file: ./documentation/operation-samples/BillFormat_partialupdate_2_request.sample.json
+                description: Here is an example of a request for updating a BillFormat with json patch
+              response:
+                file: ./documentation/operation-samples/BillFormat_partialupdate_2_response.sample.json
+                description: Here is an example of a response for updating a BillFormat.
+          parameterRestrictions:
+            excludedParameters:
+              - id
+              - href
+              - '@type'
+              - '@baseType'
+        DELETE:
+          required: true
+      notifications:
+        - name: create
+          schema: schemas/Tmf/Customer/Event/BillFormatCreateEvent.schema.json#/definitions/BillFormatCreateEvent
+          examples:
+            - name: CreateBillFormatEvent
+              content-type: application/json
+              description: Message example for BillFormatCreateEvent event
+              request:
+                file: ./documentation/notification-samples/BillFormat_Create.example_request.json
+                description: Message example for BillFormatCreateEvent event
+        - name: attributeValueChange
+          schema: schemas/Tmf/Customer/Event/BillFormatAttributeValueChangeEvent.schema.json#/definitions/BillFormatAttributeValueChangeEvent
+          examples:
+           - name: BillFormatAttributeValueChangeEvent
+             content-type: application/json
+             description: Message example for BillFormatAttributeValueChangeEvent event
+             request:
+              file: ./documentation/notification-samples/BillFormat_AttributeValueChange.example_request.json
+              description: Message example for BillFormatAttributeValueChangeEvent event
+        - name: stateChange
+          schema: schemas/Tmf/Customer/Event/BillFormatStateChangeEvent.schema.json#/definitions/BillFormatStateChangeEvent
+          examples:
+            - name: BillFormatStateChangeEvent
+              content-type: application/json
+              description: Message example for BillFormatStateChangeEvent event with ?fields=state property only
+              request:
+                file: ./documentation/notification-samples/BillFormat_StateChange.example_request.json
+                description: Message example for BillFormatStateChangeEvent event with ?fields=state property only
+        - name: delete
+          schema: schemas/Tmf/Customer/Event/BillFormatDeleteEvent.schema.json#/definitions/BillFormatDeleteEvent
+          examples:
+            - name: BillFormatDeleteEvent
+              content-type: application/json
+              description: Message example for BillFormatDeleteEvent event
+              request:
+                file: ./documentation/notification-samples/BillFormat_Delete.example_request.json
+                description: Message example for BillFormatDeleteEvent event
+    - name: BillPresentationMedia
+      schema: schemas/Tmf/Customer/BillPresentationMedia.schema.json#BillPresentationMedia
+      examples:
+        - file: ./documentation/resource-samples/BillPresentationMedia.example.json
+      supportedHttpMethods:
+        GET:
+          required: true
+          examples:
+            - name: BillPresentationMedia list example
+              description: >-
+                Retrieving all bill presentation medias. The result items are shrunk to show only the id and name
+                (fields=id,name).
+              queryParameters:
+                - name: fields
+                  value: id,name
+              content-type: application/json
+              isCollection: true
+              response:
+                file: ./documentation/operation-samples/BillPresentationMedia_list_1_response.sample.json
+                description: >-
+                  Retrieving all bill presentation medias. The result items are shrunk to show only the id and name
+                  (fields=id,name).
+            - name: BillPresentationMedia retrieve example
+              description: Here is an example of a request for retrieving a BillPresentationMedia resource
+              pathParameters:
+                - name: objectId
+                  value: '4506'
+              content-type: application/json
+              isCollection: false
+              response:
+                file: ./documentation/operation-samples/BillPresentationMedia_retrieve_1_response.sample.json
+                description: Here is an example of a response for retrieving a BillPresentationMedia resource
+        POST:
+          required: true
+          examples:
+            - name: BillPresentationMedia create example
+              description: Here is a sample of a request for creating a BillPresentationMedia resource. In this example the request only passes mandatory attributes.
+              content-type: application/json
+              request:
+                file: ./documentation/operation-samples/BillPresentationMedia_create_1_request.sample.json
+                description: Here is an example of a request for creating a BillPresentationMedia.
+              response:
+                file: ./documentation/operation-samples/BillPresentationMedia_create_1_response.sample.json
+                description: Here is an example of a response for creating a BillPresentationMedia.
+          requiredParameters:
+            - name
+        PATCH:
+          required: true
+          examples:
+            - name: BillPresentationMedia update example Patch Merge
+              description: Here is an example of a request for patching a BillPresentationMedia resource with change on description attribute using patch merge
+              content-type: application/merge-patch+json
+              request:
+                file: ./documentation/operation-samples/BillPresentationMedia_partialupdate_1_request.sample.json
+                description: Here is an example of a request for updating a BillPresentationMedia with patch merge
+              response:
+                file: ./documentation/operation-samples/BillPresentationMedia_partialupdate_1_response.sample.json
+                description: Here is an example of a response for updating a BillPresentationMedia.
+            - name: BillPresentationMedia update example JSON Patch
+              description: Here is an example of a request for patching a BillPresentationMedia resource with change on description attribute using JSON patch
+              content-type: application/json-patch+json
+              request:
+                file: ./documentation/operation-samples/BillPresentationMedia_partialupdate_2_request.sample.json
+                description: Here is an example of a request for updating a BillPresentationMedia with json patch
+              response:
+                file: ./documentation/operation-samples/BillPresentationMedia_partialupdate_2_response.sample.json
+                description: Here is an example of a response for updating a BillPresentationMedia.
+          parameterRestrictions:
+            excludedParameters:
+              - id
+              - href
+              - '@type'
+              - '@baseType'
+        DELETE:
+          required: true
+      notifications:
+        - name: create
+          schema: schemas/Tmf/Customer/Event/BillPresentationMediaCreateEvent.schema.json#/definitions/BillPresentationMediaCreateEvent
+          examples:
+            - name: CreateBillPresentationMediaEvent
+              content-type: application/json
+              description: Message example for BillPresentationMediaCreateEvent event
+              request:
+                file: ./documentation/notification-samples/BillPresentationMedia_Create.example_request.json
+                description: Message example for BillPresentationMediaCreateEvent event
+        - name: attributeValueChange
+          schema: schemas/Tmf/Customer/Event/BillPresentationMediaAttributeValueChangeEvent.schema.json#/definitions/BillPresentationMediaAttributeValueChangeEvent
+          examples:
+           - name: BillPresentationMediaAttributeValueChangeEvent
+             content-type: application/json
+             description: Message example for BillPresentationMediaAttributeValueChangeEvent event
+             request:
+              file: ./documentation/notification-samples/BillPresentationMedia_AttributeValueChange.example_request.json
+              description: Message example for BillPresentationMediaAttributeValueChangeEvent event
+        - name: stateChange
+          schema: schemas/Tmf/Customer/Event/BillPresentationMediaStateChangeEvent.schema.json#/definitions/BillPresentationMediaStateChangeEvent
+          examples:
+            - name: BillPresentationMediaStateChangeEvent
+              content-type: application/json
+              description: Message example for BillPresentationMediaStateChangeEvent event with ?fields=state property only
+              request:
+                file: ./documentation/notification-samples/BillPresentationMedia_StateChange.example_request.json
+                description: Message example for BillPresentationMediaStateChangeEvent event with ?fields=state property only
+        - name: delete
+          schema: schemas/Tmf/Customer/Event/BillPresentationMediaDeleteEvent.schema.json#/definitions/BillPresentationMediaDeleteEvent
+          examples:
+            - name: BillPresentationMediaDeleteEvent
+              content-type: application/json
+              description: Message example for BillPresentationMediaDeleteEvent event
+              request:
+                file: ./documentation/notification-samples/BillPresentationMedia_Delete.example_request.json
+                description: Message example for BillPresentationMediaDeleteEvent event
+    - name: BillingCycleSpecification
+      schema: schemas/Tmf/Customer/BillingCycleSpecification.schema.json#/definitions/BillingCycleSpecification
+      examples:
+        - file: ./documentation/resource-samples/BillingCycleSpecification.example.json
+      supportedHttpMethods:
+        GET:
+          required: true
+          examples:
+            - name: BillingCycleSpecification list example
+              description: Here is an example of a request for retrieving BillingCycleSpecification resources. Retrieving all BillingCycleSpecifications. The result items are field-restricted to show only the id and name
+              queryParameters:
+                - name: fields
+                  value: id,name
+              content-type: application/json
+              isCollection: true
+              response:
+                file: ./documentation/operation-samples/BillingCycleSpecification_list_1_response.sample.json
+                description: Here is an example of a response for retrieving multiple BillingCycleSpecifications.
+            - name: BillingCycleSpecification retrieve example
+              description: Here is a sample of a request for retrieving a BillingCycleSpecification resource based on its ID.
+              pathParameters:
+                - name: objectId
+                  value: '4556'
+              content-type: application/json
+              isCollection: false
+              response:
+                file: ./documentation/operation-samples/BillingCycleSpecification_retrieve_1_response.sample.json
+                description: Here is an example of a response for retrieving a specific BillingCycleSpecification.
+        POST:
+          required: true
+          examples:
+            - name: BillingCycleSpecification create example
+              description: Here is a sample of a request for creating a BillingCycleSpecification resource. In this example the request only passes mandatory attributes.
+              content-type: application/json
+              request:
+                file: ./documentation/operation-samples/BillingCycleSpecification_create_1_request.sample.json
+                description: Here is an example of a request for creating a BillingCycleSpecification.
+              response:
+                file: ./documentation/operation-samples/BillingCycleSpecification_create_1_response.sample.json
+                description: Here is an example of a response for creating a BillingCycleSpecification.
+          requiredParameters:
+            - name
+        PATCH:
+          required: true
+          examples:
+            - name: BillingCycleSpecification update example Patch Merge
+              description: Here is an example of a request for patching a BillingCycleSpecification resource with change on mailing date offset attribute using patch merge
+              content-type: application/merge-patch+json
+              request:
+                file: ./documentation/operation-samples/BillingCycleSpecification_partialupdate_1_request.sample.json
+                description: Here is an example of a request for updating a BillingCycleSpecification with patch merge
+              response:
+                file: ./documentation/operation-samples/BillingCycleSpecification_partialupdate_1_response.sample.json
+                description: Here is an example of a response for updating a BillingCycleSpecification.
+            - name: BillingCycleSpecification update example JSON Patch
+              description: Here is an example of a request for patching a BillingCycleSpecification resource with change on mailing date offset attribute using JSON patch
+              content-type: application/json-patch+json
+              request:
+                file: ./documentation/operation-samples/BillingCycleSpecification_partialupdate_2_request.sample.json
+                description: Here is an example of a request for updating a BillingCycleSpecification with JSON patch
+              response:
+                file: ./documentation/operation-samples/BillingCycleSpecification_partialupdate_2_response.sample.json
+                description: Here is an example of a response for updating a BillingCycleSpecification.
+          parameterRestrictions:
+            excludedParameters:
+              - id
+              - href
+              - '@type'
+              - '@baseType'
+        DELETE:
+          required: true
+      notifications:
+        - name: create
+          schema: schemas/Tmf/Customer/Event/BillingCycleSpecificationCreateEvent.schema.json#/definitions/BillingCycleSpecificationCreateEvent
+          examples:
+            - name: CreateBillingCycleSpecificationEvent
+              content-type: application/json
+              description: Message example for BillingCycleSpecificationCreateEvent event
+              request:
+                file: ./documentation/notification-samples/BillingCycleSpecification_Create.example_request.json
+                description: Message example for BillingCycleSpecificationCreateEvent event
+        - name: attributeValueChange
+          schema: schemas/Tmf/Customer/Event/BillingCycleSpecificationAttributeValueChangeEvent.schema.json#/definitions/BillingCycleSpecificationAttributeValueChangeEvent
+          examples:
+           - name: BillingCycleSpecificationAttributeValueChangeEvent
+             content-type: application/json
+             description: Message example for BillingCycleSpecificationAttributeValueChangeEvent event
+             request:
+              file: ./documentation/notification-samples/BillingCycleSpecification_AttributeValueChange.example_request.json
+              description: Message example for BillingCycleSpecificationAttributeValueChangeEvent event
+        - name: stateChange
+          schema: schemas/Tmf/Customer/Event/BillingCycleSpecificationStateChangeEvent.schema.json#/definitions/BillingCycleSpecificationStateChangeEvent
+          examples:
+            - name: BillingCycleSpecificationStateChangeEvent
+              content-type: application/json
+              description: Message example for BillingCycleSpecificationStateChangeEvent event with ?fields=state property only
+              request:
+                file: ./documentation/notification-samples/BillingCycleSpecification_StateChange.example_request.json
+                description: Message example for BillingCycleSpecificationStateChangeEvent event with ?fields=state property only
+        - name: delete
+          schema: schemas/Tmf/Customer/Event/BillingCycleSpecificationDeleteEvent.schema.json#/definitions/BillingCycleSpecificationDeleteEvent
+          examples:
+            - name: BillingCycleSpecificationDeleteEvent
+              content-type: application/json
+              description: Message example for BillingCycleSpecificationDeleteEvent event
+              request:
+                file: ./documentation/notification-samples/BillingCycleSpecification_Delete.example_request.json
+                description: Message example for BillingCycleSpecificationDeleteEvent event
+    - name: ContactMedium
+      schema: schemas/Tmf/Common/ContactMedium.schema.json#/definitions/ContactMedium
+    - name: EmailContactMedium
+      schema: schemas/Tmf/Common/EmailContactMedium.schema.json#/definitions/EmailContactMedium
+    - name: PhoneContactMedium
+      schema: schemas/Tmf/Common/PhoneContactMedium.schema.json#/definitions/PhoneContactMedium
+    - name: FaxContactMedium
+      schema: schemas/Tmf/Common/FaxContactMedium.schema.json#/definitions/FaxContactMedium
+    - name: SocialContactMedium
+      schema: schemas/Tmf/Common/SocialContactMedium.schema.json#/definitions/SocialContactMedium
+    - name: GeographicAddressContactMedium
+      schema: schemas/Tmf/Common/GeographicAddressContactMedium.schema.json#/definitions/GeographicAddressContactMedium                

@@ -63,5 +63,8 @@ public class GenerateConformanceGuide extends GenerateCommon {
 	
 	}
 	
+	public ConformanceModel getConformanceModel() {
+		return this.model;
+	}
 
 }
