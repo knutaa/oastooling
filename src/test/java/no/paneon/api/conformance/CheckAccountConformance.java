@@ -24,7 +24,7 @@ public class CheckAccountConformance  {
 
 	}
 	
-    static String oasFile = "./src/test/resources/TMF666_Account_v5.0.0_oas.yaml";
+    static String oasFile = "./src/test/resources/TMF666-Account_Management-v5.0.0.oas.yaml";
     static String conformanceFile = "./src/test/resources/TMF666_conformance.yaml";
     static String rulesFile = "./src/test/resources/TMF666_Account.rules.yaml";
 
@@ -70,9 +70,7 @@ public class CheckAccountConformance  {
     @Test
     public void checkConformance() {
     	
-    	assert(true);
-    	if(true) return;
-    	
+ 	
     	Args                             args = new Args();
 		Args.ConformanceGuide argsConformance = args.new ConformanceGuide();
     	
@@ -99,7 +97,7 @@ public class CheckAccountConformance  {
 	    	
 	    	expected.removeAll(confItems);
 	    	
-	    	Out.debug("... residue={}", expected);
+	    	Out.debug("... residue={} size={}", expected, expected.size());
 
 	    	assert(expected.isEmpty());
 	    	
@@ -132,14 +130,7 @@ public class CheckAccountConformance  {
 	    	generator.init();
 	    	
 	    	ConformanceModel conformance = generator.model;
-	    	
-	    	// JSONObject model = conformance.getConformance();
-	    	// Out.debug("... conformance model={}",  model.toString(2));
-	    	
-	    	// Set<String> properties = APIModel.getPropertiesExpanded("BillingAccount");
-	    	
-	    	// Out.debug("... BillingAccount properties={}", properties);
-	    	
+	    	    	
 	    	List<String[]> conf = conformance.getNonPatchable("BillingAccount");
 	    	
 	    	Out.debug("... conf={}", conf);
@@ -148,7 +139,7 @@ public class CheckAccountConformance  {
 	    	
 	    	Out.debug("... confItems={}", confItems);
 
-	    	Set<String> expected = new HashSet<>( Set.of("@type", "href", "id", "@baseType", "@schemaLocation" ) );
+	    	Set<String> expected = new HashSet<>( Set.of("@type", "href", "id", "@baseType", "@schemaLocation", "lastUpdate", "accountBalance" ) );
 	    	
 	    	expected.removeAll(confItems);
 	    	
@@ -168,6 +159,50 @@ public class CheckAccountConformance  {
     	
     }
 	
+    
+    @Test
+    public void checkMandatoryInPost() {
+    	Args                             args = new Args();
+		Args.Conformance argsConformance = args.new Conformance();
+    	
+		argsConformance.openAPIFile = oasFile;
+		argsConformance.targetDirectory = ".";
+		// argsConformance.rulesFile = rulesFile;
+		
+		argsConformance.outputFileName = "tmf666-conformance.yaml";
+
+		try {
+	    	GenerateConformance generator = new GenerateConformance(argsConformance);
+	    	
+	    	generator.init();
+	    	
+	    	ConformanceModel conformance = generator.model;
+	    	    	
+	    	List<ConformanceItem> conf = conformance.getMandatoryConformanceInPost(null,"BillingAccount");
+	    	
+	    	Set<String> confItems = conf.stream().map(p -> p.label).collect(Collectors.toSet());
+	    	
+	    	Out.debug("... confItems={}", confItems);
+
+	    	Set<String> expected = new HashSet<>( Set.of("relatedParty.role", "@type", "name", "relatedParty", "relatedParty.@type") );
+	    	
+	    	expected.removeAll(confItems);
+	    	
+	    	Out.debug("... residue={}", expected);
+
+	    	assert(expected.isEmpty());
+	    	
+	    	Out.debug("... test completed");
+	    	
+		} catch(Exception ex) {
+	    	Out.println("... exception:" + ex.getLocalizedMessage());
+
+		}
+    	
+    	assert(true);
+    	
+    	
+    }
     
     
 }

@@ -244,12 +244,13 @@ public class ConformanceData extends GeneratorData {
 					
 				case "PATCH":
 					resourceOperation.patch = opConf;
-					resourceOperation.patchableAttributes = model.getMandatoryConformanceInPatch(resource);
-					
-					resourceOperation.hasPatchableAttributes = !resourceOperation.patchableAttributes.isEmpty();
-					
+
 					resourceOperation.nonPatchableAttributes = model.getNonPatchableConformance(resource);
 					resourceOperation.hasNonPatchableAttributes = !resourceOperation.nonPatchableAttributes.isEmpty();
+
+					resourceOperation.patchableAttributes = model.getMandatoryConformanceInPatch(resource, resourceOperation.nonPatchableAttributes);
+					
+					resourceOperation.hasPatchableAttributes = !resourceOperation.patchableAttributes.isEmpty();
 					
 					LOG.debug("generateFragment: resource={} operation={} patchableAttributes={}", resource, operation, resourceOperation.patchableAttributes);
 					LOG.debug("generateFragment: resource={} operation={} nonPatchableAttributes={}", resource, operation, resourceOperation.nonPatchableAttributes);

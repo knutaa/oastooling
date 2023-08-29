@@ -29,3 +29,10 @@ hs_err_pid*
 .settings
 /org.junit.rules.TemporaryFolder*
 *.gql
+
+*.adoc
+/test-conformance/
+test-conformance.yaml
+test-conf.yaml
+.factorypath
+

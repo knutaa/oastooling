@@ -253,7 +253,7 @@ public class OperationsFragment {
 
 						propertyRules = generator.conformance.getMandatoryInPost(opDetail,resource);
 
-						Out.debug("getOperationsDetailsForResource: CREATE resource={} propertyRules={}", resource, propertyRules);
+						LOG.debug("getOperationsDetailsForResource: CREATE resource={} propertyRules={}", resource, propertyRules);
 
 						if(propertyRules!=null) {
 							data.mandatory = propertyRules.stream().map(this::createPropertyRuleData).collect(toList());

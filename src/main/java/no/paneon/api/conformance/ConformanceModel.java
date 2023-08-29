@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -682,16 +683,33 @@ public class ConformanceModel extends CoreModel {
 		
 		Map<String,String> propertyConditions = APIModel.getMandatoryOptional(resource,APIModel.getResourceForPost(opDetail,resource));
 				
-		Out.debug("getMandatoryInPost: resource={} propCond={}", resource, propertyConditions);
+		LOG.debug("getMandatoryInPost: resource={} propCond={}", resource, propertyConditions);
 		
 		JSONObject conformance = getConformance(resource, OPERATIONS_DETAILS, POST, MANDATORY);
 		
-		Out.debug("getMandatoryInPost: resource={} conformance={}", resource, conformance);
+		LOG.debug("getMandatoryInPost: resource={} conformance={}", resource, conformance);
 		
-		return getMandatoryInOperationHelper(resource, conformance, propertyConditions, ValueSource.USE_FOUND);
+		JSONObject operationsConf = getOperationDetailsForResourceFromRules(resource,"POST");
+
+		LOG.debug("getMandatoryInPost: resource={} operationsConf={}", resource, operationsConf);
+
+		return getMandatoryInOperationHelper(resource, conformance, propertyConditions, operationsConf, ValueSource.USE_FOUND);
 		
 	}
 	
+	private JSONObject getOperationDetailsForResourceFromRules(String resource, String op) {
+		
+		JSONObject rulesFragment = Config.getRulesForResource(resource); 
+		if(rulesFragment!=null) {
+			Object details = rulesFragment.optQuery("/supportedHttpMethods/" + op);
+			if(details!=null && details instanceof JSONObject) {
+				return (JSONObject)details;
+			} 
+		}
+
+		return null;
+	}
+
 	@LogMethod(level=LogLevel.DEBUG)
 	public List<ConformanceItem> getMandatoryConformanceInPost(JSONObject opDetail, String resource) { 
 		List<String[]> tmp =  getMandatoryInPost(opDetail, resource);
@@ -701,8 +719,11 @@ public class ConformanceModel extends CoreModel {
 	}
 	
 	@LogMethod(level=LogLevel.DEBUG)
-	public List<ConformanceItem> getMandatoryConformanceInPatch(String resource) { 
-		List<String[]> tmp =  getMandatoryInPatch(resource);
+	public List<ConformanceItem> getMandatoryConformanceInPatch(String resource, List<ConformanceItem> nonPatchableAttributes) { 
+		
+		Set<String> nonPatchable = nonPatchableAttributes.stream().map(o -> o.label).collect(Collectors.toSet());
+		
+		List<String[]> tmp =  getMandatoryInPatch(resource,nonPatchable);
 		
 		return tmp.stream().map(ConformanceItem::new).collect(Collectors.toList());
 		
@@ -720,15 +741,18 @@ public class ConformanceModel extends CoreModel {
 	
 	
 	@LogMethod(level=LogLevel.DEBUG)
-	public List<String[]> getMandatoryInPatch(String resource) {
+	public List<String[]> getMandatoryInPatch(String resource, Set<String> nonPatchable) {
 		
 		Map<String,String> propertyConditions = APIModel.getMandatoryOptional(resource,APIModel.getResourceForPatch(resource));	
-				
+								
 		JSONObject conformance = getConformance(resource, OPERATIONS_DETAILS, PATCH, PATCHABLE);
 		
+		nonPatchable.stream().forEach(conformance::remove);
+		
+		LOG.debug("getMandatoryInPatch: resource={} nonPatchable={}",  resource, nonPatchable);
 		LOG.debug("getMandatoryInPatch: resource={} conformance={}",  resource, conformance);
 
-		return getMandatoryInOperationHelper(resource, conformance, propertyConditions, ValueSource.SET_EMPTY);
+		return getMandatoryInOperationHelper(resource, conformance, propertyConditions, conformance, ValueSource.SET_EMPTY);
 		
 	}
 	
@@ -738,7 +762,7 @@ public class ConformanceModel extends CoreModel {
 	}
 	
 	@LogMethod(level=LogLevel.DEBUG)
-	public List<String[]> getMandatoryInOperationHelper(String resource, JSONObject conformance, Map<String,String>  propertyConditions, ValueSource valueSource) {
+	public List<String[]> getMandatoryInOperationHelper(String resource, JSONObject conformance, Map<String,String>  propertyConditions, JSONObject operationsConf, ValueSource valueSource) {
 		Map<String,String[]> res = new HashMap<>();
 						
 		for( Entry<String,String> entry : propertyConditions.entrySet() ) {
@@ -749,8 +773,7 @@ public class ConformanceModel extends CoreModel {
 					res.put(entry.getKey(), new String[] { entry.getKey(), value, "" });	
 				}
 			} else {
-				Out.debug("... property {} not seen in in resource {}", entry.getKey(), resource);
-
+				Out.debug("... WARNING: property {} not seen in in resource {}", entry.getKey(), resource);
 			}
 		}
 		
@@ -764,11 +787,29 @@ public class ConformanceModel extends CoreModel {
 						if(conf!=null) {
 							String rule = conf.optString(RULE);
 							if("null".contentEquals(rule)) rule = "";
-							res.put(property, new String[] { property, rule });
-							
+							res.put(property, new String[] { property, rule });							
 						}
 					} else {
-						Out.debug("... issue: property {} not seen in in resource {}", property, resource);
+						Out.debug("... WARNING: property {} not seen in in resource {}", property, resource);
+					}
+				}
+			}
+		}
+		
+		if(operationsConf!=null) {
+			JSONArray required = operationsConf.optJSONArray("requiredParameters");
+			
+			if(required!=null) {
+				Set<String> requiredProperties = required.toList().stream().map(Object::toString).collect(Collectors.toSet());
+				for(String property : requiredProperties) {
+					
+					LOG.debug("getMandatoryInOperationHelper: property={}", property);
+
+					if(propertyInResource(resource,property)) {
+						String rule = "";
+						res.put(property, new String[] { property, rule });
+					} else {
+						Out.debug("... WARNING: property {} not seen in in resource {}", property, resource);
 					}
 				}
 			}
@@ -1352,14 +1393,14 @@ public class ConformanceModel extends CoreModel {
 		boolean useConformanceSourceOnly = Config.getBoolean(CONFORMANCE_SOURCE_ONLY);
 				
 		if(!useConformanceSourceOnly && rulesExtract!=null) {
-			Out.debug("combineConformance:: rulesExtract={}", rulesExtract.toString(2));
+			LOG.debug("combineConformance:: rulesExtract={}", rulesExtract.toString(2));
 
 			combineConformance(res, rulesExtract);
 			if(LOG.isTraceEnabled()) LOG.log(Level.TRACE, "generateConformance: with rules :: {}", res.toString(2));
 		}
 		
 		if(!useConformanceSourceOnly && ruleconf!=null) {
-			Out.debug("combineConformance:: ruleConf={}", ruleconf.toString(2));
+			LOG.debug("combineConformance:: ruleConf={}", ruleconf.toString(2));
 			
 			combineConformance(res, ruleconf);
 			if(LOG.isTraceEnabled()) LOG.log(Level.TRACE, "generateConformance: with ruleconf :: {}", res.toString(2));
@@ -1373,8 +1414,12 @@ public class ConformanceModel extends CoreModel {
 		}
 			
 				
+		if(explicit!=null) LOG.debug("generateConformance: explicit={}", explicit.toString(2));
+
 		combineConformance(res, explicit, useConformanceSourceOnly);
-						
+				
+		LOG.debug("generateConformance: res with explicit={}", res.toString(2));
+
 		if(LOG.isTraceEnabled()) LOG.log(Level.TRACE, "generateConformance: with explicit :: {}", res.toString(2));
 
 		addDefaultConformance(res, model.optJSONObject(DEFAULT_CONFORMANCE));
@@ -1687,8 +1732,11 @@ public class ConformanceModel extends CoreModel {
 
 		for(String key : candidate.keySet()) {
 		
-			LOG.debug("combineConformanceHelper:: candidate={}", candidate.toString());
+			LOG.debug("combineConformanceHelper:: candidate={}", candidate.toString(2));
 			
+			if(key.startsWith(OPERATIONS_DETAILS)) LOG.debug("combineConformanceHelper:: candidate={}", candidate.get(key).toString());
+			if(key.startsWith(MANDATORY)) LOG.debug("combineConformanceHelper:: candidate={}", candidate.get(key).toString());
+
 			boolean override = key.startsWith(OPERATIONS_DETAILS) || key.startsWith(VARIABLES) || key.contentEquals(OPERATIONS);
 
 			notAllowUndefined = notAllowUndefined && !override;
@@ -1755,10 +1803,16 @@ public class ConformanceModel extends CoreModel {
 		Object candidateValue = candidate.get(key);
 		
 		if(candidateValue instanceof JSONObject) {
+			
+			if(key.startsWith(OPERATIONS_DETAILS)) LOG.debug("combineObjectsAndArrays:: candidateValue={}", candidateValue.toString());
+			if(key.startsWith(MANDATORY)) LOG.debug("combineObjectsAndArrays:: candidate={}", candidateValue.toString());
+
 			res.put(key, combineConformanceHelper(res.getJSONObject(key), (JSONObject) candidateValue, notAllowUndefined, filterPresentInCandidate));
 			
 		} else if(candidateValue instanceof JSONArray) {
 			
+			if(key.startsWith(MANDATORY)) LOG.debug("combineObjectsAndArrays:: candidate={}", candidateValue.toString());
+
 			candidate.getJSONArray(key).forEach(element -> {
 				if(!(element instanceof String || element instanceof Integer))
 					res.getJSONArray(key).put(element);
@@ -2263,7 +2317,9 @@ public class ConformanceModel extends CoreModel {
 				addedDetails = addNonPatchableFromRules(resource, rulesForResource, operationDetails); 
 				seenDetails = seenDetails || addedDetails;		
 			}
-						
+					
+			LOG.debug("extractFromRules: resource={} rulesForResource={}", resource, rulesForResource.toString(2));
+
 		}
 				
 		JSONObject res = new JSONObject();
@@ -2271,7 +2327,7 @@ public class ConformanceModel extends CoreModel {
 			res.put(CONFORMANCE, conf);
 							
 			model.put("rules_conformance", res);
-									
+								
 			Out.println("... extracted from API rules");
 			
 		}				
@@ -2483,15 +2539,23 @@ public class ConformanceModel extends CoreModel {
 
 	private boolean addMandatoryForPostFromRules(JSONObject rulesForResource, JSONObject mandConf, JSONObject condConf, JSONObject operationDetails) {
 
+		LOG.debug("addMandatoryForPostFromRules: rulesForResource={}", rulesForResource.toString(2));	
+		
 		boolean seenDetails = false;
 		List<String> mandatory = rulesForResource.keySet().stream()
 				.filter(key -> key.startsWith("mandatory in"))
 				.collect(Collectors.toList());
 						
-		for(String key : mandatory) {
-			List<String> properties = getStringArray(rulesForResource, key);
+		Object oas3mandatory = rulesForResource.optQuery("/supportedHttpMethods/POST/requiredParameters");
+		if(oas3mandatory!=null && oas3mandatory instanceof JSONArray) {
+			LOG.debug("addMandatoryForPostFromRules: oas3mandatory={}", oas3mandatory);	
+			
+			Set<String> properties = ((JSONArray)oas3mandatory).toList().stream().map(Object::toString).collect(Collectors.toSet());
+			
+			LOG.debug("addMandatoryForPostFromRules: properties={}", properties);	
+
 			for(String property : properties) {
-									
+				
 				JSONObject confItem = new JSONObject();
 				confItem.put(RULE, "");	
 				
@@ -2501,10 +2565,38 @@ public class ConformanceModel extends CoreModel {
 					condConf.put(property, confItem);
 				}
 				seenDetails = true;
-						
+					
+				LOG.debug("addMandatoryForPostFromRules: mandConf={} condConf={}", mandConf, condConf);	
+
 			}
-											
-		}		
+			
+		} else {
+			
+			LOG.debug("addMandatoryForPostFromRules: rulesForResource={}", rulesForResource);	
+
+			for(String key : mandatory) {
+				List<String> properties = getStringArray(rulesForResource, key);
+				
+				LOG.debug("addMandatoryForPostFromRules: key={} properties={}", key, properties);	
+	
+				for(String property : properties) {
+										
+					JSONObject confItem = new JSONObject();
+					confItem.put(RULE, "");	
+					
+					if(!property.contains(".") || containsParent(mandConf,property)) {
+						mandConf.put(property, confItem);
+					} else {
+						condConf.put(property, confItem);
+					}
+					seenDetails = true;
+						
+					LOG.debug("addMandatoryForPostFromRules: key={} mandConf={} condConf={}", key, mandConf, condConf);	
+	
+				}
+												
+			}	
+		}
 				
 		if(!operationDetails.has(POST)) operationDetails.put(POST, new JSONObject());
 		operationDetails.getJSONObject(POST).put(MANDATORY, mandConf);
@@ -2576,15 +2668,17 @@ public class ConformanceModel extends CoreModel {
 	private List<String> getStringArray(JSONObject json, String key) {
 		List<String> res = new LinkedList<>();
 		
-		Object value = json.get(key);
-		if(value instanceof JSONArray) {
-			res.addAll(((JSONArray)value).toList().stream().map(Object::toString).collect(Collectors.toList()));
-		} else if(value instanceof String) {
-			String s = (String)value;
-			List<String> l = Arrays.asList(s.split(",")).stream().map(String::trim).collect(Collectors.toList());
-			res.addAll(l);
-		} else {
-			Out.println("... expected string or array type for " + key);
+		Object value = json.opt(key);
+		if(value!=null) {
+			if(value instanceof JSONArray) {
+				res.addAll(((JSONArray)value).toList().stream().map(Object::toString).collect(Collectors.toList()));
+			} else if(value instanceof String) {
+				String s = (String)value;
+				List<String> l = Arrays.asList(s.split(",")).stream().map(String::trim).collect(Collectors.toList());
+				res.addAll(l);
+			} else {
+				Out.println("... expected string or array type for " + key);
+			}
 		}
 		return res;
 	}
