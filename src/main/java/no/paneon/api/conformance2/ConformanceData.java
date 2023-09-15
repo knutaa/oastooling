@@ -30,6 +30,7 @@ import no.paneon.api.generator.GeneratorData;
 import no.paneon.api.logging.AspectLogger.LogLevel;
 import no.paneon.api.logging.LogMethod;
 import no.paneon.api.model.APIModel;
+import no.paneon.api.tooling.Args;
 import no.paneon.api.tooling.ConformanceDocumentInfo;
 import no.paneon.api.utils.Config;
 import no.paneon.api.utils.Out;
@@ -58,10 +59,12 @@ public class ConformanceData extends GeneratorData {
 	public List<FileData> parts;
 		
 	private ConformanceModel model;
-			
-	public ConformanceData(ConformanceModel model) {
+	private Args.Common      args;
+
+	public ConformanceData(ConformanceModel model,Args.Common args) {
 		super();
 		this.model = model;
+		this.args  = args;
 		
 	}
 				
@@ -186,7 +189,7 @@ public class ConformanceData extends GeneratorData {
 		this.mandatoryNotifications = generateMandatoryNotifications();
 		this.hasMandatoryNotifications = !this.mandatoryNotifications.isEmpty();
 		
-		this.documentInfo = new ConformanceDocumentInfo(Config.getRules());
+		this.documentInfo = new ConformanceDocumentInfo(Config.getRules(),this.args);
 		
 	}
 

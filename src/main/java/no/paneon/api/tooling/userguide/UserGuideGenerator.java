@@ -88,8 +88,8 @@ public class UserGuideGenerator {
 				
 			Timestamp.timeStamp("finished user guide data");
 
-			this.userGuideData.documentInfo = new DocumentInfo(Config.getRules());
-			
+			this.userGuideData.documentInfo = new DocumentInfo(Config.getRules(),this.args);
+						
 			generatePartials(userGuideData);
 			
 			generator.processTemplates(args, userGuideData, "userguide.generated.templates", "userguide.templates", args.generatedOnly);

@@ -141,7 +141,7 @@ public class GenerateCommon {
 				
 				String target = generatedTargetFileName(generatedTargetDir, destination);
 	
-				LOG.debug("processTemplates: template={}", template); 
+				LOG.debug("generated::processTemplates: template={}", template); 
 
 				processTemplate(template, data, target);
 
@@ -158,11 +158,15 @@ public class GenerateCommon {
 				
 				String target = generatedTargetFileName(targetDir, destination);
 				
+				LOG.debug("processTemplates: template={} mergeMainDocument={}", template, Config.getBoolean("mergeMainDocument")); 
+
 				if(!fileExists(target)) {
 					processTemplate(template, data, target);
-				} else if(keepExisting && destination.contentEquals(args.outputFileName) && Config.getBoolean("mergeMainDocument")) {
+				} else if(/* keepExisting && */ destination.contentEquals(args.outputFileName) && Config.getBoolean("mergeMainDocument")) {
 					processMainDocument(template, data, target);
 				} else if(!keepExisting) {
+					LOG.debug("processTemplates: template={} not keepExisting", template); 
+
 					processTemplate(template, data, target);
 				} else {
 					Out.println("... file " + destination + " exists - not overwritten");

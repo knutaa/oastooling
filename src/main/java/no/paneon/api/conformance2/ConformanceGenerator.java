@@ -93,7 +93,7 @@ public class ConformanceGenerator {
 		
 		this.args = generator.args;	
 		this.conformance = generator.model;				
-		this.conformanceData = new ConformanceData(this.conformance);
+		this.conformanceData = new ConformanceData(this.conformance,this.args);
 
 	}
 

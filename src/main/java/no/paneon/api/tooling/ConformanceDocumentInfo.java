@@ -10,8 +10,8 @@ public class ConformanceDocumentInfo extends DocumentInfo {
 
 	static final Logger LOG = LogManager.getLogger(ConformanceDocumentInfo.class);
 	
-	public ConformanceDocumentInfo(JSONObject rules) {
-		super(rules);
+	public ConformanceDocumentInfo(JSONObject rules, Args.Common args) {
+		super(rules,args);
 	}
 	
 	public String getDocID() {

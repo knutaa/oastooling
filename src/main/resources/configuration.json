@@ -11,6 +11,19 @@
 			"intro": "intro ..."
 		}
 	},
+    
+    "userguide::metaData": [
+        "RELEASE",
+        "REVISION",
+        "IPR-MODE",
+        "STATUS",
+        "RELEASE-STATUS",
+        "MATURITY-LEVEL",
+        "TEAM-DATE",
+        "APPROVAL-STATUS",
+        "VERSION"
+    ],
+    
 	"userguide::metaProperties": [
 		"@type",
 		"@baseType",
