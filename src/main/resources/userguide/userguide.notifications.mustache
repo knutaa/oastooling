@@ -26,6 +26,12 @@ image::{diagrams}/NotificationsPattern.png[title="Notification Pattern" caption=
 {{#notifications}}
 ==== {{notificationLabel}}
 
+{{#fragment}}
+{{#hasFragment}}
+include::{fragments}/{{sourceLocation}}[]
+{{/hasFragment}}
+{{/fragment}}
+
 {{#OLD}}
 Notification {{notification}} case for resource {{resource}}.
 {{/OLD}}

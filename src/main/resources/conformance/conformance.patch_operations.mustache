@@ -1,7 +1,9 @@
 include::Environment.adoc[]
 
 {{#resources}}
+{{#hasMandatoryPatchOperations}}
 {{#patch}}
+{{#isMandatory}}
 === PATCH {{path}}?fields=...&{filtering}
 
 {{description}}
@@ -28,7 +30,14 @@ include::Environment.adoc[]
 |===
 {{/hasPatchableAttributes}}
 
+{{/isMandatory}}
 {{/patch}}
+{{/hasMandatoryPatchOperations}}
+
+{{^hasMandatoryPatchOperations}}
+There are no mandatory PATCH operations for {{resource}}.
+
+{{/hasMandatoryPatchOperations}}
 
 {{/resources}}
 

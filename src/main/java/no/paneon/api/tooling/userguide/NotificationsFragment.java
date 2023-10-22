@@ -78,11 +78,12 @@ public class NotificationsFragment {
 				else {
 					// Out.debug("... using default notification template for {}", notification);
 				}
+				
 			}
 
 			userGuideData.resources.get(resource).notifications = notifData;
 			userGuideData.resources.get(resource).hasNotifications = !notifData.isEmpty();
-			
+						
 			LOG.debug("notifications:: resource={} notifications.size={}", resource, notifData.size());
 			
 		}
@@ -132,6 +133,8 @@ public class NotificationsFragment {
 		res.hasSamples = !res.samples.isEmpty();
 		res.multipleSamples = res.samples.size()>1;
 		
+		res.fragment = new Fragment(args.workingDirectory,notification);
+
 		LOG.debug("getNotificationDetailsForNotification:: resource={} notification={} multipleSamples={}", resource, notification, res.multipleSamples);
 
 		return res;

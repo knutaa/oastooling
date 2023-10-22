@@ -53,8 +53,11 @@ public class UserGuideData extends GeneratorData {
 		public Boolean hasPatchable;
 		public Boolean hasNonPatchable;
 		public Boolean hasOperations;
+		
+		public Fragment fragment;
 
 	}
+	
 	
 	public class DiagramData {
 		
@@ -104,6 +107,9 @@ public class UserGuideData extends GeneratorData {
 		public List<Sample> samples = new LinkedList<>();
 		public boolean hasSamples = false;
 		public boolean multipleSamples = false;
+		
+		public Fragment fragment;
+
 				
 	}
 	
@@ -135,6 +141,8 @@ public class UserGuideData extends GeneratorData {
 
 		public Boolean hasSamples = false;
 		public List<OperationSampleData> samples;
+		
+		public Fragment fragment;
 		
 	}
 	

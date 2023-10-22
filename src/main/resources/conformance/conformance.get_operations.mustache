@@ -2,7 +2,10 @@ include::Environment.adoc[]
 
 
 {{#resources}}
+{{#hasMandatoryGetOperations}}
 {{#get}}
+{{#isMandatory}}
+
 === GET {{path}}?fields=...&{filtering}
 
 {{description}}
@@ -10,7 +13,14 @@ include::Environment.adoc[]
 Attribute selection is mandatory for all first level attributes except for the href attribute.
 Filtering on sub-resources is optional for all compliance levels
 
+{{/isMandatory}}
 {{/get}}
+{{/hasMandatoryGetOperations}}
+
+{{^hasMandatoryGetOperations}}
+There are no mandatory GET operations for {{resource}}.
+
+{{/hasMandatoryGetOperations}}
 
 {{/resources}}
 
