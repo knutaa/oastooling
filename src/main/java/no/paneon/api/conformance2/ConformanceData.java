@@ -111,19 +111,19 @@ public class ConformanceData extends GeneratorData {
 		}
 		
 		public List<OperationConformance> get;
-		public boolean hasMandaotryGetOperations;
+		public boolean hasMandatoryGetOperations;
 		
 		public List<OperationConformance> post;
-		public boolean hasMandaotryPostOperations;
+		public boolean hasMandatoryPostOperations;
 
 		public List<OperationConformance> delete;
-		public boolean hasMandaotryDeleteOperations;
+		public boolean hasMandatoryDeleteOperations;
 
 		public List<OperationConformance> patch;
-		public boolean hasMandaotryPatchOperations;
+		public boolean hasMandatoryPatchOperations;
 
 		public List<OperationConformance> put;
-		public boolean hasMandaotryPutOperations;
+		public boolean hasMandatoryPutOperations;
 
 
 		public List<ConformanceItem> mandatoryAttributes;
@@ -251,30 +251,30 @@ public class ConformanceData extends GeneratorData {
 				switch(operation) {
 				case "GET":
 					resourceOperation.get = opConf;
-					resourceOperation.hasMandaotryGetOperations = hasMandatoryOperation(opConf);
+					resourceOperation.hasMandatoryGetOperations = hasMandatoryOperation(opConf);
 					break;
 					
 				case "POST":
 					resourceOperation.post = opConf;
 					resourceOperation.mandatoryAttributes = model.getMandatoryConformanceInPost(opDetail,resource);
-					resourceOperation.hasMandaotryPostOperations = hasMandatoryOperation(opConf);
+					resourceOperation.hasMandatoryPostOperations = hasMandatoryOperation(opConf);
 
 					break;
 												
 				case "DELETE":
 					resourceOperation.delete = opConf;
-					resourceOperation.hasMandaotryDeleteOperations = hasMandatoryOperation(opConf);
+					resourceOperation.hasMandatoryDeleteOperations = hasMandatoryOperation(opConf);
 
 					break;
 					
 				case "PUT":
 					resourceOperation.put = opConf;
-					resourceOperation.hasMandaotryPutOperations = hasMandatoryOperation(opConf);
+					resourceOperation.hasMandatoryPutOperations = hasMandatoryOperation(opConf);
 					break;
 					
 				case "PATCH":
 					resourceOperation.patch = opConf;
-					resourceOperation.hasMandaotryPatchOperations = hasMandatoryOperation(opConf);
+					resourceOperation.hasMandatoryPatchOperations = hasMandatoryOperation(opConf);
 
 					resourceOperation.nonPatchableAttributes = model.getNonPatchableConformance(resource);
 					resourceOperation.hasNonPatchableAttributes = !resourceOperation.nonPatchableAttributes.isEmpty();
