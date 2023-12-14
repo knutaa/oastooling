@@ -49,14 +49,21 @@ public class GenerateConformanceGuide extends GenerateCommon {
 		
 		model.extractFromRules();
 		
+		LOG.debug("GenerateConformanceGuide: #1");
+
 		model.expandDefaults();
 		
 		boolean completeGeneration=true;
 		model.generateConformance(completeGeneration);
 
+		LOG.debug("GenerateConformanceGuide: #2");
+
 		LOG.debug("GenerateConformanceGuide: model={}", model);
 		
-		ConformanceGenerator confGen = new ConformanceGenerator(this);        	     
+		ConformanceGenerator confGen = new ConformanceGenerator(this);       
+		
+		LOG.debug("GenerateConformanceGuide: #3");
+
 		confGen.generateDocument();			
 			  
 		Timestamp.timeStamp("finished conformance generation");

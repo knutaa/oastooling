@@ -124,6 +124,8 @@ public class ConformanceModel extends CoreModel {
 			node = getOperationsOverview(resource);
 			confItem.put(OPERATIONS, getConformanceItems(node));
 			
+			LOG.debug("extractFromSwagger:: resource={} getOperationsOverview={}", resource, node);
+
 			JSONObject opDetail = APIModel.getOperationsDetailsByPath("path", "post");
 
 			List<String> ops = APIModel.getOperationsByResource(resource);
@@ -138,6 +140,9 @@ public class ConformanceModel extends CoreModel {
 				JSONObject postItem = new JSONObject();
 				postItem.put(POST, mandItem);
 				confItem.put(OPERATIONS_DETAILS, postItem);
+				
+				LOG.debug("extractFromSwagger:: resource={} postItem={}", resource, postItem);
+
 			}
 				
 			if(ops.contains(PATCH)) {
@@ -773,7 +778,7 @@ public class ConformanceModel extends CoreModel {
 					res.put(entry.getKey(), new String[] { entry.getKey(), value, "" });	
 				}
 			} else {
-				Out.debug("... WARNING: property {} not seen in in resource {}", entry.getKey(), resource);
+				Out.printOnce("... WARNING: property {} not seen in in resource {}", entry.getKey(), resource);
 			}
 		}
 		
@@ -2047,6 +2052,8 @@ public class ConformanceModel extends CoreModel {
 			
 			removeElement(res, OPERATIONS_DETAILS, POST, CONDITIONAL);
 			
+			Out.debug("mandatoryOnly: res={}", res.toString(2));
+
 			conformance.put(resource,  res);
 		}
 

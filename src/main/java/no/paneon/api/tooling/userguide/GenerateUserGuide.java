@@ -40,6 +40,8 @@ public class GenerateUserGuide extends GenerateCommon {
 		boolean forced=true;
 		this.model.generateConformance(forced);
 		
+		Fragment.readFragmentDetails(args.workingDirectory);
+		
 		UserGuideGenerator userGuide = new UserGuideGenerator(this);        	     
 
 		userGuide.generateDocument();			

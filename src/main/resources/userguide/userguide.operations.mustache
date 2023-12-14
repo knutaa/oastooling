@@ -16,6 +16,12 @@ include::Environment.adoc[]
 {{#isCreate}}
 This operation creates {{resourceArticle}} {{resource}} entity.
 
+{{#fragment}}
+{{#hasFragment}}
+include::{fragments}/{{sourceLocation}}[]
+{{/hasFragment}}
+{{/fragment}}
+
 *Mandatory Attributes*
 
 [cols="35%,65%"]

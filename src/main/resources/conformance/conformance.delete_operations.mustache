@@ -1,12 +1,21 @@
 include::Environment.adoc[]
 
 {{#resources}}
+{{#hasMandatoryDeleteOperations}}
 {{#delete}}
+{{#isMandatory}}
+
 === DELETE {{path}}
 
 {{description}}
 
+{{/isMandatory}}
 {{/delete}}
+{{/hasMandatoryDeleteOperations}}
+{{^hasMandatoryDeleteOperations}}
+There is no mandatory DELETE operation for {{resource}}.
+
+{{/hasMandatoryDeleteOperations}}
 
 {{/resources}}
 

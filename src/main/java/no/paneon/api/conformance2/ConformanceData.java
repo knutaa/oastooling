@@ -92,7 +92,9 @@ public class ConformanceData extends GeneratorData {
 			this.hasConformanceItems = !conformanceItems.isEmpty();
 			
 			LOG.debug("ConformanceResourceDetails: resource={} hasConformanceItems={}",  resourceName, hasConformanceItems);
-			
+			LOG.debug("ConformanceResourceDetails: resource={} conformanceItems={}",  resourceName, 
+					conformanceItems.stream().map(Object::toString).collect(Collectors.joining("\n")));
+
 		}
 		
 		public String toString() {
@@ -109,10 +111,20 @@ public class ConformanceData extends GeneratorData {
 		}
 		
 		public List<OperationConformance> get;
+		public boolean hasMandaotryGetOperations;
+		
 		public List<OperationConformance> post;
+		public boolean hasMandaotryPostOperations;
+
 		public List<OperationConformance> delete;
+		public boolean hasMandaotryDeleteOperations;
+
 		public List<OperationConformance> patch;
+		public boolean hasMandaotryPatchOperations;
+
 		public List<OperationConformance> put;
+		public boolean hasMandaotryPutOperations;
+
 
 		public List<ConformanceItem> mandatoryAttributes;
 		public List<ConformanceItem> patchableAttributes;
@@ -162,14 +174,21 @@ public class ConformanceData extends GeneratorData {
 	public class OperationConformance {
 		public String path;
 		public String description;
+		public String condition;
 		
-		public OperationConformance(String path, String description) {
+		public boolean isMandatory ;
+		
+		public OperationConformance(String path, String description, String condition) {
 			this.path = path;
 			this.description = description;
+			this.condition = condition;
+			this.isMandatory = !ConformanceModel.isOptional(condition);
 		}
 		
 		public OperationConformance(String path) {
 			this.path = path;
+			this.isMandatory = true;
+			
 		}
 			
 	}
@@ -201,12 +220,12 @@ public class ConformanceData extends GeneratorData {
 		LOG.debug("generateFragment: orderedResources: {}", orderedResources);
 
 	    for(String resource : orderedResources) {
-
+	    	
 			ConformanceOperationsDetails resourceOperation = new ConformanceOperationsDetails(resource); 
 						
 			for(String operation : APIModel.ALL_OPS) {
 				List<String> paths = model.getPaths(resource, operation);
-		    	
+		    					
 				if(paths.isEmpty()) continue;
 				
 				LOG.debug("generateFragment: resource={} operation={} paths={}", resource, operation, paths);
@@ -215,7 +234,9 @@ public class ConformanceData extends GeneratorData {
 	
 				List<OperationConformance> opConf = paths.stream().map(path -> {
 	    			String description = APIModel.getOperationDescription(path, operation);
-	    			return getPathConformance(path, this.addSentences(description));
+					String opCondition = model.getOperationConditionByResource(resource, operation);
+
+	    			return getPathConformance(path, this.addSentences(description), opCondition);
 				}).collect(toList());
 				
 				Optional<String> path = paths.stream().findFirst();
@@ -226,27 +247,34 @@ public class ConformanceData extends GeneratorData {
 				}
 				
 				JSONObject opDetail = APIModel.getOperationsDetailsByPath(path.get(), operation);
-
+				
 				switch(operation) {
 				case "GET":
 					resourceOperation.get = opConf;
+					resourceOperation.hasMandaotryGetOperations = hasMandatoryOperation(opConf);
 					break;
 					
 				case "POST":
 					resourceOperation.post = opConf;
 					resourceOperation.mandatoryAttributes = model.getMandatoryConformanceInPost(opDetail,resource);
+					resourceOperation.hasMandaotryPostOperations = hasMandatoryOperation(opConf);
+
 					break;
 												
 				case "DELETE":
 					resourceOperation.delete = opConf;
+					resourceOperation.hasMandaotryDeleteOperations = hasMandatoryOperation(opConf);
+
 					break;
 					
 				case "PUT":
 					resourceOperation.put = opConf;
+					resourceOperation.hasMandaotryPutOperations = hasMandatoryOperation(opConf);
 					break;
 					
 				case "PATCH":
 					resourceOperation.patch = opConf;
+					resourceOperation.hasMandaotryPatchOperations = hasMandatoryOperation(opConf);
 
 					resourceOperation.nonPatchableAttributes = model.getNonPatchableConformance(resource);
 					resourceOperation.hasNonPatchableAttributes = !resourceOperation.nonPatchableAttributes.isEmpty();
@@ -272,6 +300,10 @@ public class ConformanceData extends GeneratorData {
 	    
 	}
 
+	private boolean hasMandatoryOperation(List<OperationConformance> opConf) {
+		return opConf.stream().anyMatch(o -> o.isMandatory);
+	}
+
 	private List<ConformanceMandatoryOperations> generateResourceMandatoryOperations() {
 		List<ConformanceMandatoryOperations> res = new LinkedList<>();
 		
@@ -287,13 +319,16 @@ public class ConformanceData extends GeneratorData {
 	    	for(String op : allOps) {
 	    		String condition = model.getOperationConditionByResource(resource, op);
 	    		
-		    	LOG.debug("resource: {} op={} condition={}",  resource, op, condition);
+		    	LOG.debug("generateResourceMandatoryOperations:: resource: {} op={} condition={}",  resource, op, condition);
 
 				if(!ConformanceModel.isOptional(condition)) {
 					
 		    		String comment = model.getOperationCommentByResource(resource, op);
 
 					mandatory.add(new ConformanceOperations(op,comment));
+					
+			    	LOG.debug("generateResourceMandatoryOperations:: resource: {} op={} mandatory={}",  resource, op, mandatory);
+
 				}
 
 	    	}
@@ -325,9 +360,11 @@ public class ConformanceData extends GeneratorData {
 	}
 	
 	
-	private OperationConformance getPathConformance(String path, String description) {
-		OperationConformance res = new OperationConformance(path, description);
+	private OperationConformance getPathConformance(String path, String description, String condition) {
+		OperationConformance res = new OperationConformance(path, description, condition);
 		
+		LOG.debug("getPathConformance: path={} path={} res={}", path, path, res);
+
 		return res;
 		
 	}
@@ -356,6 +393,8 @@ public class ConformanceData extends GeneratorData {
 		return model.getOrderedResources().stream().map(this::getResourceDetailsForResource).collect(toList());
 	}
 
+	///////////  TBD /////////////////
+	
 	@LogMethod(level=LogLevel.DEBUG)
 	private ConformanceResourceDetails getResourceDetailsForResource(String resource) {
 		List<ConformanceItem> res = new LinkedList<>();
@@ -379,12 +418,17 @@ public class ConformanceData extends GeneratorData {
 									
 			List<String> ordering = arrangeByLevel(rowDetails);
 
-			LOG.debug("ordering: {}", ordering);
+			LOG.debug("ordering: {}", ordering.stream().collect(Collectors.joining("\n")));
 			
 			Map<String,String> processed = new HashMap<>();
 						
+			String previous = null;
 			for(String key : ordering) {
-				res.addAll( getTableRowCompletePath(key, rowDetails, processed) );
+				
+				boolean singleItem = ordering.stream().noneMatch(s -> !s.contentEquals(key) && !s.startsWith(key));
+				res.addAll( getTableRowCompletePath(key, rowDetails, processed, previous, singleItem) );
+				previous=key;
+				
 			}
 	
 			LOG.debug("res: {}", res);
@@ -419,17 +463,20 @@ public class ConformanceData extends GeneratorData {
 		
 		Set<String> allElements = rowDetails.keySet();
 		
-		Set<String> mandatoryPart = rowDetails.entrySet().stream()
+		List<String> mandatoryPart = rowDetails.entrySet().stream()
 				.filter(entry -> getStructuralDepth(entry.getKey())==1 && entry.getValue().condition.contains("M"))
 				.map(Entry::getKey)
 				.sorted()
-				.collect(Collectors.toSet());
+				.distinct()
+				.collect(toList());
 				
 		LOG.debug("mandatoryPart: {}", mandatoryPart);
 
-		Set<String> remainingPart = rowDetails.keySet().stream()
-						.filter(key -> !mandatoryPart.contains(key))
-						.collect(Collectors.toSet());
+		List<String> remainingPart = rowDetails.keySet().stream()
+										.filter(key -> !mandatoryPart.contains(key))
+										.sorted()
+										.distinct()
+										.collect(toList());
 		
 		List<String> mandatoryWithSubs = mandatoryPart.stream()
 									.filter(key -> !getElementsWithPrefixDirect(allElements, key).isEmpty())
@@ -551,15 +598,21 @@ public class ConformanceData extends GeneratorData {
 	
 	}
 	
-	private List<String> sortByDepthAndLabel(Collection<String> remainingPart)  {
+	private List<String> sortByDepthAndLabel(List<String> remainingPart)  {
 		List<String> res = new LinkedList<>();
 		
-		res.addAll(remainingPart);
-		
-		res.sort(new SortByDepthLabel());
-		
-		LOG.debug("sortByDepthAndLabel: res={}", res);
+		LOG.debug("sortByDepthAndLabel: remainingPart={}", remainingPart);
 
+//		res.addAll(remainingPart);
+//		
+//		res.sort(new SortByDepthLabel());
+//		
+//		Out.debug("sortByDepthAndLabel: res={}", res.stream().collect(Collectors.joining("\n ... ")) );
+		
+		res.addAll( Sorter.sortedTreeView(remainingPart) );  // updated 2023-10-16
+
+		LOG.debug("sortByDepthAndLabel: res={}", res.stream().collect(Collectors.joining("\n ... ")) );
+		
 		return res;
 		
 	}
@@ -816,21 +869,24 @@ public class ConformanceData extends GeneratorData {
 		return key.replaceAll("[^.]", "").length();
 	}
 	
+	
+	// TBD
+	
 	@LogMethod(level=LogLevel.DEBUG)
-	private List<ConformanceItem> getTableRowCompletePath(String key, Map<String, ConformanceItem> details, Map<String,String> processed) {
+	private List<ConformanceItem> getTableRowCompletePath(String key, Map<String, ConformanceItem> details, Map<String,String> processed, String previousKey, boolean singleItem) {
 		List<ConformanceItem> res = new LinkedList<>();
-		
+										
 		ConformanceItem values = details.get(key);
 
 		String parentKey = getParentKey(key);
 				
-		LOG.debug("getTableRowCompletePath: key={} parentKey={} values.label={}", key, parentKey, values.label);
+		LOG.debug("getTableRowCompletePath: #0 key={} parentKey={} values.label={}", key, parentKey, values.label);
 
 		boolean processItem=true;
 		if(!parentKey.isEmpty() && parentKey.contains(".")) {
-			processItem = addTableRowParentItem(res, key, values, processed);
+			processItem = addTableRowParentItem(res, key, values, processed, previousKey);
 			
-			LOG.debug("getTableRowCompletePath: key={} res={} processItem={}", key, res, processItem);
+			LOG.debug("getTableRowCompletePath: #1 addTableRowParentItem key={} res={} processItem={}", key, res, processItem);
 
 		} 
 		
@@ -840,8 +896,13 @@ public class ConformanceData extends GeneratorData {
 
 		if(processItem) {
 			int indent = parentKey.contains(".") ? 1 : 0;
+			
+			if(key.contentEquals("Service.intent.expression")) indent=0;
+
+			// if( isNewItem ) indent=0;
 				
 			LOG.debug("getTableRowCompletePath: key={} parentKey={} processItem={} indent={}", key, parentKey, processItem, indent);
+			LOG.debug("getTableRowCompletePath: key={} parentKey={} res={}", key, parentKey, res);
 
 			String comment = model.getResourceComment(key);				
 			String condition = model.getResourceCondition(key);
@@ -888,7 +949,7 @@ public class ConformanceData extends GeneratorData {
 
 			}			
 					
-			LOG.debug("getTableRowCompletePath: key={} parentKey={} res={}", key, parentKey, res);
+			LOG.debug("getTableRowCompletePath: #3 key={} parentKey={} res={}", key, parentKey, res);
 
 			if(indent==0) {
 				processed.put(key, key);	
@@ -898,6 +959,8 @@ public class ConformanceData extends GeneratorData {
 			}
 		}	
 		
+		LOG.debug("getTableRowCompletePath: key={} parentKey={} res={}", key, parentKey, res);
+
 		return res;
 		
 	}
@@ -925,7 +988,7 @@ public class ConformanceData extends GeneratorData {
 	private static String ROWTITLE = "ROW_TITLE_";
 	
 	@LogMethod(level=LogLevel.DEBUG)
-	private boolean addTableRowParentItem(List<ConformanceItem> res, String key, ConformanceItem values, Map<String, String> processed) {
+	private boolean addTableRowParentItem(List<ConformanceItem> res, String key, ConformanceItem values, Map<String, String> processed, String previousKey) {
 		
 		boolean processItem=true;
 		
@@ -971,7 +1034,7 @@ public class ConformanceData extends GeneratorData {
 				
 			} else if(!processed.containsKey(parentResource)) {
 				
-				LOG.debug("addTableRowParentItem: #3");
+				LOG.debug("addTableRowParentItem: #3 key={}", key);
 
 				String optString = condition.startsWith("M") ? "" : Config.getString("parentPresentCondition");
 																
@@ -984,7 +1047,7 @@ public class ConformanceData extends GeneratorData {
 				
 				if(!processed.containsKey(parentKey) && !processed.containsKey(ROWTITLE + parentResource)) {
 				
-					LOG.debug("addTableRowParentItem: #4");
+					LOG.debug("addTableRowParentItem: #4 key={}", key);
 
 					res.add( getSeeConditions(ruleText, condition, seenAt, parent, parentResource) ); 
 
@@ -992,7 +1055,19 @@ public class ConformanceData extends GeneratorData {
 					processed.put(parentKey, parentKey);		
 
 					processItem=false;
-				} 
+					
+				} else {
+					
+					int keyLength = key.replaceAll("[^.]", "").length();
+					int prevLength = previousKey!=null ? previousKey.replaceAll("[^.]", "").length() :  0;
+
+					boolean isNewItem = prevLength>keyLength && !previousKey.startsWith(key);
+					
+					if(isNewItem) LOG.debug("addTableRowParentItem: #5 key={} processItem={} isNewItem={}", key, processItem, isNewItem);
+
+					processItem = !isNewItem;
+
+				}
 				
 			}
 			

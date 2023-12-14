@@ -1,12 +1,22 @@
 include::Environment.adoc[]
 
 {{#resources}}
+{{#hasMandatoryPutOperations}}
 {{#put}}
+{{#isMandatory}}
 === PUT {{path}}?fields=...&{filtering}
 
 {{description}}
 
+{{/isMandatory}}
 {{/put}}
+{{/hasMandatoryPutOperations}}
+
+
+{{^hasMandatoryPutOperations}}
+There are no mandatory PUT operations for {{resource}}.
+
+{{/hasMandatoryPutOperations}}
 
 {{/resources}}
 

@@ -132,6 +132,8 @@ public class GenerateCommon {
 
 		LOG.debug("relativePathToGeneratedDirectory: {}", relativePathToGeneratedDirectory); 
 		
+		LOG.debug("generated::processTemplates: conformance data={}", data); 
+
 		Map<String,String> templatesToProcess = Config.getMap(generatedTemplates);
 		templatesToProcess.entrySet().stream()
 	        .sorted(Map.Entry.comparingByKey())

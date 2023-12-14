@@ -552,6 +552,8 @@ public class ConformanceGenerator {
 				
 		List<String> ordering = new LinkedList<>();
 		
+		LOG.debug("arrangeByLevel:: remainingPart={}", remainingPart);
+		
 		ordering.addAll( getOrderingOfProperties(mandatoryPart));		
 		ordering.addAll( getOrderingOfProperties(remainingPart) );
 		

@@ -6,6 +6,12 @@ include::Environment.adoc[]
 
 {{description}}
 
+{{#fragment}}
+{{#hasFragment}}
+include::{fragments}/{{sourceLocation}}[]
+{{/hasFragment}}
+{{/fragment}}
+
 *Resource model*
 
 include::{{diagramSource}}[]

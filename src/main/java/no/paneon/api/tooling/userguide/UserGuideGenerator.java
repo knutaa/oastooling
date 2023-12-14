@@ -97,10 +97,12 @@ public class UserGuideGenerator {
 			Map<String,String> filesToCopy = Config.getMap("userguide.generated.filesToCopy");
 								
 			generator.copyFiles(filesToCopy, args.generatedTargetDirectory, KEEP_EXISTING);
-			
+						
 			filesToCopy = Config.getMap("userguide.filesToCopy");
 			generator.copyFiles(filesToCopy, KEEP_EXISTING);
 
+			Fragment.copyFiles(args);
+			
 
 		} catch(Exception ex) {
 			Out.printAlways("... error generating userguide: exception=" + ex.getLocalizedMessage());

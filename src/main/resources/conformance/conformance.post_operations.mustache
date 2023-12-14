@@ -1,7 +1,9 @@
 include::Environment.adoc[]
 
 {{#resources}}
+{{#hasMandatoryPostOperations}}
 {{#post}}
+{{#isMandatory}}
 === POST {{path}}?fields=...&{filtering}
 
 {{description}}
@@ -21,7 +23,16 @@ The following table provides the list of mandatory attributes when creating an i
 {{/mandatoryAttributes}}
 |===
 
+{{/isMandatory}}
 {{/post}}
+{{/hasMandatoryPostOperations}}
+
+
+{{^hasMandatoryPostOperations}}
+There are no mandatory POST operations for {{resource}}.
+
+{{/hasMandatoryPostOperations}}
+
 
 {{/resources}}
 

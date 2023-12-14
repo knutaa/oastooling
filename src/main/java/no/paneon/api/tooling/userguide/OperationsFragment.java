@@ -84,13 +84,16 @@ public class OperationsFragment {
 		for(String resource : resources) {
 			userGuideData.resources.get(resource).operations = getOperationsDetailsForResource(config, resource);
 			userGuideData.resources.get(resource).hasOperations = !userGuideData.resources.get(resource).operations.isEmpty();
+			
+			userGuideData.resources.get(resource).fragment = new Fragment(args.workingDirectory, resource);
+			
 		}
 			
 		Timestamp.timeStamp("finished operations fragment");
 
 	}
 
-	
+
 	private void addOperationConfig(List<String> sampleFiles) {
 		
 		LOG.debug("addOperationConfig: samplesFiles={}",  sampleFiles);
@@ -288,6 +291,8 @@ public class OperationsFragment {
 					data.samples = sampleResults;
 					data.hasSamples = !sampleResults.isEmpty();
 					
+					data.fragment = new Fragment(args.workingDirectory, resource + "_" + op.toUpperCase());
+
 				}
 				
 			}
@@ -365,7 +370,7 @@ public class OperationsFragment {
 		
 		res.append(op.toUpperCase() + " " );
 		
-		String endPoint = updatePathParams(path, config);	
+		String endPoint = updatePathParams(op, path, config);	
 				
 		res.append(endPoint);
 		
@@ -418,9 +423,19 @@ public class OperationsFragment {
 		return res.toString();
 	}
 
-	private String updatePathParams(String path, JSONObject example) {
+	private String updatePathParams(String op, String path, JSONObject example) {
 		JSONArray pathParams = example.optJSONArray("pathParameters");
-		if(pathParams==null) return path;
+		
+		LOG.debug("updatePathParams: op={} path={} example={}", op, path, example);
+
+		if(pathParams==null) {
+			if(path.contains("{")) {
+				Out.printOnce("... WARNING: Missing example parameters to create sample for {} {}", op, path);
+			}
+			return path;
+		}
+		
+		String origPath=path;
 		
 		for(int i=0; i<pathParams.length(); i++) {
 			Object param = pathParams.get(i);
@@ -436,6 +451,13 @@ public class OperationsFragment {
 				}
  			}
 		}
+		
+		LOG.debug("updatePathParams: result path={}", path);
+
+		if(origPath.contentEquals(path)) {
+			LOG.debug("... WARNING: Unable to update parameters in {}", path);
+		}
+		
 		return path;
 	}
 
@@ -619,8 +641,14 @@ public class OperationsFragment {
 		
 		res.append(op.toUpperCase() + " " );
 		
+		LOG.debug("generateRequestPayload: op={} path={} sampleConfig_id={}", op, path, sampleConfig.optString("objectId") );
+
 		String endPoint = path;		
 		if(endPoint.endsWith("}")) {
+			String value=sampleConfig.optString("objectId");
+			if(value.isEmpty()) {
+				Out.printOnce("... WARNING: Missing example parameters to create sample for {} {}", op, path);
+			}
 			endPoint = endPoint.replaceAll("\\{[^\\}]+\\}", sampleConfig.optString("objectId"));
 		}
 		
@@ -652,9 +680,15 @@ public class OperationsFragment {
 		
 		res.append(op.toUpperCase() + " " );
 		
+		LOG.debug("generateRequestPayload: op={} path={} payload_id={}", op, path, payload.optString("id") );
+		
 		String endPoint = path;		
 		if(endPoint.endsWith("}")) {
-			endPoint = endPoint.replaceAll("\\{[^\\}]+\\}", payload.optString("id"));
+			String value=payload.optString("id");
+			if(value.isEmpty()) {
+				Out.printOnce("... WARNING: Missing example parameters to create sample for {} {}", op, path);
+			}
+			endPoint = endPoint.replaceAll("\\{[^\\}]+\\}", value);
 		}
 		
 		res.append(endPoint);

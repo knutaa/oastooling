@@ -23,6 +23,7 @@
 hs_err_pid*
 /target/
 /bin/
+.factorypath
 .DS_Store
 .classpath
 .project
@@ -34,5 +35,3 @@ hs_err_pid*
 /test-conformance/
 test-conformance.yaml
 test-conf.yaml
-.factorypath
-
