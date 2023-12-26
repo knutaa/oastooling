@@ -254,7 +254,7 @@ public class ResourcesFragment {
 		
 	}
 
-	private Collection<JSONObject> extractJSONObjects(JSONArray array) {
+	public static Collection<JSONObject> extractJSONObjects(JSONArray array) {
 		List<JSONObject> res = new LinkedList<>();
 		for(int i=0; i<array.length(); i++) {
 			JSONObject o = array.optJSONObject(i);

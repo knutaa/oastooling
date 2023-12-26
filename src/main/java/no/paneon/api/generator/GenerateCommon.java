@@ -45,7 +45,9 @@ public class GenerateCommon {
 		this.common = common;
 		
 		List<String> dirs = getDirectories(common.workingDirectory);
-				
+		
+		System.out.println("aaa");
+		
 		try {
 			APIModel.loadAPI(common.openAPIFile, Utils.getFile(common.openAPIFile, dirs));
 		
@@ -54,7 +56,7 @@ public class GenerateCommon {
 			Out.println("... unable to read API specification from " + common.openAPIFile);
 			System.exit(0);
 		}
-
+		
 		Out.silentMode = common.silentMode;
 		
 		setLogLevel( Utils.getLevelmap().get(common.debug));
@@ -201,13 +203,14 @@ public class GenerateCommon {
 
 	public static String extractRelativePath(String dir1, String dir2) {
 
+		System.out.println("dir1={} dir2={}" + dir1 + " " + dir2);
 		
 		if(dir1.isEmpty()) return dir2;
 		
 		String[] dir1parts = dir1.split("/");
 		String[] dir2parts = dir2.split("/");
 
-		LOG.debug("dir1={} dir1parts.length={} dir2={} dir2parts.length={} steps={}", dir1, dir1parts.length, dir2, dir2parts.length);
+		Out.debug("dir1={} dir1parts.length={} dir2={} dir2parts.length={} steps={}", dir1, dir1parts.length, dir2, dir2parts.length);
 
 		int pos=0;
 		boolean done = dir1parts.length==0;
@@ -238,7 +241,8 @@ public class GenerateCommon {
 
 		res.append(String.join("/", dir2parts));
 
-		LOG.debug("dir1={} dir2={} steps={} res={}", dir1, dir2, steps, res);
+		Out.debug("dir1={} dir2={} steps={} res={}", dir1, dir2, steps, res);
+		Out.debug("dir1={} dir2={} steps={} res={}", dir1, dir2, steps, res);
 
 		if(res.length()==0) res.append(".");
 		
