@@ -14,6 +14,7 @@ import no.paneon.api.model.APIModel;
 import no.paneon.api.tooling.Args;
 import no.paneon.api.tooling.Args.UserGuide;
 import no.paneon.api.tooling.userguide.GenerateUserGuide;
+import no.paneon.api.utils.Config;
 import no.paneon.api.utils.Out;
 
 public class PatchPayloadTest  {
@@ -29,7 +30,10 @@ public class PatchPayloadTest  {
     public TemporaryFolder folder = new TemporaryFolder();
         
     @BeforeClass
-    public static void runOnceBeforeClass() {        
+    public static void runOnceBeforeClass() {     
+    	
+    	Config.setBoolean("keepMVOFVOResources",true);
+    	
         APIModel.setSwaggerSource(file);
         APIModel.loadAPI(file);
 

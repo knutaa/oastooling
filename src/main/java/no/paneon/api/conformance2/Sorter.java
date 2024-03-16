@@ -25,12 +25,9 @@ public class Sorter {
 
 		String pivot = selectPivotElement(input);
 
-		List<String> first = input.stream().filter(s -> s.startsWith(pivot)).collect(toList());
+		List<String> first = input.stream().filter(s -> s.startsWith(pivot + ".")).collect(toList());
 
-		Map<Integer, List<String>> grouped = first.stream().sorted()
-				.collect(Collectors.groupingBy(Sorter::numberOfParts));
-
-		LOG.debug("## sorted:: first=" + first);
+		Map<Integer, List<String>> grouped = first.stream().sorted().collect(Collectors.groupingBy(Sorter::numberOfParts));
 
 		if (grouped.keySet().size() == 1) {
 			res.addAll(first);
@@ -38,13 +35,9 @@ public class Sorter {
 			Integer key = grouped.keySet().iterator().next();
 			List<String> group = grouped.get(key);
 
-			LOG.debug("## sorted:: group=" + group );
-
 			List<String> subsequentGroup = group.stream().filter(s -> isNotContaining(first, s)).collect(toList());
 
 			subsequentGroup.remove(pivot);
-
-			LOG.debug("## sorted:: subsequentGroup=" + subsequentGroup);
 
 			if (subsequentGroup.size() == 0) {
 				res.addAll(group);
@@ -59,6 +52,7 @@ public class Sorter {
 				res.addAll(sortedTreeView(group));
 
 				first.removeAll(group);
+				
 				res.addAll(sortedTreeView(first));
 
 			}
@@ -90,8 +84,13 @@ public class Sorter {
 			if (!isPrefix) {
 				foundCore = true;
 				pivot = candidate.replaceAll("\\.[^\\.]+$", "");
+				
+				LOG.debug("## sorted:: candidate={} isPrefix={}", candidate, isPrefix, pivot );
+
 			}
 		}
+
+		LOG.debug("## sorted:: foundCore={}", foundCore );
 
 		if (!foundCore) {
 			pivot = input.get(0);
